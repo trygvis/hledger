@@ -13,6 +13,7 @@ import Ledger.Types
 import Ledger.AccountName
 import Ledger.Entry
 import Ledger.Transaction
+import Ledger.RawTransaction
 
 
 negativepatternchar = '-'
@@ -44,9 +45,10 @@ rawLedgerAccountNameTree l = accountNameTreeFrom $ rawLedgerAccountNames l
 
 -- | Remove ledger entries we are not interested in.
 -- Keep only those which fall between the begin and end dates, and match
--- the description pattern, and match the cleared flag.
-filterRawLedger :: String -> String -> [String] -> Bool -> RawLedger -> RawLedger
-filterRawLedger begin end pats clearedonly = 
+-- the description pattern, and are cleared or real if those options are active.
+filterRawLedger :: String -> String -> [String] -> Bool -> Bool -> RawLedger -> RawLedger
+filterRawLedger begin end pats clearedonly realonly = 
+    filterRawLedgerTransactionsByRealness realonly .
     filterRawLedgerEntriesByClearedStatus clearedonly .
     filterRawLedgerEntriesByDate begin end .
     filterRawLedgerEntriesByDescription pats
@@ -80,6 +82,14 @@ filterRawLedgerEntriesByClearedStatus :: Bool -> RawLedger -> RawLedger
 filterRawLedgerEntriesByClearedStatus False l = l
 filterRawLedgerEntriesByClearedStatus True  (RawLedger ms ps es f) =
     RawLedger ms ps (filter estatus es) f
+
+-- | Strip out any (virtual transactions), if the flag is true, otherwise
+-- do no filtering.
+filterRawLedgerTransactionsByRealness :: Bool -> RawLedger -> RawLedger
+filterRawLedgerTransactionsByRealness False l = l
+filterRawLedgerTransactionsByRealness True (RawLedger ms ps es f) =
+    RawLedger ms ps (map filtertxns es) f
+    where filtertxns e@Entry{etransactions=ts} = e{etransactions=filter isReal ts}
 
 -- | Check if a set of ledger account/description patterns matches the
 -- given account name or entry description, applying ledger's special
