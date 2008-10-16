@@ -28,7 +28,7 @@ options = [
  Option ['C'] ["cleared"]      (NoArg  Cleared)            "report only on cleared entries",
  Option ['R'] ["real"]         (NoArg  Real)               "report only on real (non-virtual) transactions",
  Option ['s'] ["showsubs"]     (NoArg  ShowSubs)           "in the balance report, include subaccounts",
- Option ['h'] ["help","usage"] (NoArg  Help)               "show this help",
+ Option ['h'] ["help"] (NoArg  Help)                       "show this help",
  Option ['V'] ["version"]      (NoArg  Version)            "show version"
  ]
 
