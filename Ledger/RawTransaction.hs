@@ -39,7 +39,7 @@ autofillTransactions ts =
       (reals, _) = partition isReal ts
       (realamounts, missingamounts) = partition hasAmount reals
       balance t = if (isReal t) && (not $ hasAmount t) 
-                  then t{tamount = -(sumLedgerTransactions realamounts)}
+                  then t{tamount = -(sumRawTransactions realamounts)}
                   else t
 
 isReal :: RawTransaction -> Bool
@@ -48,5 +48,5 @@ isReal t = rttype t == RegularTransaction
 hasAmount :: RawTransaction -> Bool
 hasAmount = ("AUTO" /=) . symbol . commodity . tamount
 
-sumLedgerTransactions :: [RawTransaction] -> Amount
-sumLedgerTransactions = sumAmounts . map tamount
+sumRawTransactions :: [RawTransaction] -> Amount
+sumRawTransactions = sumAmounts . map tamount
