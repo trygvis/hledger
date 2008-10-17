@@ -91,7 +91,7 @@ balancecommandtests = TestList [
      "")
      (showBalanceReport [] [] l)
  ,
-  "balance report with showsubs" ~: do
+  "balance report with --subtotal" ~: do
     l <- ledgerfromfile "sample.ledger"
     assertequal (
      "                 $-1  assets\n" ++
@@ -105,7 +105,7 @@ balancecommandtests = TestList [
      "                 $-1    salary\n" ++
      "                  $1  liabilities:debts\n" ++
      "")
-     (showBalanceReport [ShowSubs] [] l)
+     (showBalanceReport [SubTotal] [] l)
  ,
   "balance report with account pattern o" ~: do
     l <- ledgerfromfile "sample.ledger"
@@ -117,7 +117,7 @@ balancecommandtests = TestList [
      "")
      (showBalanceReport [] ["o"] l)
  ,
-  "balance report with account pattern o and showsubs" ~: do
+  "balance report with account pattern o and --subtotal" ~: do
     l <- ledgerfromfile "sample.ledger"
     assertequal (
      "                  $1  expenses:food\n" ++
@@ -127,7 +127,7 @@ balancecommandtests = TestList [
      "--------------------\n" ++
      "                 $-1\n" ++
      "")
-     (showBalanceReport [ShowSubs] ["o"] l)
+     (showBalanceReport [SubTotal] ["o"] l)
  ,
   "balance report with account pattern a" ~: do
     l <- ledgerfromfile "sample.ledger"
