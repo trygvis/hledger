@@ -43,8 +43,8 @@ cacheLedger l =
         subacctsof a = filter (isAccountNamePrefixOf a) anames
         subtxnsof a = concat [txnsof a | a <- [a] ++ subacctsof a]
         balmap = Map.union 
-               (Map.fromList [(a, (sumTransactions $ subtxnsof a)) | a <- anames])
-               (Map.fromList [(a,nullamt) | a <- anames])
+               (Map.fromList [(a,(sumTransactions $ subtxnsof a)) | a <- anames])
+               (Map.fromList [(a,[]) | a <- anames])
         amap = Map.fromList [(a, Account a (txnmap ! a) (balmap ! a)) | a <- anames]
     in
       Ledger l ant amap
