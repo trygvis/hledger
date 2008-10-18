@@ -184,7 +184,7 @@ registercommandtests = TestList [
   "register does something" ~:
   do 
     l <- ledgerfromfile "sample.ledger"
-    assertnotequal "" $ showTransactionsWithBalances [] [] l
+    assertnotequal "" $ showRegisterReport [] [] l
   ]
   
 -- | Assert a parsed thing equals some expected thing, or print a parse error.
