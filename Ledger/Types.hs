@@ -43,7 +43,7 @@ data TransactionType = RegularTransaction | VirtualTransaction | BalancedVirtual
 
 data RawTransaction = RawTransaction {
       taccount :: AccountName,
-      tamount :: Amount,
+      tamount :: MixedAmount,
       tcomment :: String,
       rttype :: TransactionType
     } deriving (Eq)
@@ -92,7 +92,7 @@ data Transaction = Transaction {
       date :: Date,
       description :: String,
       account :: AccountName,
-      amount :: Amount,
+      amount :: MixedAmount,
       ttype :: TransactionType
     } deriving (Eq)
 
