@@ -139,7 +139,7 @@ sumAmounts :: [Amount] -> Amount
 sumAmounts = sum . filter (not . isZeroAmount)
 
 sumMixedAmounts :: [MixedAmount] -> MixedAmount
-sumMixedAmounts = concat
+sumMixedAmounts = normaliseMixedAmount . concat
 
 nullamt = []
 
