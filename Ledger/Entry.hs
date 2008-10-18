@@ -30,9 +30,9 @@ yyyy/mm/dd[ *][ CODE] description.........          [  ; comment...............]
     account name 1.....................  ...$amount1[  ; comment...............]
     account name 2.....................  ..$-amount1[  ; comment...............]
 
-pcodewidth    = no limit -- 10
-pdescwidth    = no limit -- 20
-pacctwidth    = 35 minimum, no maximum
+pcodewidth    = no limit -- 10          -- mimicking ledger layout.
+pdescwidth    = no limit -- 20          -- I don't remember what these mean,
+pacctwidth    = 35 minimum, no maximum  -- they were important at the time.
 pamtwidth     = 11
 pcommentwidth = no limit -- 22
 @
