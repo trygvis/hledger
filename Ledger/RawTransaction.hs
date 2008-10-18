@@ -26,26 +26,6 @@ showRawTransaction (RawTransaction a amt _ ttype) =
                       VirtualTransaction -> (\s -> "("++s++")", 20)
                       otherwise -> (id,22)
 
--- | Fill in the missing balance in an entry's transactions. Excluding
--- virtual transactions, there should be at most one missing balance,
--- otherwise return Nothing.
-autofillTransactions :: [RawTransaction] -> Maybe [RawTransaction]
-autofillTransactions ts =
-    case (length withmissingamounts) of
-      0 -> Just ts
-      1 -> Just $ map balance ts
-      otherwise -> Nothing
-    where 
-      (reals, _) = partition isReal ts
-      (withrealamounts, withmissingamounts) = partition hasAmount reals
-      balance t = if (isReal t) && (not $ hasAmount t) 
-                  then t{tamount = -otherssimpletotal}
-                  else t
-      otherstotal = sumRawTransactions withrealamounts
-      otherssimpletotal
-          | length otherstotal == 1 = head otherstotal
-          | otherwise = error "sorry, can't balance a mixed-commodity entry yet"
-
 isReal :: RawTransaction -> Bool
 isReal t = rttype t == RegularTransaction
 
