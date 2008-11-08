@@ -132,12 +132,15 @@ canonicaliseAmounts l@(RawLedger ms ps es f) = RawLedger ms ps (map fixEntryAmou
             samesymbol :: Commodity -> Commodity -> Bool
             samesymbol (Commodity{symbol=s1}) (Commodity{symbol=s2}) = s1==s2
 
+-- | Get just the amounts from a ledger, in the order parsed.
 rawLedgerAmounts :: RawLedger -> [MixedAmount]
 rawLedgerAmounts = map amount . rawLedgerTransactions
 
+-- | Get just the ammount commodities from a ledger, in the order parsed.
 rawLedgerCommodities :: RawLedger -> [Commodity]
 rawLedgerCommodities = map commodity . concatMap amounts . rawLedgerAmounts
 
+-- | Get just the amount precisions from a ledger, in the order parsed.
 rawLedgerPrecisions :: RawLedger -> [Int]
 rawLedgerPrecisions = map precision . rawLedgerCommodities
 
