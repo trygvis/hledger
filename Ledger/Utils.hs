@@ -34,7 +34,7 @@ import Data.Tree
 import Debug.Trace
 import System.Locale (defaultTimeLocale)
 import Test.HUnit
-import Test.QuickCheck hiding (test, Testable)
+-- import Test.QuickCheck hiding (test, Testable)
 import Text.Printf
 import Text.Regex
 import Text.ParserCombinators.Parsec (parse)
