@@ -76,7 +76,9 @@ unittests = TestList [
     let l = canonicaliseAmounts $ rawLedgerWithAmounts ["1","2.00"]
     -- should be using the greatest precision everywhere
     assertequal [2,2] (rawLedgerPrecisions l)
-
+  ,
+  "timeLog" ~: do
+    assertparseequal timelog1 (parsewith timelog timelog1_str)
   ]
 
 rawLedgerWithAmounts as = 

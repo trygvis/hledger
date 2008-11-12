@@ -243,7 +243,7 @@ ledgerday = do
   m <- many1 digit
   char '/'
   d <- many1 digit
-  many1 spacenonewline
+  many spacenonewline
   return (fromGregorian (read y) (read m) (read d))
 
 ledgerdate :: Parser Date
@@ -255,8 +255,11 @@ ledgerdatetime = do
   h <- many1 digit
   char ':'
   m <- many1 digit
-  many1 spacenonewline
-  return (mkDateTime day (TimeOfDay (read h) (read m) 0))
+  s <- optionMaybe $ do
+      char ':'
+      many1 digit
+  many spacenonewline
+  return (mkDateTime day (TimeOfDay (read h) (read m) (maybe 0 (fromIntegral.read) s)))
 
 
 ledgerstatus :: Parser Bool
@@ -454,7 +457,6 @@ timelogentry = do
   code <- oneOf "bhioO"
   many1 spacenonewline
   datetime <- ledgerdatetime
-  many spacenonewline
   comment <- restofline
   return $ TimeLogEntry code datetime comment
 
