@@ -36,7 +36,6 @@ clever tricks like the plague." --Edsger Dijkstra
 *** test on more ledger files
 *** speed regression tests
 *** more modular/scalable approach to test data ?
-*** individual test running
 *** figure out reliable maintainable appropriate tests
 *** easy ledger compatibility testing
 ** docs
