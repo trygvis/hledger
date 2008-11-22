@@ -80,6 +80,14 @@ amountop :: (Double -> Double -> Double) -> Amount -> Amount -> Amount
 amountop op a@(Amount ac aq ap) b@(Amount bc bq bp) = 
     Amount bc ((quantity $ convertAmountTo bc a) `op` bq) Nothing
 
+-- | Convert an amount to the commodity of its saved price, if any.
+costOfAmount :: Amount -> Amount
+costOfAmount a@(Amount _ _ Nothing) = a
+costOfAmount a@(Amount _ q (Just price))
+    | isZeroMixedAmount price = nullamt
+    | otherwise = Amount pc (pq*q) Nothing
+    where (Amount pc pq _) = head $ amounts price
+
 -- | Convert an amount to the specified commodity using the appropriate
 -- exchange rate (which is currently always 1).
 convertAmountTo :: Commodity -> Amount -> Amount
@@ -155,6 +163,10 @@ normaliseMixedAmount (Mixed as) = Mixed as'
 sumAmountsPreservingPrice [] = nullamt
 sumAmountsPreservingPrice as = (sum as){price=price $ head as}
 
+-- | Convert a mixed amount's component amounts to the commodity of their
+-- saved price, if any.
+costOfMixedAmount :: MixedAmount -> MixedAmount
+costOfMixedAmount (Mixed as) = Mixed $ map costOfAmount as
 
 -- | The empty simple amount.
 nullamt :: Amount
