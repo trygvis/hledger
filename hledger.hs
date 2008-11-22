@@ -73,7 +73,7 @@ parseLedgerAndDo :: [Opt] -> [String] -> ([Opt] -> [String] -> Ledger -> IO ()) 
 parseLedgerAndDo opts args cmd = 
     ledgerFilePathFromOpts opts >>= parseLedgerFile >>= either printParseError runcmd
     where
-      runcmd = cmd opts args . cacheLedger apats . canonicaliseAmounts . filterRawLedger b e dpats c r
+      runcmd = cmd opts args . cacheLedger apats . filterRawLedger b e dpats c r . canonicaliseAmounts
       b = parsemaybedate (beginDateFromOpts opts)
       e = parsemaybedate (endDateFromOpts opts)
       (apats,dpats) = parseAccountDescriptionArgs args
