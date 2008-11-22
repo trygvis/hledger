@@ -10,8 +10,6 @@ clever tricks like the plague." --Edsger Dijkstra
 
 * to do
 ** errors
-*** make account balances reflect account filtering
-*** print command doesn't filter by account ?
 *** ? in description or amount gives "too many blank transactions"
 *** parse commented lines at end of file 
 *** display mixed amounts vertically, not horizontally
@@ -73,6 +71,7 @@ clever tricks like the plague." --Edsger Dijkstra
 *** ledger shows description comments as part of description
 *** ledger shows small time amounts in minutes
 *** ledger can get timelog entry balance wrong, see mail list
+*** hledger print puts a blank line after the entry, not before it
 ** things I want to know
 *** time
 where have I been spending my time in recent weeks ?
