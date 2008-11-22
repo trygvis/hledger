@@ -28,6 +28,7 @@ options = [
  Option ['b'] ["begin"]        (ReqArg Begin "YYYY/MM/DD") "report on entries on or after this date",
  Option ['e'] ["end"]          (ReqArg End "YYYY/MM/DD")   "report on entries prior to this date",
  Option ['C'] ["cleared"]      (NoArg  Cleared)            "report only on cleared entries",
+ Option ['E'] ["empty"]        (NoArg  Empty)              "balance report: show accounts with zero balance",
  Option ['R'] ["real"]         (NoArg  Real)               "report only on real (non-virtual) transactions",
  Option ['s'] ["subtotal"]     (NoArg  SubTotal)           "in the balance report, include subaccounts",
  Option ['h'] ["help"] (NoArg  Help)                       "show this help",
@@ -41,6 +42,7 @@ data Opt =
     Begin String | 
     End String | 
     Cleared | 
+    Empty | 
     Real | 
     SubTotal |
     Help |

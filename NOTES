@@ -11,7 +11,6 @@ clever tricks like the plague." --Edsger Dijkstra
 * to do
 ** errors
 ** features
-*** -E to show zero amounts, for reports and showing informational timelog entries
 *** -n to skip total, for compound reports
 *** flexible date expressions, for easier time reports
 *** commodity @ rate, for tracking client hours in main ledger
