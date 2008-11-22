@@ -29,6 +29,7 @@ options = [
  Option ['R'] ["real"]         (NoArg  Real)               "report only on real (non-virtual) transactions",
  Option ['s'] ["subtotal"]     (NoArg  SubTotal)           "in the balance report, include subaccounts",
  Option ['h'] ["help"] (NoArg  Help)                       "show this help",
+ Option ['v'] ["verbose"]      (NoArg  Verbose)            "verbose test output",
  Option ['V'] ["version"]      (NoArg  Version)            "show version"
  ]
 
@@ -41,6 +42,7 @@ data Opt =
     Real | 
     SubTotal |
     Help |
+    Verbose |
     Version
     deriving (Show,Eq)
 
