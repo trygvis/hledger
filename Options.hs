@@ -30,7 +30,7 @@ options = [
  Option ['C'] ["cleared"]      (NoArg  Cleared)            "report only on cleared entries",
  Option ['E'] ["empty"]        (NoArg  Empty)              "balance report: show accounts with zero balance",
  Option ['R'] ["real"]         (NoArg  Real)               "report only on real (non-virtual) transactions",
- Option ['s'] ["subtotal"]     (NoArg  SubTotal)           "in the balance report, include subaccounts",
+ Option ['s'] ["subtotal"]     (NoArg  SubTotal)           "balance report: show subaccounts",
  Option ['h'] ["help"] (NoArg  Help)                       "show this help",
  Option ['v'] ["verbose"]      (NoArg  Verbose)            "verbose test output",
  Option ['V'] ["version"]      (NoArg  Version)            "show version"
