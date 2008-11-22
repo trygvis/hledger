@@ -10,7 +10,6 @@ clever tricks like the plague." --Edsger Dijkstra
 
 * to do
 ** errors
-*** display mixed amounts vertically, not horizontally
 ** features
 *** -E to show zero amounts, for reports and showing informational timelog entries
 *** -n to skip total, for compound reports

@@ -130,7 +130,7 @@ showBalanceReport opts args l = acctsstr ++ totalstr
       maxdepth = 9999
       totalstr = if isZeroMixedAmount total 
                  then "" 
-                 else printf "--------------------\n%20s\n" $ showMixedAmount total
+                 else printf "--------------------\n%s\n" $ padleft 20 $ showMixedAmount total
       total = sum $ map (abalance . ledgerAccount l) $ nonredundantaccts
       nonredundantaccts = filter (not . hasparentshowing) matchedacctnames
       hasparentshowing aname = (parentAccountName $ aname) `elem` matchedacctnames
@@ -173,8 +173,8 @@ showAccountTreeWithBalances matchednames t = showAccountTreeWithBalances' matche
             subsindented = showsubs (indent+1) ""
             showsubs i p = concatMap (showAccountTreeWithBalances' matchednames i p) subs
             hasmatchedsubs = any ((`elem` matchednames) . aname) $ concatMap flatten subs
-            this = showbal ++ spaces ++ prefix ++ leafname ++ "\n"
-            showbal = printf "%20s" $ showMixedAmount bal
+            amt = padleft 20 $ showMixedAmount bal
+            this = concatTopPadded [amt, spaces ++ prefix ++ leafname] ++ "\n"
             spaces = "  " ++ replicate (indent * 2) ' '
             leafname = accountLeafName fullname
             ismatched = fullname `elem` matchednames
@@ -182,3 +182,4 @@ showAccountTreeWithBalances matchednames t = showAccountTreeWithBalances' matche
             numsubs = length subs
             subbal = abalance $ root $ head subs
             matched = fullname `elem` matchednames
+

@@ -118,8 +118,11 @@ isZeroMixedAmount = all isZeroAmount . amounts . normaliseMixedAmount
 -- its component amounts. We currently display them on one line but
 -- will need to change to ledger's vertical layout.
 showMixedAmount :: MixedAmount -> String
-showMixedAmount m = concat $ intersperse ", " $ map show as
-    where (Mixed as) = normaliseMixedAmount m
+showMixedAmount m = concat $ intersperse "\n" $ map showfixedwidth as
+    where 
+      (Mixed as) = normaliseMixedAmount m
+      width = maximum $ map (length . show) $ as
+      showfixedwidth = printf (printf "%%%ds" width) . show
 
 -- | Get the string representation of a mixed amount, and if it
 -- appears to be all zero just show a bare 0, ledger-style.
