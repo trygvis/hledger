@@ -3,6 +3,7 @@ where
 import System
 import System.Console.GetOpt
 import System.Directory
+import Text.Printf
 import Ledger.AccountName (negativepatternchar)
 import Ledger.Parse (smartparsedate)
 import Ledger.Dates
@@ -60,7 +61,8 @@ data Opt =
 
 usage = usageInfo usagehdr options ++ usageftr
 
-version = "hledger version 0.2 \n"
+versionno = "0.2"
+version = printf "hledger version %s \n" versionno :: String
 
 -- | Parse the command-line arguments into ledger options, ledger command
 -- name, and ledger command arguments
