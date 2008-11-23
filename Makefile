@@ -128,7 +128,8 @@ show-authors:
 	@darcs changes --from-tag . |grep '^\w' |cut -c 31- |sort |uniq
 
 sloc:
-	@echo "lines of test and app code:"
+	@echo "test code:"
 	@sloccount Tests.hs | grep haskell:
+	@echo "non-test code:"
 	@sloccount `ls {,Ledger/}*.hs |grep -v Tests.hs` | grep haskell:
 
