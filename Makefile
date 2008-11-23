@@ -122,6 +122,11 @@ show-changes:
 	@echo
 	@darcs changes --from-tag . | grep '*'
 
+show-authors:
+	@echo Patch authors since last release:
+	@echo
+	@darcs changes --from-tag . |grep '^\w' |cut -c 31- |sort |uniq
+
 sloc:
 	@echo "lines of test and app code:"
 	@sloccount Tests.hs | grep haskell:
