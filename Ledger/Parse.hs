@@ -570,11 +570,9 @@ yesterday = string "yesterday" >> return ("","","yesterday")
 tomorrow  = string "tomorrow"  >> return ("","","tomorrow")
 
 
-type TransactionMatcher = Transaction -> Bool
-
 -- | Parse a --display expression which is a simple date predicate, like
 -- "d>[DATE]" or "d<=[DATE]", and return a transaction-matching predicate.
-datedisplayexpr :: Parser TransactionMatcher
+datedisplayexpr :: Parser (Transaction -> Bool)
 datedisplayexpr = do
   char 'd'
   op <- compareop
