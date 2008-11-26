@@ -44,6 +44,9 @@ import Ledger.Dates
 
 -- strings
 
+strip = dropspaces . reverse . dropspaces . reverse
+    where dropspaces = dropWhile (`elem` " \t")
+
 elideLeft width s =
     case length s > width of
       True -> ".." ++ (reverse $ take (width - 2) $ reverse s)
