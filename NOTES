@@ -10,6 +10,9 @@ clever tricks like the plague." --Edsger Dijkstra
 
 * to do
 ** errors
+*** does not catch an unbalanced entry
+*** should accept - before currency symbol ?
+*** can't parse comment line immediately after or within an entry
 ** features
 *** actual/effective entry & txn dates, for completeness
 *** speed
