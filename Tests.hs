@@ -216,7 +216,7 @@ misc_tests = TestList [
 
 balancereportacctnames_tests = TestList 
   [
-   "balancereportacctnames0" ~: ("-s",[])              `gives` ["assets","assets:cash","assets:checking","assets:saving",
+   "balancereportacctnames0" ~: ("-s",[])              `gives` ["assets","assets:bank","assets:bank:checking","assets:bank:saving","assets:cash",
                                                                 "expenses","expenses:food","expenses:supplies","income",
                                                                 "income:gifts","income:salary","liabilities","liabilities:debts"]
   ,"balancereportacctnames1" ~: ("",  [])              `gives` ["assets","expenses","income","liabilities"]
@@ -225,7 +225,7 @@ balancereportacctnames_tests = TestList
   ,"balancereportacctnames4" ~: ("",  ["assets:cash"]) `gives` ["assets:cash"]
   ,"balancereportacctnames5" ~: ("",  ["-assets"])     `gives` ["expenses","income","liabilities"]
   ,"balancereportacctnames6" ~: ("",  ["-e"])          `gives` []
-  ,"balancereportacctnames7" ~: ("-s",["assets"])      `gives` ["assets","assets:cash","assets:checking","assets:saving"]
+  ,"balancereportacctnames7" ~: ("-s",["assets"])      `gives` ["assets","assets:bank","assets:bank:checking","assets:bank:saving","assets:cash"]
   ,"balancereportacctnames8" ~: ("-s",["-e"])          `gives` []
   ] where
     gives (opt,pats) e = do 
@@ -245,8 +245,8 @@ balancecommand_tests = TestList [
   "balance report with -s" ~:
   ([SubTotal], []) `gives`
   ("                 $-1  assets\n" ++
+   "                  $1    bank:saving\n" ++
    "                 $-2    cash\n" ++
-   "                  $1    saving\n" ++
    "                  $2  expenses\n" ++
    "                  $1    food\n" ++
    "                  $1    supplies\n" ++
@@ -267,8 +267,8 @@ balancecommand_tests = TestList [
   "balance report --depth activates -s" ~:
   ([Depth "2"], []) `gives`
   ("                 $-1  assets\n" ++
+   "                  $1    bank\n" ++
    "                 $-2    cash\n" ++
-   "                  $1    saving\n" ++
    "                  $2  expenses\n" ++
    "                  $1    food\n" ++
    "                  $1    supplies\n" ++
@@ -299,8 +299,8 @@ balancecommand_tests = TestList [
   "balance report with account pattern a" ~:
   ([], ["a"]) `gives`
   ("                 $-1  assets\n" ++
+   "                  $1    bank:saving\n" ++
    "                 $-2    cash\n" ++
-   "                  $1    saving\n" ++
    "                 $-1  income:salary\n" ++
    "                  $1  liabilities\n" ++
    "--------------------\n" ++
@@ -318,8 +318,8 @@ balancecommand_tests = TestList [
  ,
   "balance report with unmatched parent of two matched subaccounts" ~: 
   ([], ["cash","saving"]) `gives`
-  ("                 $-2  assets:cash\n" ++
-   "                  $1  assets:saving\n" ++
+  ("                  $1  assets:bank:saving\n" ++
+   "                 $-2  assets:cash\n" ++
    "--------------------\n" ++
    "                 $-1\n" ++
    "")
@@ -353,9 +353,10 @@ balancecommand_tests = TestList [
   "balance report with -E shows zero-balance accounts" ~:
   ([SubTotal,Empty], ["assets"]) `gives`
   ("                 $-1  assets\n" ++
+   "                  $1    bank\n" ++
+   "                  $0      checking\n" ++
+   "                  $1      saving\n" ++
    "                 $-2    cash\n" ++
-   "                  $0    checking\n" ++
-   "                  $1    saving\n" ++
    "--------------------\n" ++
    "                 $-1\n" ++
    "")
@@ -404,17 +405,17 @@ registercommand_tests = TestList [
   "register report" ~:
   do 
     assertequal (
-     "2008/01/01 income               assets:checking                  $1           $1\n" ++
+     "2008/01/01 income               assets:bank:checking             $1           $1\n" ++
      "                                income:salary                   $-1            0\n" ++
-     "2008/06/01 gift                 assets:checking                  $1           $1\n" ++
+     "2008/06/01 gift                 assets:bank:checking             $1           $1\n" ++
      "                                income:gifts                    $-1            0\n" ++
-     "2008/06/02 save                 assets:saving                    $1           $1\n" ++
-     "                                assets:checking                 $-1            0\n" ++
+     "2008/06/02 save                 assets:bank:saving               $1           $1\n" ++
+     "                                assets:bank:checking            $-1            0\n" ++
      "2008/06/03 eat & shop           expenses:food                    $1           $1\n" ++
      "                                expenses:supplies                $1           $2\n" ++
      "                                assets:cash                     $-2            0\n" ++
      "2008/12/31 pay off              liabilities:debts                $1           $1\n" ++
-     "                                assets:checking                 $-1            0\n" ++
+     "                                assets:bank:checking            $-1            0\n" ++
      "")
      $ showRegisterReport [] [] sampleledger
   ,
@@ -441,8 +442,8 @@ registercommand_tests = TestList [
     "june" `periodexprgives` ["2008/06/01","2008/06/02","2008/06/03"]
 
     assertequal (
-     "2008/01/01 - 2008/12/31         assets:cash                     $-2          $-2\n" ++
-     "                                assets:saving                    $1          $-1\n" ++
+     "2008/01/01 - 2008/12/31         assets:bank:saving               $1           $1\n" ++
+     "                                assets:cash                     $-2          $-1\n" ++
      "                                expenses:food                    $1            0\n" ++
      "                                expenses:supplies                $1           $1\n" ++
      "                                income:gifts                    $-1            0\n" ++
@@ -483,9 +484,10 @@ sample_ledger_str = (
  ";\n" ++
  "; Sets up this account tree:\n" ++
  "; assets\n" ++
+ ";   bank\n" ++
+ ";     checking\n" ++
+ ";     saving\n" ++
  ";   cash\n" ++
- ";   checking\n" ++
- ";   saving\n" ++
  "; expenses\n" ++
  ";   food\n" ++
  ";   supplies\n" ++
@@ -496,16 +498,16 @@ sample_ledger_str = (
  ";   debts\n" ++
  "\n" ++
  "2008/01/01 income\n" ++
- "    assets:checking  $1\n" ++
+ "    assets:bank:checking  $1\n" ++
  "    income:salary\n" ++
  "\n" ++
  "2008/06/01 gift\n" ++
- "    assets:checking  $1\n" ++
+ "    assets:bank:checking  $1\n" ++
  "    income:gifts\n" ++
  "\n" ++
  "2008/06/02 save\n" ++
- "    assets:saving  $1\n" ++
- "    assets:checking\n" ++
+ "    assets:bank:saving  $1\n" ++
+ "    assets:bank:checking\n" ++
  "\n" ++
  "2008/06/03 * eat & shop\n" ++
  "    expenses:food      $1\n" ++
@@ -514,11 +516,13 @@ sample_ledger_str = (
  "\n" ++
  "2008/12/31 * pay off\n" ++
  "    liabilities:debts  $1\n" ++
- "    assets:checking\n" ++
+ "    assets:bank:checking\n" ++
  "\n" ++
  "\n" ++
  ";final comment\n" ++
  "")
+
+write_sample_ledger = writeFile "sample.ledger" sample_ledger_str
 
 rawtransaction1_str  = "  expenses:food:dining  $10.00\n"
 
