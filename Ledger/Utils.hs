@@ -16,6 +16,7 @@ module Data.Ord,
 module Data.Tree,
 module Data.Time.Clock,
 module Data.Time.Calendar,
+module Data.Time.LocalTime,
 module Debug.Trace,
 module Ledger.Utils,
 module Text.Printf,
@@ -33,6 +34,7 @@ import Data.Ord
 import Data.Tree
 import Data.Time.Clock
 import Data.Time.Calendar
+import Data.Time.LocalTime
 import Debug.Trace
 import Test.HUnit
 import Text.Printf
