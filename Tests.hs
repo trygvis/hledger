@@ -216,7 +216,9 @@ misc_tests = TestList [
      [
       nulltxn{date=parsedate "2008/01/01",description="- 2008/12/31",account="",amount=Mixed [dollars 15]}
      ]
-
+  ,
+  "ledgerentry"        ~: do
+    assertparseequal price1 (parseWithCtx ledgerHistoricalPrice price1_str)
   ]
 
 newparse_tests = TestList [ sameParseTests ]
@@ -857,7 +859,8 @@ rawledger7 = RawLedger
              ],
              epreceding_comment_lines=""
            }
-          ]
+          ] 
+          []
           []
           ""
 
@@ -883,6 +886,9 @@ timelog1 = TimeLog [
             timelogentry1,
             timelogentry2
            ]
+
+price1_str = "P 2004/05/01 XYZ $55\n"
+price1 = HistoricalPrice (parsedate "2004/05/01") "XYZ" "$" 55
 
 a1 = Mixed [(hours 1){price=Just $ Mixed [Amount (comm "$") 10 Nothing]}]
 a2 = Mixed [(hours 2){price=Just $ Mixed [Amount (comm "EUR") 10 Nothing]}]
@@ -921,6 +927,7 @@ rawLedgerWithAmounts as =
         [] 
         [] 
         [nullentry{edescription=a,etransactions=[nullrawtxn{tamount=parse a}]} | a <- as]
+        []
         []
         ""
             where parse = fromparse . parseWithCtx transactionamount . (" "++)
