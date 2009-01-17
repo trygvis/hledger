@@ -138,6 +138,15 @@ amounts (Mixed as) = as
 isZeroMixedAmount :: MixedAmount -> Bool
 isZeroMixedAmount = all isZeroAmount . amounts . normaliseMixedAmount
 
+-- | MixedAmount derives Eq in Types.hs, but that doesn't know that we
+-- want $0 = EUR0 = 0. Yet we don't want to drag all this code in there.
+-- When zero equality is important, use this, for now; should be used
+-- everywhere.
+mixedAmountEquals :: MixedAmount -> MixedAmount -> Bool
+mixedAmountEquals a b = amounts a' == amounts b' || (isZeroMixedAmount a' && isZeroMixedAmount b')
+    where a' = normaliseMixedAmount a
+          b' = normaliseMixedAmount b
+
 -- | Get the string representation of a mixed amount, showing each of
 -- its component amounts. NB a mixed amount can have an empty amounts
 -- list in which case it shows as \"\".
