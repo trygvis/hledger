@@ -1,6 +1,6 @@
 
 BUILD=ghc --make hledger.hs -o hledger -O
-BUILDFLAGS=-DVTY
+BUILDFLAGS=-DVTY -DANSI
 build: tag
 	$(BUILD) $(BUILDFLAGS)
 
