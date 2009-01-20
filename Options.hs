@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -cpp #-}
 module Options 
 where
 import System
@@ -22,6 +23,12 @@ usageftr    = "\n" ++
               "  balance  - show account balances\n" ++
               "  print    - show formatted ledger entries\n" ++
               "  register - show register transactions\n" ++
+#ifdef VTY
+              "  ui       - run a simple vty-based text ui\n" ++
+#endif
+#ifdef ANSI
+              "  ansi     - run a simple ansi-based text ui\n" ++
+#endif
               "\n" ++
               "All dates can be y/m/d or ledger-style smart dates like \"last month\".\n" ++
               "Account and description patterns are regular expressions which filter by\n" ++
