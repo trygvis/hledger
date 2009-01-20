@@ -11,14 +11,37 @@ import Ledger.Types
 import Ledger.Dates
 
 
-versionno   = "0.3.x"
-version     = printf "hledger version %s \n" versionno :: String
+configflags = [
+         ("vty",
+#ifdef VTY
+          True
+#else
+          False
+#endif
+         )
+        ,("ansi",
+#ifdef ANSI
+          True
+#else
+          False
+#endif
+         )
+         ]
+versionmsg  = "hledger " ++ version ++ configmsg ++ "\n"
+version     = "0.3.x"
+configmsg
+    | null with && null without = ""
+    | (not $ null with) && (not $ null without) = " configured" ++ with ++ " and" ++ without
+    | otherwise = " configured" ++ with ++ without
+    where
+      with = punc "with" [f | (f,v) <- configflags, v]
+      without = punc "without" [f | (f,v) <- configflags, not v]
+      punc _ [] = ""
+      punc prefix ws = printf " %s %s" prefix (intercalate ", " ws)
 defaultfile = "~/.ledger"
 fileenvvar  = "LEDGER"
 usagehdr    = "Usage: hledger [OPTS] COMMAND [ACCTPATTERNS] [-- DESCPATTERNS]\n" ++
               "\n" ++
-              "Options (before command, unless using --options-anywhere):"
-usageftr    = "\n" ++
               "Commands (can be abbreviated):\n" ++
               "  balance  - show account balances\n" ++
               "  print    - show formatted ledger entries\n" ++
@@ -30,7 +53,10 @@ usageftr    = "\n" ++
               "  ansi     - run a simple ansi-based text ui\n" ++
 #endif
               "\n" ++
+              "Options (before command, unless using --options-anywhere):"
+usageftr    = "\n" ++
               "All dates can be y/m/d or ledger-style smart dates like \"last month\".\n" ++
+              "\n" ++
               "Account and description patterns are regular expressions which filter by\n" ++
               "account name and entry description. Prefix a pattern with - to negate it,\n" ++
               "and separate account and description patterns with --.\n" ++
@@ -55,7 +81,6 @@ options = [
                                                         "(where EXPR is 'dOP[DATE]', OP is <, <=, =, >=, >)")
  ,Option ['E'] ["empty"]        (NoArg  Empty)         "balance report: show accounts with zero balance"
  ,Option ['R'] ["real"]         (NoArg  Real)          "report only on real (non-virtual) transactions"
- ,Option []    ["options-anywhere"] (NoArg OptionsAnywhere) "allow options anywhere, use ^ to negate patterns"
  ,Option ['n'] ["collapse"]     (NoArg  Collapse)      "balance report: no grand total"
  ,Option ['s'] ["subtotal"]     (NoArg  SubTotal)      "balance report: show subaccounts"
  ,Option ['W'] ["weekly"]       (NoArg  WeeklyOpt)     "register report: show weekly summary"
@@ -64,7 +89,8 @@ options = [
  ,Option ['h'] ["help"] (NoArg  Help)                  "show this help"
  ,Option ['v'] ["verbose"]      (NoArg  Verbose)       "verbose test output"
  ,Option ['V'] ["version"]      (NoArg  Version)       "show version"
- ,Option []    ["debug-no-ui"]  (NoArg  DebugNoUI)     "when running in ui mode, don't display anything (mostly)"
+ ,Option []    ["debug-no-ui"]  (NoArg  DebugNoUI)     "run ui commands without no output"
+ ,Option []    ["options-anywhere"] (NoArg OptionsAnywhere) "allow options anywhere on the command line"
  ]
     where 
       filehelp = printf "ledger file; - means use standard input. Defaults\nto the %s environment variable or %s"
