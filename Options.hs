@@ -18,6 +18,9 @@ configflags = [
 #ifdef ANSI
  ,"ansi"
 #endif
+#ifdef HAPPS
+ ,"happs"
+#endif
  ]
 versionmsg  = "hledger " ++ version ++ configmsg ++ "\n"
 version     = "0.3.x"
