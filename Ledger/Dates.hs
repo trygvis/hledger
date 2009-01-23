@@ -245,7 +245,7 @@ Assumes any text in the parse stream has been lowercased.
 smartdate :: GenParser Char st SmartDate
 smartdate = do
   let dateparsers = [yyyymmdd, ymd, ym, md, y, d, month, mon, today', yesterday, tomorrow,
-                     lastthisnextthing, thing
+                     lastthisnextthing
                     ]
   (y,m,d) <- choice $ map try dateparsers
   return $ (y,m,d)
@@ -347,17 +347,6 @@ lastthisnextthing = do
 --       ++ (map string $ months ++ monthabbrevs ++ weekdays ++ weekdayabbrevs)
             
   return ("",r,p)
-
-thing :: GenParser Char st SmartDate
-thing = do
-  p <- choice $ [
-        string "day"
-       ,string "week"
-       ,string "month"
-       ,string "quarter"
-       ,string "year"
-      ]
-  return ("","this",p)
 
 periodexpr :: Day -> GenParser Char st (Interval, DateSpan)
 periodexpr rdate = choice $ map try [
