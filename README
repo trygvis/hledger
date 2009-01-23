@@ -73,7 +73,7 @@ alias it looks for your timelog (~/.timelog, or the file specified by
 $TIMELOG or -f), and parses arguments slightly differently for
 convenient querying::
 
- hours [OPTIONS] [PERIOD [COMMAND]]
+ hours [OPTIONS] [PERIOD [COMMAND [PATTERNS]]]
 
 PERIOD and COMMAND default to "today" and "balance --subtotal"
 respectively, and --options-anywhere is assumed.  Examples::
