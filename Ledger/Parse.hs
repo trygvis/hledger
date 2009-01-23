@@ -340,16 +340,18 @@ ledgertransaction = many1 spacenonewline >> choice [ normaltransaction, virtualt
 
 normaltransaction :: GenParser Char LedgerFileCtx RawTransaction
 normaltransaction = do
+  status <- ledgerstatus
   account <- transactionaccountname
   amount <- transactionamount
   many spacenonewline
   comment <- ledgercomment
   restofline
   parent <- getParentAccount
-  return (RawTransaction account amount comment RegularTransaction)
+  return (RawTransaction status account amount comment RegularTransaction)
 
 virtualtransaction :: GenParser Char LedgerFileCtx RawTransaction
 virtualtransaction = do
+  status <- ledgerstatus
   char '('
   account <- transactionaccountname
   char ')'
@@ -358,10 +360,11 @@ virtualtransaction = do
   comment <- ledgercomment
   restofline
   parent <- getParentAccount
-  return (RawTransaction account amount comment VirtualTransaction)
+  return (RawTransaction status account amount comment VirtualTransaction)
 
 balancedvirtualtransaction :: GenParser Char LedgerFileCtx RawTransaction
 balancedvirtualtransaction = do
+  status <- ledgerstatus
   char '['
   account <- transactionaccountname
   char ']'
@@ -369,7 +372,7 @@ balancedvirtualtransaction = do
   many spacenonewline
   comment <- ledgercomment
   restofline
-  return (RawTransaction account amount comment BalancedVirtualTransaction)
+  return (RawTransaction status account amount comment BalancedVirtualTransaction)
 
 -- Qualify with the parent account from parsing context
 transactionaccountname :: GenParser Char LedgerFileCtx AccountName

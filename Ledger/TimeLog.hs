@@ -58,6 +58,6 @@ entryFromTimeLogInOut i o
       intime   = tldatetime i
       outtime  = tldatetime o
       amount   = Mixed [hours $ elapsedSeconds outtime intime / 3600]
-      txns     = [RawTransaction acctname amount "" RegularTransaction
+      txns     = [RawTransaction False acctname amount "" RegularTransaction
                  --,RawTransaction "assets:time" (-amount) "" RegularTransaction
                  ]

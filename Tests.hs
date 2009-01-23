@@ -585,7 +585,7 @@ write_sample_ledger = writeFile "sample.ledger" sample_ledger_str
 
 rawtransaction1_str  = "  expenses:food:dining  $10.00\n"
 
-rawtransaction1 = RawTransaction "expenses:food:dining" (Mixed [dollars 10]) "" RegularTransaction
+rawtransaction1 = RawTransaction False "expenses:food:dining" (Mixed [dollars 10]) "" RegularTransaction
 
 entry1_str = "" ++
  "2007/01/28 coopportunity\n" ++
@@ -595,8 +595,8 @@ entry1_str = "" ++
 
 entry1 =
     (Entry (parsedate "2007/01/28") False "" "coopportunity" ""
-     [RawTransaction "expenses:food:groceries" (Mixed [dollars 47.18]) "" RegularTransaction, 
-      RawTransaction "assets:checking" (Mixed [dollars (-47.18)]) "" RegularTransaction] "")
+     [RawTransaction False "expenses:food:groceries" (Mixed [dollars 47.18]) "" RegularTransaction, 
+      RawTransaction False "assets:checking" (Mixed [dollars (-47.18)]) "" RegularTransaction] "")
 
 
 entry2_str = "" ++
@@ -739,12 +739,14 @@ rawledger7 = RawLedger
              ecomment="",
              etransactions=[
               RawTransaction {
+                tstatus=False,
                 taccount="assets:cash", 
                 tamount=(Mixed [dollars 4.82]),
                 tcomment="",
                 rttype=RegularTransaction
               },
               RawTransaction {
+                tstatus=False,
                 taccount="equity:opening balances", 
                 tamount=(Mixed [dollars (-4.82)]),
                 tcomment="",
@@ -762,12 +764,14 @@ rawledger7 = RawLedger
              ecomment="",
              etransactions=[
               RawTransaction {
+                tstatus=False,
                 taccount="expenses:vacation", 
                 tamount=(Mixed [dollars 179.92]),
                 tcomment="",
                 rttype=RegularTransaction
               },
               RawTransaction {
+                tstatus=False,
                 taccount="assets:checking", 
                 tamount=(Mixed [dollars (-179.92)]),
                 tcomment="",
@@ -785,12 +789,14 @@ rawledger7 = RawLedger
              ecomment="",
              etransactions=[
               RawTransaction {
+                tstatus=False,
                 taccount="assets:saving", 
                 tamount=(Mixed [dollars 200]),
                 tcomment="",
                 rttype=RegularTransaction
               },
               RawTransaction {
+                tstatus=False,
                 taccount="assets:checking", 
                 tamount=(Mixed [dollars (-200)]),
                 tcomment="",
@@ -808,12 +814,14 @@ rawledger7 = RawLedger
              ecomment="",
              etransactions=[
               RawTransaction {
+                tstatus=False,
                 taccount="expenses:food:dining", 
                 tamount=(Mixed [dollars 4.82]),
                 tcomment="",
                 rttype=RegularTransaction
               },
               RawTransaction {
+                tstatus=False,
                 taccount="assets:cash", 
                 tamount=(Mixed [dollars (-4.82)]),
                 tcomment="",
@@ -831,12 +839,14 @@ rawledger7 = RawLedger
              ecomment="",
              etransactions=[
               RawTransaction {
+                tstatus=False,
                 taccount="expenses:phone", 
                 tamount=(Mixed [dollars 95.11]),
                 tcomment="",
                 rttype=RegularTransaction
               },
               RawTransaction {
+                tstatus=False,
                 taccount="assets:checking", 
                 tamount=(Mixed [dollars (-95.11)]),
                 tcomment="",
@@ -854,12 +864,14 @@ rawledger7 = RawLedger
              ecomment="",
              etransactions=[
               RawTransaction {
+                tstatus=False,
                 taccount="liabilities:credit cards:discover", 
                 tamount=(Mixed [dollars 80]),
                 tcomment="",
                 rttype=RegularTransaction
               },
               RawTransaction {
+                tstatus=False,
                 taccount="assets:checking", 
                 tamount=(Mixed [dollars (-80)]),
                 tcomment="",
