@@ -92,7 +92,7 @@ data RawLedger = RawLedger {
 
 data TimeLogEntry = TimeLogEntry {
       tlcode :: Char,
-      tldatetime :: UTCTime,
+      tldatetime :: LocalTime,
       tlcomment :: String
     } deriving (Eq,Ord)
 
