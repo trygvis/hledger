@@ -151,4 +151,4 @@ isnegativepat pat = take 1 pat `elem` ["-","^"]
 abspat pat = if isnegativepat pat then drop 1 pat else pat
 positivepats = filter (not . isnegativepat)
 negativepats = filter isnegativepat
-matchregex pat str = containsRegex (mkRegexWithOpts pat True True) str
+matchregex pat str = containsRegex (mkRegexWithOpts pat True False) str
