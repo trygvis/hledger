@@ -36,7 +36,7 @@ test:
 # build profiling-enabled hledgerp and archive and show a cleaned-up profile
 # you may need to rebuild some libs: sudo cabal install --reinstall -p ...
 PROFBIN=hledgerp
-BUILDPROF=ghc --make hledger.hs -prof -auto-all -o $(PROFBIN)
+BUILDPROF=ghc $(BUILDFLAGS) --make hledger.hs -prof -auto-all -o $(PROFBIN)
 RUNPROF=./$(PROFBIN) +RTS -p -RTS
 PROFCMD=-f sample1000.ledger -s balance
 TIME=`date +"%Y%m%d%H%M"`
@@ -209,7 +209,8 @@ colourised-source hscolour: api-doc-dir
 MAIN=hledger.hs
 
 # nb --ignore-all-exports means these are actually implementation docs
-HADDOCK=haddock -B `ghc --print-libdir` --no-warnings --ignore-all-exports
+HADDOCK=haddock -B `ghc --print-libdir` --no-warnings --ignore-all-exports $(subst -D,--optghc=-D,$(BUILDFLAGS))
+
 api-doc-with-source: api-doc-dir colourised-source $(MAIN)
 	echo "Generating haddock api docs" ; \
 	$(HADDOCK) -o api-doc -h --source-module=src-%{MODULE/./-}.html $(filter-out %api-doc-dir colourised-source,$^) ; \
