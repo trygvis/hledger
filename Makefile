@@ -31,7 +31,7 @@ rebuild: clean build
 
 # run code tests
 test:
-	./hledger.hs test
+	runghc hledger.hs test
 
 # build profiling-enabled hledgerp and archive and show a cleaned-up profile
 # you may need to rebuild some libs: sudo cabal install --reinstall -p ...
