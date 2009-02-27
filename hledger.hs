@@ -50,6 +50,7 @@ import Control.Monad.Error
 import qualified Data.Map as Map (lookup)
 import System.IO
 
+import Version (versionmsg)
 import Ledger
 import Utils
 import Options
