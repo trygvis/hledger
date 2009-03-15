@@ -73,6 +73,14 @@ $ hledger -f sample.ledger balance o
                  $-1
 @
 
+@
+$ hledger -f sample.ledger balance --depth 1
+                 $-1  assets
+                  $2  expenses
+                 $-2  income
+                  $1  liabilities
+@
+
 -}
 -- other test tools:
 -- http://hackage.haskell.org/cgi-bin/hackage-scripts/package/test-framework
@@ -208,7 +216,7 @@ tests = [
     ,"                  $1  liabilities:debts"
     ]
 
-   ,"balance report level can also be limited with --depth" ~:
+   ,"balance report can be limited with --depth" ~:
     ([Depth "1"], []) `gives`
     ["                 $-1  assets"
     ,"                  $2  expenses"
@@ -228,7 +236,7 @@ tests = [
 
    ,"balance report with account pattern o and --depth 1" ~:
     ([Depth "1"], ["o"]) `gives`
-    ["                  $1  expenses:food"
+    ["                  $1  expenses"
     ,"                 $-2  income"
     ,"--------------------"
     ,"                 $-1"
@@ -240,7 +248,7 @@ tests = [
     ,"                  $1    bank:saving"
     ,"                 $-2    cash"
     ,"                 $-1  income:salary"
-    ,"                  $1  liabilities"
+    ,"                  $1  liabilities:debts"
     ,"--------------------"
     ,"                 $-1"
     ]
@@ -248,16 +256,22 @@ tests = [
    ,"balance report with account pattern e" ~:
     ([], ["e"]) `gives`
     ["                 $-1  assets"
+    ,"                  $1    bank:saving"
+    ,"                 $-2    cash"
     ,"                  $2  expenses"
+    ,"                  $1    food"
     ,"                  $1    supplies"
     ,"                 $-2  income"
+    ,"                 $-1    gifts"
+    ,"                 $-1    salary"
     ,"                  $1  liabilities:debts"
     ]
 
    ,"balance report with unmatched parent of two matched subaccounts" ~: 
     ([], ["cash","saving"]) `gives`
-    ["                  $1  assets:bank:saving"
-    ,"                 $-2  assets:cash"
+    ["                 $-1  assets"
+    ,"                  $1    bank:saving"
+    ,"                 $-2    cash"
     ,"--------------------"
     ,"                 $-1"
     ]
@@ -272,8 +286,12 @@ tests = [
    ,"balance report with negative account pattern" ~:
     ([], ["^assets"]) `gives`
     ["                  $2  expenses"
+    ,"                  $1    food"
+    ,"                  $1    supplies"
     ,"                 $-2  income"
-    ,"                  $1  liabilities"
+    ,"                 $-1    gifts"
+    ,"                 $-1    salary"
+    ,"                  $1  liabilities:debts"
     ,"--------------------"
     ,"                  $1"
     ]
@@ -283,7 +301,7 @@ tests = [
 
    ,"balance report negative patterns affect totals" ~: 
     ([], ["expenses","^food"]) `gives`
-    ["                  $1  expenses"
+    ["                  $1  expenses:supplies"
     ,"--------------------"
     ,"                  $1"
     ]
@@ -312,8 +330,8 @@ tests = [
               canonicaliseAmounts True rl -- enable cost basis adjustment            
       showBalanceReport [] [] l `is` 
        unlines
-        ["                $500  a"
-        ,"               $-500  c"
+        ["                $500  a:b"
+        ,"               $-500  c:d"
         ]
 
    ,"balance report elides zero-balance root account(s)" ~: do
@@ -323,37 +341,16 @@ tests = [
               ,"  test:a  1"
               ,"  test:b"
               ])
-      showBalanceReport [] [] l `is` ""
-      showBalanceReport [SubTotal] [] l `is`
+      showBalanceReport [] [] l `is`
        unlines
-        ["                1  test:a"
-        ,"               -1  test:b"
+        ["                   1  test:a"
+        ,"                  -1  test:b"
         ]
 
    ]
 
   ,"balanceEntry" ~: do
     (tamount $ last $ etransactions $ balanceEntry entry1) `is` Mixed [dollars (-47.18)]
-
-  ,"balancereportacctnames" ~: 
-   let gives (opt,pats) e = do 
-         l <- sampleledger
-         let t = pruneZeroBalanceLeaves $ ledgerAccountTree 999 l
-         balancereportacctnames l (opt=="-s") pats t `is` e
-   in TestList
-   [
-    "balancereportacctnames 0" ~: ("-s",[])              `gives` ["assets","assets:bank","assets:bank:checking","assets:bank:saving",
-                                                                  "assets:cash","expenses","expenses:food","expenses:supplies","income",
-                                                                  "income:gifts","income:salary","liabilities","liabilities:debts"]
-   ,"balancereportacctnames 1" ~: ("",  [])              `gives` ["assets","expenses","income","liabilities"]
-   ,"balancereportacctnames 2" ~: ("",  ["assets"])      `gives` ["assets"]
-   ,"balancereportacctnames 3" ~: ("",  ["as"])          `gives` ["assets","assets:cash"]
-   ,"balancereportacctnames 4" ~: ("",  ["assets:cash"]) `gives` ["assets:cash"]
-   ,"balancereportacctnames 5" ~: ("",  ["^assets"])     `gives` ["expenses","income","liabilities"]
-   ,"balancereportacctnames 6" ~: ("",  ["^e"])          `gives` []
-   ,"balancereportacctnames 7" ~: ("-s",["assets"])      `gives` ["assets","assets:bank","assets:bank:checking","assets:bank:saving","assets:cash"]
-   ,"balancereportacctnames 8" ~: ("-s",["^e"])          `gives` []
-   ]
 
   ,"cacheLedger" ~: do
     (length $ Map.keys $ accountmap $ cacheLedger [] rawledger7) `is` 15
