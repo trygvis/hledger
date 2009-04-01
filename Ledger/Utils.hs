@@ -242,3 +242,13 @@ getCurrentLocalTime = do
   t <- getCurrentTime
   tz <- getCurrentTimeZone
   return $ utcToLocalTime tz t
+
+
+
+isLeft :: Either a b -> Bool
+isLeft (Left _) = True
+isLeft _        = False
+
+isRight :: Either a b -> Bool
+isRight = not . isLeft
+
