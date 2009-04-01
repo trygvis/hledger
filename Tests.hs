@@ -352,9 +352,6 @@ tests = [
    ]
 
   ,"balanceEntry" ~: do
-     let fromeither (Left err) = error err
-         fromeither (Right e) = e
-     (tamount $ last $ etransactions $ fromeither $ balanceEntry entry1) `is` Mixed [dollars (-47.18)]
      assertBool "detect unbalanced entry, sign error"
                     (isLeft $ balanceEntry
                            (Entry (parsedate "2007/01/28") False "" "test" ""
@@ -367,12 +364,16 @@ tests = [
                             [RawTransaction False "a" missingamt "" RegularTransaction, 
                              RawTransaction False "b" missingamt "" RegularTransaction
                             ] ""))
-     assertBool "one missing amount should be ok"
-                    (isRight $ balanceEntry
-                           (Entry (parsedate "2007/01/28") False "" "test" ""
-                            [RawTransaction False "a" (Mixed [dollars 1]) "" RegularTransaction, 
-                             RawTransaction False "b" missingamt "" RegularTransaction
-                            ] ""))
+     let e = balanceEntry (Entry (parsedate "2007/01/28") False "" "test" ""
+                           [RawTransaction False "a" (Mixed [dollars 1]) "" RegularTransaction, 
+                            RawTransaction False "b" missingamt "" RegularTransaction
+                           ] "")
+     assertBool "one missing amount should be ok" (isRight e)
+     assertEqual "balancing amount is added" 
+                     (Mixed [dollars (-1)])
+                     (case e of
+                        Right e' -> (tamount $ last $ etransactions e')
+                        Left _ -> error "should not happen")
 
   ,"cacheLedger" ~: do
     (length $ Map.keys $ accountmap $ cacheLedger [] rawledger7) `is` 15
