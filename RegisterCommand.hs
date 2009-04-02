@@ -35,7 +35,8 @@ showRegisterReport opts args l
       interval = intervalFromOpts opts
       ts = sort $ filterempties $ filter matchapats $ filterdepth $ ledgerTransactions l
            where sort = sortBy (\a b -> compare (date a) (date b))
-      filterdepth = filter (\t -> (accountNameLevel $ account t) <= depth)
+      filterdepth | interval == NoInterval = filter (\t -> (accountNameLevel $ account t) <= depth)
+                  | otherwise = id
       filterempties
           | Empty `elem` opts = id
           | otherwise = filter (not . isZeroMixedAmount . amount)
