@@ -182,7 +182,7 @@ sdist:
 	cabal sdist
 
 hackageupload:
-	cabal upload dist/hledger-$(VERSION).tar.gz
+	echo please do: cabal upload dist/hledger-$(VERSION).tar.gz -u UserName -p password
 
 
 # update emacs TAGS file
