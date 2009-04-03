@@ -186,7 +186,7 @@ hackageupload:
 
 # update emacs TAGS file
 tag:
-	@rm -f TAGS; hasktags -e *hs Ledger/*hs
+	@rm -f TAGS; hasktags -e *hs Ledger/*hs hledger.cabal
 
 clean:
 	rm -f {,Ledger/}*{.o,.hi,~} darcs-amend-record*
