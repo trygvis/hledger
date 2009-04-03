@@ -1,8 +1,9 @@
 
-2009/04/xx hledger 0.4 released
-...............................
+2009/04/03 hledger 0.4 released
+-------------------------------
 
 Changes:
+........
 
   * new "web" command serves reports in a web browser (install with -f happs to build this)
   * make the vty-based curses ui a cabal build option, which will be ignored on MS windows
@@ -39,12 +40,14 @@ Changes:
      -f sample10000.ledger balance ||       12.72 |       14.97 |       4.63
 
 Contributors:
+.............
 
   * Simon Michael
   * Tim Docker
   * HAppS, happstack and testpack developers
 
 Stats:
+......
 
   * Known errors: 0
   * Commits: 132
@@ -55,7 +58,7 @@ Stats:
 
 
 2009/01/17 hledger 0.3 released
-...............................
+-------------------------------
 
 Fixes:
 
