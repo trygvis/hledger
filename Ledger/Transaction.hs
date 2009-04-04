@@ -33,17 +33,17 @@ flattenLedgerTransaction (LedgerTransaction d s _ desc _ ps _, n) =
     [Transaction n s d desc (paccount p) (pamount p) (ptype p) | p <- ps]
 
 accountNamesFromTransactions :: [Transaction] -> [AccountName]
-accountNamesFromTransactions ts = nub $ map account ts
+accountNamesFromTransactions ts = nub $ map taccount ts
 
 sumTransactions :: [Transaction] -> MixedAmount
-sumTransactions = sum . map amount
+sumTransactions = sum . map tamount
 
 nulltxn = Transaction 0 False (parsedate "1900/1/1") "" "" nullmixedamt RegularPosting
 
 -- | Does the given transaction fall within the given date span ?
 isTransactionInDateSpan :: DateSpan -> Transaction -> Bool
 isTransactionInDateSpan (DateSpan Nothing Nothing)   _ = True
-isTransactionInDateSpan (DateSpan Nothing (Just e))  (Transaction{date=d}) = d<e
-isTransactionInDateSpan (DateSpan (Just b) Nothing)  (Transaction{date=d}) = d>=b
-isTransactionInDateSpan (DateSpan (Just b) (Just e)) (Transaction{date=d}) = d>=b && d<e
+isTransactionInDateSpan (DateSpan Nothing (Just e))  (Transaction{tdate=d}) = d<e
+isTransactionInDateSpan (DateSpan (Just b) Nothing)  (Transaction{tdate=d}) = d>=b
+isTransactionInDateSpan (DateSpan (Just b) (Just e)) (Transaction{tdate=d}) = d>=b && d<e
 
