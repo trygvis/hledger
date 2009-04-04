@@ -44,7 +44,7 @@ showRegisterReport opts args l
       (displayedts, _) = span (matchdisplayopt dopt) ts'
       startbal = sumTransactions precedingts
       matchapats t = matchpats apats $ account t
-      apats = fst $ parseAccountDescriptionArgs opts args
+      (apats,_) = parsePatternArgs args
       matchdisplayopt Nothing t = True
       matchdisplayopt (Just e) t = (fromparse $ parsewith datedisplayexpr e) t
       dopt = displayFromOpts opts
