@@ -9,6 +9,7 @@ ingrained.
 
 module Ledger.Transaction
 where
+import Ledger.Dates
 import Ledger.Utils
 import Ledger.Types
 import Ledger.Dates
@@ -38,3 +39,11 @@ sumTransactions :: [Transaction] -> MixedAmount
 sumTransactions = sum . map amount
 
 nulltxn = Transaction 0 False (parsedate "1900/1/1") "" "" nullmixedamt RegularPosting
+
+-- | Does the given transaction fall within the given date span ?
+isTransactionInDateSpan :: DateSpan -> Transaction -> Bool
+isTransactionInDateSpan (DateSpan Nothing Nothing)   _ = True
+isTransactionInDateSpan (DateSpan Nothing (Just e))  (Transaction{date=d}) = d<e
+isTransactionInDateSpan (DateSpan (Just b) Nothing)  (Transaction{date=d}) = d>=b
+isTransactionInDateSpan (DateSpan (Just b) (Just e)) (Transaction{date=d}) = d>=b && d<e
+
