@@ -700,7 +700,7 @@ tests = [
   ,"subAccounts" ~: do
     l <- sampleledger
     let a = ledgerAccount l "assets"
-    (map aname $ subAccounts l a) `is` ["assets:bank","assets:cash"]
+    (map aname $ ledgerSubAccounts l a) `is` ["assets:bank","assets:cash"]
 
   ,"summariseTransactionsInDateSpan" ~: do
     let (b,e,tnum,depth,showempty,ts) `gives` summaryts = 
