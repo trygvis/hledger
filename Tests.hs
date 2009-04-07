@@ -737,9 +737,9 @@ tests = [
       nulltxn{tdate=parsedate "2008/01/01",tdescription="- 2008/12/31",taccount="",tamount=Mixed [dollars 15]}
      ]
 
-  ,"transactionamount" ~: do
-    parseWithCtx transactionamount " $47.18" `parseis` Mixed [dollars 47.18]
-    parseWithCtx transactionamount " $1." `parseis` 
+  ,"postingamount" ~: do
+    parseWithCtx postingamount " $47.18" `parseis` Mixed [dollars 47.18]
+    parseWithCtx postingamount " $1." `parseis` 
      Mixed [Amount (Commodity {symbol="$",side=L,spaced=False,comma=False,precision=0}) 1 Nothing]
 
   ]
@@ -1150,5 +1150,5 @@ rawLedgerWithAmounts as =
         []
         []
         ""
-    where parse = fromparse . parseWithCtx transactionamount . (" "++)
+    where parse = fromparse . parseWithCtx postingamount . (" "++)
 
