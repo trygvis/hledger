@@ -39,6 +39,7 @@ accountNamesFromTransactions ts = nub $ map taccount ts
 sumTransactions :: [Transaction] -> MixedAmount
 sumTransactions = sum . map tamount
 
+nulltxn :: Transaction
 nulltxn = Transaction 0 False (parsedate "1900/1/1") "" "" nullmixedamt RegularPosting
 
 -- | Does the given transaction fall within the given date span ?
