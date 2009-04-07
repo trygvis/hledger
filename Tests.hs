@@ -1146,7 +1146,7 @@ rawLedgerWithAmounts as =
         RawLedger 
         [] 
         [] 
-        [nullentry{ltdescription=a,ltpostings=[nullrawposting{pamount=parse a}]} | a <- as]
+        [nullledgertxn{ltdescription=a,ltpostings=[nullrawposting{pamount=parse a}]} | a <- as]
         []
         []
         ""
