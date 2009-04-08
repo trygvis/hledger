@@ -1166,6 +1166,7 @@ rawledger7 = RawLedger
           []
           []
           ""
+          ""
 
 ledger7 = cacheLedger [] rawledger7 
 
@@ -1189,6 +1190,7 @@ a1 = Mixed [(hours 1){price=Just $ Mixed [Amount (comm "$") 10 Nothing]}]
 a2 = Mixed [(hours 2){price=Just $ Mixed [Amount (comm "EUR") 10 Nothing]}]
 a3 = Mixed $ (amounts a1) ++ (amounts a2)
 
+rawLedgerWithAmounts :: [String] -> RawLedger
 rawLedgerWithAmounts as = 
         RawLedger 
         [] 
@@ -1196,6 +1198,7 @@ rawLedgerWithAmounts as =
         [nullledgertxn{ltdescription=a,ltpostings=[nullrawposting{pamount=parse a}]} | a <- as]
         []
         []
+        ""
         ""
     where parse = fromparse . parseWithCtx postingamount . (" "++)
 
