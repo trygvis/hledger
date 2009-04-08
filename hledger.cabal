@@ -55,7 +55,9 @@ Executable hledger
                   HUnit, mtl, bytestring, filepath, process, testpack
 
   Other-Modules:  
+                  AddCommand
                   BalanceCommand
+                  HistogramCommand
                   Options
                   PrintCommand
                   RegisterCommand
