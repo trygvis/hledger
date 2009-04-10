@@ -47,7 +47,10 @@ import Text.ParserCombinators.Parsec
 lowercase = map toLower
 uppercase = map toUpper
 
-strip = dropws . reverse . dropws . reverse where dropws = dropWhile (`elem` " \t")
+strip = lstrip . rstrip
+lstrip = dropws
+rstrip = reverse . dropws . reverse
+dropws = dropWhile (`elem` " \t")
 
 elideLeft width s =
     case length s > width of
