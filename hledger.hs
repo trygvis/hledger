@@ -41,6 +41,7 @@ module Main (
              module Utils,
              module Options,
              module BalanceCommand,
+             module ConvertCommand,
              module PrintCommand,
              module RegisterCommand,
              module HistogramCommand,
@@ -63,6 +64,7 @@ import Utils (withLedgerDo)
 import Options
 import Tests
 import BalanceCommand
+import ConvertCommand
 import PrintCommand
 import RegisterCommand
 import HistogramCommand
@@ -84,6 +86,7 @@ main = do
        | Help `elem` opts             = putStr $ usage
        | Version `elem` opts          = putStr versionmsg
        | cmd `isPrefixOf` "balance"   = withLedgerDo opts args balance
+       | cmd `isPrefixOf` "convert"   = withLedgerDo opts args convert
        | cmd `isPrefixOf` "print"     = withLedgerDo opts args print'
        | cmd `isPrefixOf` "register"  = withLedgerDo opts args register
        | cmd `isPrefixOf` "histogram" = withLedgerDo opts args histogram
