@@ -89,14 +89,13 @@ benchtest: sampleledgers bench.tests bench
 	tools/bench $(BENCHEXES) --verbose | tee profs/`date +%Y%m%d%H%M%S`.bench
 
 # generate standard sample ledgers
-sampleledgers: sample.ledger 100x100x10.ledger 1000x1000x10.ledger 10000x1000x10.ledger \
-	100000x1000x10.ledger 1000.ledger 10000.ledger 100000.ledger 1000x1000x10.ledger
+sampleledgers: sample.ledger 100x100x10.ledger 1000x1000x10.ledger 10000x1000x10.ledger 100000x1000x10.ledger
 
 sample.ledger:
 	true # XXX should probably regenerate this
 
 100x100x10.ledger: generateledger
-	tools/generateledger 1000 1000 10 >$@
+	tools/generateledger 100 100 10 >$@
 
 1000x1000x10.ledger: generateledger
 	tools/generateledger 1000 1000 10 >$@
@@ -106,16 +105,6 @@ sample.ledger:
 
 100000x1000x10.ledger: generateledger
 	tools/generateledger 100000 1000 10 >$@
-
-# keep for next benchmark report..
-1000include.ledger:
-	ghc -e 'putStr $$ unlines $$ replicate 1000 "!include sample.ledger"' >1000.ledger
-
-10000include.ledger:
-	ghc -e 'putStr $$ unlines $$ replicate 10000 "!include sample.ledger"' >10000.ledger
-
-100000include.ledger:
-	ghc -e 'putStr $$ unlines $$ replicate 100000 "!include sample.ledger"' >100000.ledger
 
 ######################################################################
 # DOCS
