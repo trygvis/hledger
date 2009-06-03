@@ -55,7 +55,6 @@ Library
                  ,directory
                  ,filepath
                  ,haskell98
-                 ,old-locale
                  ,parsec
                  ,time
                  ,utf8-string
@@ -101,7 +100,6 @@ Executable hledger
                  ,filepath
                  ,haskell98
                  ,mtl
-                 ,old-locale
                  ,parsec
                  ,process
                  ,regexpr >= 0.5.1
