@@ -104,7 +104,6 @@ Executable hledger
                  ,old-locale
                  ,parsec
                  ,process
-                 ,regex-compat
                  ,regexpr >= 0.5.1
                  ,split
                  ,testpack
