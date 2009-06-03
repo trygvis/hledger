@@ -57,7 +57,7 @@ Library
                  ,haskell98
                  ,parsec
                  ,time
-                 ,utf8-string
+                 ,utf8-string >= 0.3 && < 0.4
                  ,HUnit
 
 Executable hledger
@@ -106,7 +106,7 @@ Executable hledger
                  ,split
                  ,testpack
                  ,time
-                 ,utf8-string
+                 ,utf8-string >= 0.3 && < 0.4
                  ,HUnit
 
   -- should set patchlevel here as in Makefile
@@ -126,6 +126,5 @@ Executable hledger
                  ,happstack-data >= 0.2 && < 0.3
                  ,happstack-server >= 0.2 && < 0.3
                  ,happstack-state >= 0.2 && < 0.3
-                 ,utf8-string >= 0.3 && < 0.4
                  ,xhtml >= 3000.2 && < 3000.3
                  ,HTTP >= 4000.0 && < 4000.1
