@@ -20,10 +20,9 @@ BENCHEXES=hledger-0.4 hledger-0.5 ledger
 VIEWHTMLCMD=open
 VIEWPSCMD=open
 
-PLATFORMBINARIES=hledgermac hledgerlinux #hledgerwin
-BINARYFILENAME=`runhaskell ./hledger.hs --binary-filename`
 SOURCEFILES:=*hs Commands/*hs Ledger/*hs
 DOCFILES:=HOME README NEWS CONTRIBUTORS SCREENSHOTS
+BINARYFILENAME=`runhaskell ./hledger.hs --binary-filename`
 PATCHLEVEL:=$(shell expr `darcs changes --count --from-tag=\\\\\.` - 1)
 WARNINGS:=-W -fwarn-tabs #-fwarn-orphans -fwarn-simple-patterns -fwarn-monomorphism-restriction -fwarn-name-shadowing
 BUILDFLAGS:=-DPATCHLEVEL=$(PATCHLEVEL) $(OPTFLAGS) $(WARNINGS)
@@ -43,12 +42,10 @@ hledger: setversion
 hledgerp: setversion
 	ghc --make hledger.hs -prof -auto-all -o hledgerp $(BUILDFLAGS) 
 
-# build the coverage-enabled binary. make clean before and after,
-# tedious but necessary
+# build the coverage-enabled binary. coverage-enabled .o files are kept
+# separate to avoid contamination.
 hledgercov: setversion
-	make clean
-	ghc --make hledger.hs -fhpc -o hledgercov $(BUILDFLAGS) 
-	make clean
+	ghc --make hledger.hs -fhpc -o hledgercov -outputdir .coverageobjs $(BUILDFLAGS) 
 
 # build the fastest binary we can
 hledgeropt: setversion
