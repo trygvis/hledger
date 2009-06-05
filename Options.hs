@@ -11,8 +11,8 @@ import System.Environment
 import Text.Printf
 import Data.Char (toLower)
 import Ledger.IO (IOArgs,
-                  ledgerenvvar,ledgerdefaultpath,myLedgerPath,
-                  timelogenvvar,timelogdefaultpath,myTimelogPath)
+                  ledgerenvvar,myLedgerPath,
+                  timelogenvvar,myTimelogPath)
 import Ledger.Parse
 import Ledger.Utils
 import Ledger.Types
