@@ -347,7 +347,7 @@ sdist:
 
 # display a hackage upload command reminder
 hackageupload:
-	echo please do: cabal upload dist/hledger-$(VERSION).tar.gz -u UserName -p password
+	@echo please do: cabal upload dist/hledger-$(VERSION).tar.gz -v3
 
 # send unpushed patches to the mail list
 send:
