@@ -26,7 +26,7 @@ BINARYFILENAME=`runhaskell ./hledger.hs --binary-filename`
 PATCHLEVEL:=$(shell expr `darcs changes --count --from-tag=\\\\\.` - 1)
 WARNINGS:=-W -fwarn-tabs #-fwarn-orphans -fwarn-simple-patterns -fwarn-monomorphism-restriction -fwarn-name-shadowing
 BUILDFLAGS:=-DPATCHLEVEL=$(PATCHLEVEL) $(OPTFLAGS) $(WARNINGS)
-TIME:=`date +"%Y%m%d%H%M"`
+TIME:=$(shell date +"%Y%m%d%H%M")
 
 default: tag hledger
 
