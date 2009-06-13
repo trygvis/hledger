@@ -325,7 +325,7 @@ endif
 VERSIONFILES=hledger.cabal Version.hs
 
 hledger.cabal: $(VERSIONFILE)
-	perl -p -e "s/(^Version: *) .*/\1 $(VERSION)/" -i $@
+	perl -p -e "s/(^version: *) .*/\1 $(VERSION)/" -i $@
 
 Version.hs: $(VERSIONFILE)
 	perl -p -e "s/(^version *= *)\".*?\"/\1\"$(VERSION3)\"/" -i $@
