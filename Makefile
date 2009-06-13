@@ -14,7 +14,7 @@ PROFCMD=-f 1000x1000x10.ledger balance
 COVCMD=test
 
 # executables to run during "make benchmark" (prepend ./ if not in $PATH)
-BENCHEXES=hledger-0.4 hledger-0.5 ledger
+BENCHEXES=hledger-0.5 hledger-0.6 ledger
 
 # document viewing commands
 VIEWHTMLCMD=open
