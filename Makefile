@@ -33,6 +33,10 @@ default: tag hledger
 ######################################################################
 # BUILDING
 
+# build the standard cabal binary
+hledgercabal:
+	cabal configure -fhapps -fvty && cabal build
+
 # build the standard developer's binary, quickly
 hledger: setversion
 	ghc --make hledger.hs -o hledger $(BUILDFLAGS) # -O
@@ -105,7 +109,6 @@ committest: unittest doctest haddocktest warningstest
 
 # thorough, pre-release tests - run before release
 releasetest: unittest doctest haddocktest warningstest cabaltest
-	@dist/build/hledger/hledger test 2>&1 | tail -1 | grep -q 'Errors: 0  Failures: 0'
 
 # run unit tests, without waiting for compilation
 unittest:
@@ -135,6 +138,9 @@ cabaltest: setversion
 		&& cabal check \
 		&& cabal configure -fvty -fhapps \
 		&& cabal build \
+		&& dist/build/hledger/hledger test 2>&1 | tail -1 | grep -q 'Errors: 0  Failures: 0' \
+		&& cabal sdist \
+		&& cabal upload dist/hledger-$(VERSION).tar.gz --check -v3 \
 		&& echo $@ passed) || echo $@ FAILED
 
 # run performance tests and save results in profs/. 
@@ -209,7 +215,7 @@ web:
 	cd website; rm -f index.html; ln -s HOME.html index.html; rm -f profs; ln -s ../profs
 
 # ..from anywhere
-updatesite:
+updatesite: push
 	ssh joyful.com 'make -C/repos/hledger web'
 
 # generate pdf versions of main docs
@@ -310,7 +316,9 @@ hoogleindex: $(MAIN)
 # doing a bugfix release: set VERSION to 0.5.1, make release hackageupload
 # building 0.6 alpha:     set VERSION to 0.5.98, make
 # releasing 0.6 beta:     set VERSION to 0.5.99, make release
-release: releasetest setandrecordversion tagrelease sdist hackageupload updatesite
+release: releasetest setandrecordversion tagrelease sdist
+
+releaseupload: hackageupload updatesite
 
 # file where the current release version is defined
 VERSIONFILE=VERSION
@@ -351,7 +359,7 @@ sdist:
 
 # display a hackage upload command reminder
 hackageupload:
-	@echo please do: cabal upload dist/hledger-$(VERSION).tar.gz -v3
+	cabal upload dist/hledger-$(VERSION).tar.gz -v3
 
 # send unpushed patches to the mail list
 send:
@@ -378,7 +386,7 @@ pullprofs:
 # make hledgerPLAT first
 pushbinary:
 	-gzip -9 $(BINARYFILENAME)
-	rsync -aP $(BINARYFILENAME).gz joyful.com:/repos/hledger/website/binaries/
+	-rsync -aP $(BINARYFILENAME).gz joyful.com:/repos/hledger/website/binaries/
 
 # show project stats useful for release notes
 stats: showlastreleasedate showreleaseauthors showloc showcov showerrors showlocalchanges showreleasechanges benchmark
