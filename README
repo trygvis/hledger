@@ -15,8 +15,8 @@ Released under GPL version 3 or later.
 Installation
 ------------
 
-Platform binaries are not yet being published; you could try asking for
-one on the #ledger channel. 
+One of the platform binaries published at http://hledger.org may work for you.
+If not, please report the problem and read on..
 
 Building hledger requires GHC 6.8 or later (http://haskell.org/ghc).
 hledger should work on any platform which GHC supports.
