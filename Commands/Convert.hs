@@ -17,15 +17,15 @@ Here's an example rules file:
 
 > 0,2,3,4,1
 >
-> ATM DEPOSIT
-> assets:bank:checking
->
-> (TO|FROM) SAVINGS
-> assets:bank:savings
+> SPECTRUM
+> expenses:health:gym
 >
 > ITUNES
 > BLKBSTR=BLOCKBUSTER
 > expenses:entertainment
+>
+> (TO|FROM) SAVINGS
+> assets:bank:savings
 
 Roadmap: 
 Support for other formats will be added. To update a ledger file, pipe the
