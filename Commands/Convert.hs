@@ -91,7 +91,7 @@ print_ledger_txn debug (baseacct,fieldpositions,rules) record@(_:_:_:_:_:[]) = d
       unknownacct | (read amount' :: Double) < 0 = "income:unknown"
                   | otherwise = "expenses:unknown"
       (acct,desc) = choose_acct_desc rules (unknownacct,description)
-  when (debug) $ hPutStrLn stderr $ printf "using %s for %s" desc description
+  when debug $ hPutStrLn stderr $ printf "using %s for %s" desc description
   putStrLn $ printf "%s%s %s" (fixdate date) (if not (null number) then printf " (%s)" number else "") desc
   putStrLn $ printf "    %-30s  %15s" acct (printf "$%s" amount' :: String)
   putStrLn $ printf "    %s\n" baseacct
