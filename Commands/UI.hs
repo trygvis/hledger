@@ -69,7 +69,7 @@ ui opts args l = do
 -- | Update the screen, wait for the next event, repeat.
 go :: AppState -> IO ()
 go a@AppState{av=av,aw=_,ah=_,abuf=_,amsg=_,aopts=opts,aargs=_,aledger=_} = do
-  when (not $ DebugNoUI `elem` opts) $ update av (renderScreen a)
+  when (notElem DebugNoUI opts) $ update av (renderScreen a)
   k <- next_event av
   case k of 
     EvResize x y                -> go $ resize x y a
