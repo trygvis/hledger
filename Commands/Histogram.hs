@@ -36,7 +36,7 @@ showHistogram opts args l = concatMap (printDayWith countBar) daytxns
           | otherwise = filter (not . isZeroMixedAmount . tamount)
       matchapats t = matchpats apats $ taccount t
       (apats,_) = parsePatternArgs args
-      filterdepth | interval == NoInterval = filter (\t -> (accountNameLevel $ taccount t) <= depth)
+      filterdepth | interval == NoInterval = filter (\t -> accountNameLevel (taccount t) <= depth)
                   | otherwise = id
       depth = depthFromOpts opts
 
