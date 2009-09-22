@@ -53,7 +53,7 @@ readLedgerWithOpts opts args f = do
 -- | Convert a RawLedger to a canonicalised, cached and filtered Ledger
 -- based on the command-line options/arguments and a reference time.
 filterAndCacheLedgerWithOpts ::  [Opt] -> [String] -> LocalTime -> String -> RawLedger -> Ledger
-filterAndCacheLedgerWithOpts opts args t = filterAndCacheLedger (optsToFilterSpec opts args t)
+filterAndCacheLedgerWithOpts opts args = filterAndCacheLedger . optsToFilterSpec opts args
 
 -- | Attempt to open a web browser on the given url, all platforms.
 openBrowserOn :: String -> IO ExitCode
