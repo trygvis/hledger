@@ -64,7 +64,7 @@ showLedgerTransaction' elide t =
       date = showdate $ ltdate t
       status = if ltstatus t then " *" else ""
       code = if length (ltcode t) > 0 then printf " (%s)" $ ltcode t else ""
-      desc = " " ++ ltdescription t
+      desc = ' ' : ltdescription t
       showdate = printf "%-10s" . showDate
       showpostings ps
           | elide && length ps > 1 && isLedgerTransactionBalanced t

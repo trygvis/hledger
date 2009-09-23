@@ -32,9 +32,9 @@ binaryfilename = prettify $ splitAtElement '.' buildversion :: String
                           where
                             bugfix'
                                 | bugfix `elem` ["0"{-,"98","99"-}] = ""
-                                | otherwise = "."++bugfix
+                                | otherwise = '.' : bugfix
                             patches'
-                                | patches/="0" = "+"++patches
+                                | patches/="0" = '+' : patches
                                 | otherwise = ""
                             (os',suffix)
                                 | os == "darwin"  = ("mac","")
@@ -53,7 +53,7 @@ versionstr    = prettify $ splitAtElement '.' buildversion :: String
                           where
                             bugfix'
                                 | bugfix `elem` ["0"{-,"98","99"-}] = ""
-                                | otherwise = "."++bugfix
+                                | otherwise = '.' : bugfix
                             patches'
                                 | patches/="0" = "+"++patches++" patches"
                                 | otherwise = ""
