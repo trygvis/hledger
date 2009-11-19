@@ -286,7 +286,7 @@ ledgerHistoricalPrice :: GenParser Char LedgerFileCtx HistoricalPrice
 ledgerHistoricalPrice = do
   char 'P' <?> "historical price"
   many spacenonewline
-  date <- ledgerdate
+  date <- try (do {LocalTime d _ <- ledgerdatetime; return d}) <|> ledgerdate -- a time is ignored
   many spacenonewline
   symbol1 <- commoditysymbol
   many spacenonewline
