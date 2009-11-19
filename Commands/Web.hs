@@ -270,10 +270,11 @@ transactionfields n env = do
 handleAddform :: Ledger -> AppUnit
 handleAddform l = do
   env <- getenv
-  handle $ validate env
+  d <- io getCurrentDay
+  handle $ validate env d
   where
-    validate :: Hack.Env -> Failing LedgerTransaction
-    validate env =
+    validate :: Hack.Env -> Day -> Failing LedgerTransaction
+    validate env today =
         let inputs = Hack.Contrib.Request.inputs env
             date  = fromMaybe "" $ lookup "date"  inputs
             desc  = fromMaybe "" $ lookup "desc"  inputs
@@ -295,7 +296,7 @@ handleAddform l = do
             amt1' = either (const missingamt) id $ parse someamount "" amt1
             amt2' = either (const missingamt) id $ parse someamount "" amt2
             t = LedgerTransaction {
-                            ltdate = parsedate date
+                            ltdate = parsedate $ fixSmartDateStr today date
                            ,lteffectivedate=Nothing
                            ,ltstatus=False
                            ,ltcode=""
