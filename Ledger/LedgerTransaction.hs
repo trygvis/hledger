@@ -60,11 +60,12 @@ showLedgerTransaction' :: Bool -> LedgerTransaction -> String
 showLedgerTransaction' elide t = 
     unlines $ [description] ++ showpostings (ltpostings t) ++ [""]
     where
-      description = concat [date, status, code, desc] -- , comment]
+      description = concat [date, status, code, desc, comment]
       date = showdate $ ltdate t
       status = if ltstatus t then " *" else ""
       code = if length (ltcode t) > 0 then printf " (%s)" $ ltcode t else ""
       desc = ' ' : ltdescription t
+      comment = if null com then "" else "  ; " ++ com where com = ltcomment t
       showdate = printf "%-10s" . showDate
       showpostings ps
           | elide && length ps > 1 && isLedgerTransactionBalanced t
@@ -76,7 +77,7 @@ showLedgerTransaction' elide t =
             showacct p = "    " ++ showstatus p ++ printf (printf "%%-%ds" w) (showAccountName Nothing (ptype p) (paccount p))
             w = maximum $ map (length . paccount) ps
             showamount = printf "%12s" . showMixedAmount
-            showcomment s = if length s > 0 then "  ; "++s else ""
+            showcomment s = if null s then "" else "  ; "++s
             showstatus p = if pstatus p then "* " else ""
 
 -- | Show an account name, clipped to the given width if any, and
@@ -103,11 +104,12 @@ isLedgerTransactionBalanced (LedgerTransaction {ltpostings=ps}) =
 -- return an error message instead.
 balanceLedgerTransaction :: LedgerTransaction -> Either String LedgerTransaction
 balanceLedgerTransaction t@LedgerTransaction{ltpostings=ps}
-    | length missingamounts > 1 = Left $ printerr "could not balance this transaction, too many missing amounts"
+    | length missingamounts' > 1 = Left $ printerr "could not balance this transaction, too many missing amounts"
     | not $ isLedgerTransactionBalanced t' = Left $ printerr nonzerobalanceerror
     | otherwise = Right t'
     where
       (withamounts, missingamounts) = partition hasAmount $ filter isReal ps
+      (_, missingamounts') = partition hasAmount ps
       t' = t{ltpostings=ps'}
       ps' | length missingamounts == 1 = map balance ps
           | otherwise = ps
