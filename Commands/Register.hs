@@ -34,7 +34,7 @@ showRegisterReport opts args l
     | otherwise = showtxns summaryts nulltxn startbal
     where
       interval = intervalFromOpts opts
-      ts = sortBy (comparing tdate) $ filterempties $ filter matchapats $ filterdepth $ ledgerTransactions l
+      ts = sortBy (comparing tdate) $ filterempties $ filtertxns apats $ filterdepth $ ledgerTransactions l
       filterdepth | interval == NoInterval = filter (\t -> accountNameLevel (taccount t) <= depth)
                   | otherwise = id
       filterempties
@@ -43,7 +43,6 @@ showRegisterReport opts args l
       (precedingts, ts') = break (matchdisplayopt dopt) ts
       (displayedts, _) = span (matchdisplayopt dopt) ts'
       startbal = sumTransactions precedingts
-      matchapats = matchpats apats . taccount
       (apats,_) = parsePatternArgs args
       matchdisplayopt Nothing _ = True
       matchdisplayopt (Just e) t = (fromparse $ parsewith datedisplayexpr e) t
