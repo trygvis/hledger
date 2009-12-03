@@ -55,7 +55,7 @@ versionstr    = prettify $ splitAtElement '.' buildversion :: String
                                 | bugfix `elem` ["0"{-,"98","99"-}] = ""
                                 | otherwise = '.' : bugfix
                             patches'
-                                | patches/="0" = "+"++patches++" patches"
+                                | patches/="0" = "+"++patches
                                 | otherwise = ""
                             desc
 --                                 | bugfix=="98" = " (alpha)"
