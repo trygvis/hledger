@@ -1,6 +1,6 @@
 # hledger project makefile
 
-# optional features described in README, comment out if you don't have the libs
+# optional features described in MANUAL, comment out if you don't have the libs
 OPTFLAGS=-DWEB -DVTY
 
 # command to run during "make ci"
@@ -25,7 +25,7 @@ SOURCEFILES:= \
 	[A-Z]*hs \
 	Commands/[A-Z]*hs \
 	Ledger/[A-Z]*hs
-DOCFILES:=HOME HOME2 README NEWS CONTRIBUTORS SCREENSHOTS
+DOCFILES:=README README2 MANUAL NEWS CONTRIBUTORS SCREENSHOTS
 BINARYFILENAME=`runhaskell ./hledger.hs --binary-filename`
 PATCHLEVEL:=$(shell expr `darcs changes --count --from-tag=\\\\\.` - 1)
 WARNINGS:=-W -fwarn-tabs #-fwarn-orphans -fwarn-simple-patterns -fwarn-monomorphism-restriction -fwarn-name-shadowing
@@ -249,7 +249,7 @@ docs: web pdf api-docs
 # build the main hledger.org website
 web:
 	for d in $(DOCFILES); do pandoc --toc -s -H website/header.html -A website/footer.html -r rst $$d >website/$$d.html; done
-	cd website; rm -f index.html; ln -s HOME.html index.html; rm -f profs; ln -s ../profs
+	cd website; rm -f index.html; ln -s README.html index.html; rm -f profs; ln -s ../profs
 
 # ..from anywhere
 updatesite: push
