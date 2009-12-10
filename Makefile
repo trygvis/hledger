@@ -85,7 +85,7 @@ hledgerlinux: setversion
 # searchpath.org , you might need the patched version from
 # http://joyful.com/repos/searchpath .
 continuous ci: setversion
-	sp --no-exts --no-default-map -o hledger ghc --make hledger.hs $(BUILDFLAGS) -Werror --run $(CICMD)
+	sp --no-exts --no-default-map -o hledger ghc --make hledger.hs $(BUILDFLAGS) --run $(CICMD)
 
 # build the standalone unit test runner. Requires test-framework, which
 # may not work on windows.
