@@ -181,7 +181,7 @@ fullcabaltest: setversion
 # run performance benchmarks and save results in profs/. 
 # Requires some commands defined in bench.tests and some executables defined above.
 benchmark: sampleledgers bench.tests tools/bench
-	tools/bench -fbench.tests $(BENCHEXES) | tee profs/$(TIME).bench
+	PATH=.:$(PATH) tools/bench -fbench.tests $(BENCHEXES) | tee profs/$(TIME).bench
 	@rm -f benchresults.*
 	@(cd profs; rm -f latest.bench; ln -s $(TIME).bench latest.bench)
 
