@@ -71,7 +71,7 @@ showLedgerTransaction' elide effective t =
       desc = ' ' : ltdescription t
       comment = if null com then "" else "  ; " ++ com where com = ltcomment t
       showdate = printf "%-10s" . showDate
-      showedate = printf "[=%s]" . showdate
+      showedate = printf "=%s" . showdate
       showpostings ps
           | elide && length ps > 1 && isLedgerTransactionBalanced t
               = map showposting (init ps) ++ [showpostingnoamt (last ps)]
