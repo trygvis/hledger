@@ -57,7 +57,7 @@ library
                   Ledger.Types
                   Ledger.Utils
   Build-Depends:
-                  base >= 3 && < 5
+                  base >= 3
                  ,containers
                  ,directory
                  ,filepath
@@ -65,7 +65,7 @@ library
                  ,old-time
                  ,parsec
                  ,time
-                 ,utf8-string >= 0.3 && < 0.4
+                 ,utf8-string >= 0.3
                  ,HUnit
 
 executable hledger
@@ -100,7 +100,7 @@ executable hledger
                   Utils
                   Version
   build-depends:
-                  base >= 3 && < 5
+                  base >= 3
                  ,bytestring
                  ,containers
                  ,csv
@@ -115,7 +115,7 @@ executable hledger
                  ,split
                  ,testpack
                  ,time
-                 ,utf8-string >= 0.3 && < 0.4
+                 ,utf8-string >= 0.3
                  ,HUnit
                  ,safe >= 0.2
 
@@ -126,7 +126,7 @@ executable hledger
     cpp-options: -DVTY
     other-modules:Commands.UI
     build-depends:
-                  vty >= 4.0.0.1 && < 4.1
+                  vty >= 4.0.0.1
 
   if flag(web)
     cpp-options: -DWEB
@@ -134,17 +134,17 @@ executable hledger
     build-depends:
                   hsp
                  ,hsx
-                 ,xhtml >= 3000.2 && < 3000.3
+                 ,xhtml >= 3000.2
                  ,loli
                  ,io-storage
                  ,hack-contrib
                  ,hack
                  ,hack-handler-happstack
-                 ,happstack >= 0.3 && < 0.4
-                 ,happstack-data >= 0.3 && < 0.4
-                 ,happstack-server >= 0.3 && < 0.4
-                 ,happstack-state >= 0.3 && < 0.4
-                 ,HTTP >= 4000.0 && < 4000.1
+                 ,happstack >= 0.3
+                 ,happstack-data >= 0.3
+                 ,happstack-server >= 0.3
+                 ,happstack-state >= 0.3
+                 ,HTTP >= 4000.0
                  ,applicative-extras
 
 
