@@ -33,14 +33,14 @@ add opts args l
 -- prompting, validating, displaying and appending them to the ledger
 -- file, until end of input (then raise an EOF exception). Any
 -- command-line arguments are used as the first transaction's description.
-getAndAddTransactions :: Ledger -> [String] -> IO ()
-getAndAddTransactions l args = do
-  l <- getTransaction l args >>= addTransaction l
-  getAndAddTransactions l []
+getAndAddTransactions :: Ledger -> [Opt] -> [String] -> IO ()
+getAndAddTransactions l opts args = do
+  l <- getTransaction l opts args >>= ledgerAddTransaction l
+  getAndAddTransactions l opts []
 
 -- | Read a transaction from the command line, with history-aware prompting.
-getTransaction :: Ledger -> [String] -> IO LedgerTransaction
-getTransaction l args = do
+getTransaction :: Ledger -> [Opt] -> [String] -> IO Transaction
+getTransaction l opts args = do
   today <- getCurrentDay
   datestr <- askFor "date" 
             (Just $ showDate today)
@@ -61,7 +61,7 @@ getTransaction l args = do
         if NoNewAccts `elem` opts
             then isJust $ Foldable.find (== x) ant
             else True
-        where (ant,_,_,_) = groupTransactions . rawLedgerTransactions . rawledger $ l
+        where (ant,_,_,_) = groupPostings . journalPostings . journal $ l
       getpostingsandvalidate = do
         ps <- getPostings accept bestmatchpostings []
         let t = nulltransaction{tdate=date
