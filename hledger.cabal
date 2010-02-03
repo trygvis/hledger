@@ -57,7 +57,7 @@ library
                   Ledger.Types
                   Ledger.Utils
   Build-Depends:
-                  base >= 3
+                  base >= 3 && < 5
                  ,containers
                  ,directory
                  ,filepath
@@ -100,7 +100,7 @@ executable hledger
                   Utils
                   Version
   build-depends:
-                  base >= 3
+                  base >= 3 && < 5
                  ,bytestring
                  ,containers
                  ,csv
