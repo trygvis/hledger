@@ -27,23 +27,24 @@ add opts args l
   hPutStrLn stderr
     "Enter one or more transactions, which will be added to your ledger file.\n\
     \To complete a transaction, enter . as account name. To quit, press control-c."
-  getAndAddTransactions l opts args `catch` (\e -> unless (isEOFError e) $ ioError e)
+  today <- getCurrentDay
+  getAndAddTransactions l opts args today `catch` (\e -> unless (isEOFError e) $ ioError e)
 
 -- | Read a number of ledger transactions from the command line,
 -- prompting, validating, displaying and appending them to the ledger
 -- file, until end of input (then raise an EOF exception). Any
 -- command-line arguments are used as the first transaction's description.
-getAndAddTransactions :: Ledger -> [Opt] -> [String] -> IO ()
-getAndAddTransactions l opts args = do
-  l <- getTransaction l opts args >>= ledgerAddTransaction l
-  getAndAddTransactions l opts []
+getAndAddTransactions :: Ledger -> [String] -> IO ()
+getAndAddTransactions l args = do
+  l <- getTransaction l args >>= addTransaction l
+  getAndAddTransactions l []
 
 -- | Read a transaction from the command line, with history-aware prompting.
-getTransaction :: Ledger -> [Opt] -> [String] -> IO Transaction
-getTransaction l opts args = do
+getTransaction :: Ledger -> [String] -> IO LedgerTransaction
+getTransaction l args = do
   today <- getCurrentDay
   datestr <- askFor "date" 
-            (Just $ showDate today)
+            (Just $ showDate defaultDate)
             (Just $ \s -> null s || 
              isRight (parse (smartdate >> many spacenonewline >> eof) "" $ lowercase s))
   description <- if null args 
@@ -72,7 +73,7 @@ getTransaction l opts args = do
             retry = do
               hPutStrLn stderr $ "\n" ++ nonzerobalanceerror ++ ". Re-enter:"
               getpostingsandvalidate
-        either (const retry) return $ balanceTransaction t
+        either (const retry) return $ balanceLedgerTransaction t
   unless (null historymatches) 
        (do
          hPutStrLn stderr "Similar transactions found, using the first for defaults:\n"
