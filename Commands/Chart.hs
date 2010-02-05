@@ -17,6 +17,7 @@ import Graphics.Rendering.Chart
 import Data.Colour
 import Data.Colour.Names
 import Data.List
+import Safe (readDef)
 
 -- | Generate an image with the pie chart and write it to a file
 chart :: [Opt] -> [String] -> Ledger -> IO ()
@@ -50,9 +51,13 @@ genPie opts filterspec l = defaultPieLayout
     where
       pie_chart = defaultPieChart { pie_data_ = items }
       items = mapMaybe (uncurry accountPieItem) $
-              flatten $
+              top num $
               balances $
               ledgerAccountTree (fromMaybe 99999 $ depthFromOpts opts) $ cacheLedger'' filterspec l
+      top n t = topn ++ [other]
+          where (topn,rest) = splitAt n $ reverse $ sortBy (comparing snd) $ flatten t
+                other = ("other", sum $ map snd rest)
+      num = readDef 10 (getOption opts ChartItems "10")
 
 -- | Convert all quantities of MixedAccount to a single commodity
 amountValue :: MixedAmount -> Double
