@@ -13,9 +13,13 @@ import Ledger.Ledger
 import Ledger.Commodity
 import Options
 
+import Control.Monad (liftM3)
 import Graphics.Rendering.Chart
 import Data.Colour
 import Data.Colour.Names
+import Data.Colour.RGBSpace
+import Data.Colour.RGBSpace.HSL (hsl)
+import Data.Colour.SRGB.Linear (rgb)
 import Data.List
 import Safe (readDef)
 
@@ -49,7 +53,7 @@ genPie opts filterspec l = defaultPieLayout
     { pie_background_ = solidFillStyle $ opaque $ white
     , pie_plot_ = pie_chart }
     where
-      pie_chart = defaultPieChart { pie_data_ = items }
+      pie_chart = defaultPieChart { pie_data_ = items, pie_colors_ = mkColours}
       items = mapMaybe (uncurry accountPieItem) $
               top num $
               balances $
@@ -80,3 +84,11 @@ accountPieItem accname balance =
     if balance == 0
         then Nothing 
         else Just $ PieItem accname 0 balance
+
+-- | Generate an infinite color list suitable for charts.
+mkColours :: [AlphaColour Double]
+mkColours = cycle $ [opaque $ rgbToColour $ hsl h s l | (h,s,l) <- liftM3 (,,)
+                     [100] [0.7] [0.2,0.3..0.6] ]
+
+rgbToColour :: (Fractional a) => RGB a -> Colour a
+rgbToColour (RGB r g b) = rgb r g b
