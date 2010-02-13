@@ -21,6 +21,7 @@ BENCHEXES=hledger-0.7 hledger-0.8 ledger-3pre
 # misc. tools
 PANDOC=pandoc
 RST2HTML=rst2html
+RST2PDF=rst2pdf
 VIEWHTML=open
 VIEWPS=open
 VIEWPDF=open
@@ -287,7 +288,7 @@ pdf: docspdf codepdf
 # generate pdf versions of main docs
 # work around rst2pdf needing images in the same directory
 docspdf:
-	-for d in $(DOCFILES); do (cd website && ln -sf ../$$d && rst2pdf $$d && rm -f $$d); done
+	-for d in $(DOCFILES); do (cd website && ln -sf ../$$d && $(RST2PDF) $$d && rm -f $$d); done
 
 # format all code as a pdf for offline reading
 ENSCRIPT=enscript -q --header='$$n|$$D{%+}|Page $$% of $$=' --line-numbers --font=Courier6 --color -o-
