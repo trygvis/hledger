@@ -32,6 +32,7 @@ hledger is free software by `Simon Michael`_ & `co.`_, released under GNU GPLv3.
  benchmark_\/profile_\/heap_\/coverage_ reports
 
 .. raw:: html
+
  <a name="support" />
 
 **Support**
@@ -39,6 +40,7 @@ hledger is free software by `Simon Michael`_ & `co.`_, released under GNU GPLv3.
 - chat Simon (sm) on the `#ledger`_ irc channel which we share, or `email me`_
 - report problems in the `issue tracker`_
 - .. raw:: html
+
      <form action="http://groups.google.com/group/hledger/boxsubscribe" >
        join the <a href="http://hledger.org/list">hledger mail list</a>. Your email:
        <input type=text name=email><input type=submit name="sub" value="Subscribe">
