@@ -18,7 +18,7 @@ module Commands.All (
 #ifdef VTY
                      module Commands.UI,
 #endif
-#ifdef WEB
+#if defined(WEB) || defined(WEBHAPPSTACK)
                      module Commands.Web,
 #endif
 #ifdef CHART
@@ -36,7 +36,7 @@ import Commands.Stats
 #ifdef VTY
 import Commands.UI
 #endif
-#ifdef WEB
+#if defined(WEB) || defined(WEBHAPPSTACK)
 import Commands.Web
 #endif
 #ifdef CHART
