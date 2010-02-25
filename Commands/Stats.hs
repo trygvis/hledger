@@ -39,6 +39,7 @@ showStats _ _ l today =
                               maybe "" (printf " (%d days ago)") lastelapsed)
 --        ,("Payees/descriptions", show $ length $ nub $ map tdescription ts)
         ,("Accounts", show $ length $ accounts l)
+        ,("Account tree depth", show $ maximum $ map (accountNameLevel.aname) $ accounts l)
         ,("Commodities", show $ length $ commodities l)
       -- Transactions this month     : %(monthtxns)s (last month in the same period: %(lastmonthtxns)s)
       -- Uncleared transactions      : %(uncleared)s
