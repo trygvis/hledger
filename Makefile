@@ -234,14 +234,14 @@ heap: sampleledgers hledgerp
 	mv hledgerp.hp profs/$(TIME).hp
 	(cd profs; rm -f latest.hp; ln -s $(TIME).hp latest.hp; \
 		hp2ps $(TIME).hp; rm -f latest.ps; ln -s $(TIME).ps latest.ps; rm -f *.aux)
-	$(VIEWPSCMD) profs/latest.ps
+	$(VIEWPS) profs/latest.ps
 
 # generate and display a code coverage report
 coverage: sampleledgers hledgercov
 	@echo "Generating coverage report with $(COVCMD)"
 	tools/coverage "markup --destdir=profs/coverage" test
 	cd profs/coverage; rm -f index.html; ln -s hpc_index.html index.html
-	$(VIEWHTMLCMD) profs/coverage/index.html
+	$(VIEWHTML) profs/coverage/index.html
 
 # get a debug prompt
 ghci:
@@ -307,11 +307,11 @@ codepdf:
 # view all docs and code as pdf
 PDFS=website/{README,README2,MANUAL,NEWS,CONTRIBUTORS,SCREENSHOTS}.pdf code.pdf
 viewall: pdf
-	$(VIEWPDFCMD) $(PDFS)
+	$(VIEWPDF) $(PDFS)
 
 # print all docs and code for offline reading
 printall: pdf
-	$(PRINTCMD) $(PDFS)
+	$(PRINT) $(PDFS)
 
 # push latest docs etc. and update the hledger.org site
 site: push
@@ -328,7 +328,7 @@ apidocs: haddock #hoogle
 
 # generate and view the api docs
 viewapidocs: api-docs
-	$(VIEWHTMLCMD) website/api-doc/index.html
+	$(VIEWHTML) website/api-doc/index.html
 
 MAIN=hledger.hs
 
