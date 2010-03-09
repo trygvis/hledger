@@ -281,7 +281,7 @@ currentTransaction a@AppState{aledger=l,abuf=buf} = ptransaction p
     where
       p = headDef nullposting $ filter ismatch $ ledgerPostings l
       ismatch p = postingDate p == parsedate (take 10 datedesc)
-                  && take 70 (showposting False p nullmixedamt) == (datedesc ++ acctamt)
+                  && take 70 (showPostingWithBalance False p nullmixedamt) == (datedesc ++ acctamt)
       datedesc = take 32 $ fromMaybe "" $ find (not . (" " `isPrefixOf`)) $ headDef "" rest : reverse above
       acctamt = drop 32 $ headDef "" rest
       (above,rest) = splitAt y buf
