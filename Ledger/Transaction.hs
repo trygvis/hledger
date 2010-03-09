@@ -126,7 +126,7 @@ isTransactionBalanced t = isReallyZeroMixedAmountCost rsum && isReallyZeroMixedA
 -- return an error message instead.
 balanceTransaction :: Transaction -> Either String Transaction
 balanceTransaction t@Transaction{tpostings=ps}
-    | length missingamounts' > 1 = Left $ printerr "could not balance this transaction, too many missing amounts"
+    | length missingamounts' > 1 = Left $ printerr "could not balance this transaction (too many missing amounts)"
     | not $ isTransactionBalanced t' = Left $ printerr $ nonzerobalanceerror t'
     | otherwise = Right t'
     where
@@ -139,7 +139,7 @@ balanceTransaction t@Transaction{tpostings=ps}
             balance p | isReal p && not (hasAmount p) = p{pamount = costOfMixedAmount (-otherstotal)}
                       | otherwise = p
                       where otherstotal = sum $ map pamount withamounts
-      printerr s = printf "%s:\n%s" s (showTransactionUnelided t)
+      printerr s = unlines [s, showTransactionUnelided t]
 
 nonzerobalanceerror :: Transaction -> String
 nonzerobalanceerror t = printf "could not balance this transaction (%s%s%s)" rmsg sep bvmsg
