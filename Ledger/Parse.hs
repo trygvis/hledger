@@ -163,6 +163,10 @@ import Ledger.Commodity (dollars,dollar,unknown)
 import System.FilePath(takeDirectory,combine)
 
 
+-- | A JournalUpdate is some transformation of a "Journal". It can do I/O
+-- or raise an error.
+type JournalUpdate = ErrorT String IO (Journal -> Journal)
+
 -- | Some context kept during parsing.
 data LedgerFileCtx = Ctx {
       ctxYear     :: !(Maybe Integer)  -- ^ the default year most recently specified with Y
@@ -220,10 +224,10 @@ parseLedger reftime inname intxt =
 
 -- parsers
 
--- | Top-level journal parser. Returns a mighty composite, I/O performing,
--- error-raising journal transformation, which should be applied to a
--- journal to get the final result.
-ledgerFile :: GenParser Char LedgerFileCtx (ErrorT String IO (Journal -> Journal))
+-- | Top-level journal parser. Returns a single composite, I/O performing,
+-- error-raising "JournalUpdate" which can be applied to an empty journal
+-- to get the final result.
+ledgerFile :: GenParser Char LedgerFileCtx JournalUpdate
 ledgerFile = do items <- many ledgerItem
                 eof
                 return $ liftM (foldr (.) id) $ sequence items
@@ -266,7 +270,7 @@ ledgercommentline = do
   return s
   <?> "comment"
 
-ledgerExclamationDirective :: GenParser Char LedgerFileCtx (ErrorT String IO (Journal -> Journal))
+ledgerExclamationDirective :: GenParser Char LedgerFileCtx JournalUpdate
 ledgerExclamationDirective = do
   char '!' <?> "directive"
   directive <- many nonspace
@@ -276,7 +280,7 @@ ledgerExclamationDirective = do
     "end"     -> ledgerAccountEnd
     _         -> mzero
 
-ledgerInclude :: GenParser Char LedgerFileCtx (ErrorT String IO (Journal -> Journal))
+ledgerInclude :: GenParser Char LedgerFileCtx JournalUpdate
 ledgerInclude = do many1 spacenonewline
                    filename <- restofline
                    outerState <- getState
@@ -291,14 +295,14 @@ ledgerInclude = do many1 spacenonewline
                     currentPos = show outerPos
                     whileReading = " reading " ++ show filename ++ ":\n"
 
-ledgerAccountBegin :: GenParser Char LedgerFileCtx (ErrorT String IO (Journal -> Journal))
+ledgerAccountBegin :: GenParser Char LedgerFileCtx JournalUpdate
 ledgerAccountBegin = do many1 spacenonewline
                         parent <- ledgeraccountname
                         newline
                         pushParentAccount parent
                         return $ return id
 
-ledgerAccountEnd :: GenParser Char LedgerFileCtx (ErrorT String IO (Journal -> Journal))
+ledgerAccountEnd :: GenParser Char LedgerFileCtx JournalUpdate
 ledgerAccountEnd = popParentAccount >> return (return id)
 
 ledgerModifierTransaction :: GenParser Char LedgerFileCtx ModifierTransaction
@@ -329,7 +333,7 @@ ledgerHistoricalPrice = do
   restofline
   return $ HistoricalPrice date symbol price
 
-ledgerIgnoredPriceCommodity :: GenParser Char LedgerFileCtx (ErrorT String IO (Journal -> Journal))
+ledgerIgnoredPriceCommodity :: GenParser Char LedgerFileCtx JournalUpdate
 ledgerIgnoredPriceCommodity = do
   char 'N' <?> "ignored-price commodity"
   many1 spacenonewline
@@ -337,7 +341,7 @@ ledgerIgnoredPriceCommodity = do
   restofline
   return $ return id
 
-ledgerDefaultCommodity :: GenParser Char LedgerFileCtx (ErrorT String IO (Journal -> Journal))
+ledgerDefaultCommodity :: GenParser Char LedgerFileCtx JournalUpdate
 ledgerDefaultCommodity = do
   char 'D' <?> "default commodity"
   many1 spacenonewline
@@ -345,7 +349,7 @@ ledgerDefaultCommodity = do
   restofline
   return $ return id
 
-ledgerCommodityConversion :: GenParser Char LedgerFileCtx (ErrorT String IO (Journal -> Journal))
+ledgerCommodityConversion :: GenParser Char LedgerFileCtx JournalUpdate
 ledgerCommodityConversion = do
   char 'C' <?> "commodity conversion"
   many1 spacenonewline
@@ -357,7 +361,7 @@ ledgerCommodityConversion = do
   restofline
   return $ return id
 
-ledgerTagDirective :: GenParser Char LedgerFileCtx (ErrorT String IO (Journal -> Journal))
+ledgerTagDirective :: GenParser Char LedgerFileCtx JournalUpdate
 ledgerTagDirective = do
   string "tag" <?> "tag directive"
   many1 spacenonewline
@@ -365,14 +369,14 @@ ledgerTagDirective = do
   restofline
   return $ return id
 
-ledgerEndTagDirective :: GenParser Char LedgerFileCtx (ErrorT String IO (Journal -> Journal))
+ledgerEndTagDirective :: GenParser Char LedgerFileCtx JournalUpdate
 ledgerEndTagDirective = do
   string "end tag" <?> "end tag directive"
   restofline
   return $ return id
 
 -- like ledgerAccountBegin, updates the LedgerFileCtx
-ledgerDefaultYear :: GenParser Char LedgerFileCtx (ErrorT String IO (Journal -> Journal))
+ledgerDefaultYear :: GenParser Char LedgerFileCtx JournalUpdate
 ledgerDefaultYear = do
   char 'Y' <?> "default year"
   many spacenonewline
