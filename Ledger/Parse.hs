@@ -479,7 +479,7 @@ ledgerposting = do
   amount <- postingamount
   many spacenonewline
   comment <- ledgercomment <|> return ""
-  restofline
+  newline
   return (Posting status account' amount comment ptype Nothing)
 
 -- qualify with the parent account from parsing context
