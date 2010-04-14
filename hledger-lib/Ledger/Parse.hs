@@ -382,7 +382,7 @@ ledgerDefaultYear = do
   many spacenonewline
   y <- many1 digit
   let y' = read y
-  guard (y' >= 1000)
+  failIfInvalidYear y
   setYear y'
   return $ return id
 
@@ -404,7 +404,7 @@ ledgerTransaction = do
     Left err -> fail err
 
 ledgerdate :: GenParser Char LedgerFileCtx Day
-ledgerdate = (try ledgerfulldate <|> ledgerpartialdate) <?> "full or partial date"
+ledgerdate = choice' [ledgerfulldate, ledgerpartialdate] <?> "full or partial date"
 
 ledgerfulldate :: GenParser Char LedgerFileCtx Day
 ledgerfulldate = do
@@ -417,7 +417,7 @@ ledgerpartialdate :: GenParser Char LedgerFileCtx Day
 ledgerpartialdate = do
   (_,m,d) <- md
   y <- getYear
-  when (y==Nothing) $ fail "partial date found, but no default year specified"
+  when (isNothing y) $ fail "partial date found, but no default year specified"
   return $ fromGregorian (fromJust y) (read m) (read d)
 
 ledgerdatetime :: GenParser Char LedgerFileCtx LocalTime
@@ -459,7 +459,7 @@ ledgerpostings = do
   let parses p = isRight . parseWithCtx ctx p
   ls <- many1 $ try linebeginningwithspaces
   let ls' = filter (not . (ledgercommentline `parses`)) ls
-  guard (not $ null ls')
+  when (null ls') $ fail "no postings"
   return $ map (fromparse . parseWithCtx ctx ledgerposting) ls'
   <?> "postings"
 
