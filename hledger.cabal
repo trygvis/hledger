@@ -1,5 +1,5 @@
 name:           hledger
-version:        0.9
+version: 0.9.1
 category:       Finance
 synopsis:       A command-line (or curses or web-based) double-entry accounting tool.
 description:
@@ -79,7 +79,7 @@ executable hledger
                   Commands.Register
                   Commands.Stats
   build-depends:
-                  hledger-lib == 0.9
+                  hledger-lib == 0.9.1
                  ,HUnit
                  ,base >= 3 && < 5
                  ,containers
