@@ -51,7 +51,7 @@ import Paths_hledger_make (getDataFileName)
 #else
 import Paths_hledger (getDataFileName)
 #endif
-import Hledger.Utils (openBrowserOn)
+import Hledger.Cli.Utils (openBrowserOn)
 
 -- import Debug.Trace
 -- strace :: Show a => a -> a
