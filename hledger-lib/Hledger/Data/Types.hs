@@ -132,8 +132,8 @@ data Journal = Journal {
 
 data Account = Account {
       aname :: AccountName,
-      apostings :: [Posting],    -- ^ transactions in this account
-      abalance :: MixedAmount    -- ^ sum of transactions in this account and subaccounts
+      apostings :: [Posting],    -- ^ postings in this account
+      abalance :: MixedAmount    -- ^ sum of postings in this account and subaccounts
     }
 
 data Ledger = Ledger {
