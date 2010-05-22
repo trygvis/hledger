@@ -304,10 +304,10 @@ abspat pat = if isnegativepat pat then drop (length negateprefix) pat else pat
 
 -- | Calculate the account tree and account balances from a journal's
 -- postings, and return the results for efficient lookup.
-crunchJournal :: Journal -> (Tree AccountName, Map.Map AccountName Account)
-crunchJournal j = (ant,amap)
+journalAccountInfo :: Journal -> (Tree AccountName, Map.Map AccountName Account)
+journalAccountInfo j = (ant, amap)
     where
-      (ant,psof,_,inclbalof) = (groupPostings . journalPostings) j
+      (ant, psof, _, inclbalof) = (groupPostings . journalPostings) j
       amap = Map.fromList [(a, acctinfo a) | a <- flatten ant]
       acctinfo a = Account a (psof a) (inclbalof a)
 
@@ -319,7 +319,7 @@ groupPostings :: [Posting] -> (Tree AccountName,
                              (AccountName -> [Posting]),
                              (AccountName -> MixedAmount),
                              (AccountName -> MixedAmount))
-groupPostings ps = (ant,psof,exclbalof,inclbalof)
+groupPostings ps = (ant, psof, exclbalof, inclbalof)
     where
       anames = sort $ nub $ map paccount ps
       ant = accountNameTreeFrom $ expandAccountNames anames
