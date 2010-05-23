@@ -67,7 +67,7 @@ with the cabal-install tool:
     You can add the following options to the install command to include extra features
     (these are not enabled by default as they are harder to build):
 
-    - `-fvty` - builds the [ui](#ui) command. (Not available on microsoft
+    - `-fvty` - builds the [vty](#vty) command. (Not available on microsoft
         windows.)
 
     - `-fweb` - builds the [web](#web) command.
