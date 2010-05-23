@@ -72,7 +72,7 @@ vty opts args j = do
 -- | Update the screen, wait for the next event, repeat.
 go :: AppState -> IO ()
 go a@AppState{av=av,aopts=opts} = do
-  when (notElem DebugNoUI opts) $ update av (renderScreen a)
+  when (notElem DebugVty opts) $ update av (renderScreen a)
   k <- next_event av
   t <- getCurrentLocalTime
   case k of 
