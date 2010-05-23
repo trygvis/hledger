@@ -153,7 +153,7 @@ hlinttest hlint:
 unittest: unittest-builtin
 
 unittest-builtin: hledger
-	@(bin/hledger test -v \
+	@(bin/hledger test \
 		&& echo $@ passed) || echo $@ FAILED
 
 # XXX doesn't rebuild on hledger source changes
@@ -168,7 +168,7 @@ unittesths:
 
 # run functional tests, requires shelltestrunner from hackage
 functest: hledger
-	(shelltest tests --implicit=none --threads=16 \
+	(shelltest tests --implicit=none --plain --threads=16 \
 		&& echo $@ passed) || echo $@ FAILED
 
 # run doc tests
