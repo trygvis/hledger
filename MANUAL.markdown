@@ -72,10 +72,7 @@ with the cabal-install tool:
 
     - `-fweb` - builds the [web](#web) command.
 
-    - `-fchart` builds the [chart](#chart) command. This requires
-        [gtk2hs](http://www.haskell.org/gtk2hs/download/), which you'll
-        need to install yourself as it's not yet provided by the haskell
-        platform or cabal.
+    - `-fchart` builds the [chart](#chart) command.
 
 #### Installation Problems
 
