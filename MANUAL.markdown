@@ -72,7 +72,10 @@ with the cabal-install tool:
 
     - `-fweb` - builds the [web](#web) command.
 
-    - `-fchart` builds the [chart](#chart) command.
+    - `-fchart` builds the [chart](#chart) command. This requires
+      additional GTK/GHC integration libraries (on ubuntu: `apt-get
+      install libghc6-gtk-dev`) and possibly other things - see the
+      [gtk2hs install docs](http://code.haskell.org/gtk2hs/INSTALL).
 
 #### Installation Problems
 
