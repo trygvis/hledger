@@ -14,6 +14,9 @@ import Hledger.Data.Types
 
 nonsimplecommoditychars = "0123456789-.@;\n \""
 
+quoteCommoditySymbolIfNeeded s | any (`elem` nonsimplecommoditychars) s = "\"" ++ s ++ "\""
+                               | otherwise = s
+
 -- convenient amount and commodity constructors, for tests etc.
 
 unknown = Commodity {symbol="",   side=L,spaced=False,comma=False,precision=0}
