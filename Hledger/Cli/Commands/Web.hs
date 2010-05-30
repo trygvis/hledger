@@ -41,6 +41,7 @@ import Hledger.Cli.Commands.Histogram
 import Hledger.Cli.Commands.Print
 import Hledger.Cli.Commands.Register
 import Hledger.Data
+import Hledger.Read
 import Hledger.Cli.Options hiding (value)
 #ifdef MAKE
 import Paths_hledger_make (getDataFileName)
@@ -124,7 +125,7 @@ journalFileModifiedTime Journal{filepath=f}
 
 reload :: Journal -> IO Journal
 reload Journal{filepath=f} = do
-  j' <- readJournal f
+  j' <- readJournalFile f
   putValue "hledger" "journal" j'
   return j'
             
