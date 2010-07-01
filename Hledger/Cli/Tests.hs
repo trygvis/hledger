@@ -43,7 +43,7 @@ import Hledger.Cli.Utils
 
 -- | Run unit tests.
 runtests :: [Opt] -> [String] -> IO ()
-runtests opts args = do
+runtests _ args = do
   (counts,_) <- liftM (flip (,) 0) $ runTestTT ts
   if errors counts > 0 || (failures counts > 0)
    then exitFailure
