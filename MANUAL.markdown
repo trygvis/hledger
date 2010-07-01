@@ -282,7 +282,7 @@ Here is the command-line help:
      -Y       --yearly             register report: show yearly summary
      -h       --help               show this help
      -V       --version            show version information
-     -v       --verbose            show verbose test output
+     -v       --verbose            show more verbose output
               --binary-filename    show the download filename for this hledger build
               --debug              show extra debug output; implies verbose
               --debug-vty          run vty command with no vty output, showing console
