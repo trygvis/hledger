@@ -87,9 +87,7 @@ getStyleCss :: Handler HledgerWebApp RepPlain
 getStyleCss = do
     app <- getYesod
     let dir = appWebdir app
-    s <- liftIO $ readFile $ dir </> "style.css"
-    header "Content-Type" "text/css"
-    return $ RepPlain $ toContent s
+    sendFile "text/css" $ dir </> "style.css"
 
 getTransactionsPage :: Handler HledgerWebApp RepHtml
 getTransactionsPage = withLatestJournalRender (const showTransactions)
