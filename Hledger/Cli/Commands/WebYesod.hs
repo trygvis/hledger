@@ -68,13 +68,13 @@ instance Yesod HledgerWebApp where approot _ = homeurl
 mkYesod "HledgerWebApp" [$parseRoutes|
 /             IndexPage        GET
 /style.css    StyleCss         GET
-/transactions TransactionsPage GET POST
+/journal      JournalPage      GET POST
 /register     RegisterPage     GET
 /balance      BalancePage      GET
 |]
 
 getIndexPage :: Handler HledgerWebApp ()
-getIndexPage = redirect RedirectTemporary TransactionsPage
+getIndexPage = redirect RedirectTemporary JournalPage
 
 getStyleCss :: Handler HledgerWebApp ()
 getStyleCss = do
@@ -82,8 +82,8 @@ getStyleCss = do
     let dir = appWebdir app
     sendFile "text/css" $ dir </> "style.css"
 
-getTransactionsPage :: Handler HledgerWebApp RepHtml
-getTransactionsPage = withLatestJournalRender (const showTransactions)
+getJournalPage :: Handler HledgerWebApp RepHtml
+getJournalPage = withLatestJournalRender (const showTransactions)
 
 getRegisterPage :: Handler HledgerWebApp RepHtml
 getRegisterPage = withLatestJournalRender showRegisterReport
@@ -131,7 +131,7 @@ template here msg a p title content = [$hamlet|
 |]
  where m = fromMaybe (string "") msg
        navbar' = navbar here a p
-       addform' | here == TransactionsPage = addform
+       addform' | here == JournalPage = addform
                 | otherwise = nulltemplate
        stylesheet = StyleCss
        metacontent = "text/html; charset=utf-8"
@@ -152,12 +152,12 @@ navbar here a p = [$hamlet|
 navlinks :: HledgerWebAppRoutes -> String -> String -> Hamlet HledgerWebAppRoutes
 navlinks here a p = [$hamlet|
  #navlinks
-  ^transactionslink^ | $
+  ^journallink^ | $
   ^registerlink^ | $
   ^balancelink^
 |]
  where
-  transactionslink = navlink here "transactions" TransactionsPage
+  journallink = navlink here "journal" JournalPage
   registerlink = navlink here "register" RegisterPage
   balancelink = navlink here "balance" BalancePage
   navlink here s dest = [$hamlet|%a.$style$!href=@?u@ $string.s$|]
@@ -268,8 +268,8 @@ transactionfields n = [$hamlet|
   acctvar = numbered "accountname"
   amtvar = numbered "amount"
 
-postTransactionsPage :: Handler HledgerWebApp RepPlain
-postTransactionsPage = do
+postJournalPage :: Handler HledgerWebApp RepPlain
+postJournalPage = do
   today <- liftIO getCurrentDay
   -- get form input values, or basic validation errors. E means an Either value.
   dateE  <- runFormPost $ catchFormError $ notEmpty $ required $ input "date"
@@ -309,7 +309,7 @@ postTransactionsPage = do
    Left errs -> do
     -- save current form values in session
     setMessage $ string $ intercalate "; " $ map (intercalate ", " . map (\(a,b) -> a++": "++b)) errs
-    redirect RedirectTemporary TransactionsPage
+    redirect RedirectTemporary JournalPage
 
    Right t -> do
     let t' = txnTieKnot t -- XXX move into balanceTransaction
@@ -318,5 +318,5 @@ postTransactionsPage = do
     -- liftIO $ putValue "hledger" "journal" j'
     liftIO $ journalAddTransaction j t'
     setMessage $ string $ printf "Added transaction:\n%s" (show t')
-    redirect RedirectTemporary TransactionsPage
+    redirect RedirectTemporary JournalPage
 
