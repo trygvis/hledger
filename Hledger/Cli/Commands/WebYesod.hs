@@ -174,14 +174,14 @@ navlinks here a p = [$hamlet|
 
 searchform :: HledgerWebAppRoutes -> String -> String -> Hamlet HledgerWebAppRoutes
 searchform here a p = [$hamlet|
- %form#searchform
+ %form#searchform!method=GET
   search for: $
   %input!name=a!size=20!value=$string.a$
   ^ahelp^ $
   in reporting period: $
   %input!name=p!size=20!value=$string.p$
   ^phelp^ $
-  %input!name=submit!type=submit!value=filter!style=display:none;
+  %input!type=submit!value=filter
   ^resetlink^
 |]
  where
