@@ -44,7 +44,11 @@ web opts args j = do
   server url port opts args j
 
 browser :: String -> IO ()
-browser url = putStrLn "starting web browser" >> threadDelay browserstartdelay >> openBrowserOn url >> return ()
+browser url = do
+  putStrLn "starting web browser"
+  threadDelay browserstartdelay
+  openBrowserOn url
+  return ()
 
 server :: String -> Int -> [Opt] -> [String] -> Journal -> IO ()
 server url port opts args j = do
@@ -57,7 +61,7 @@ server url port opts args j = do
               ,appWebdir=fp
               ,appRoot=url
               }
-    withStore "hledger" $ do -- IO ()
+    withStore "hledger" $ do
      putValue "hledger" "journal" j
      toWaiApp app >>= run port
 
@@ -175,10 +179,10 @@ navlinks here a p = [$hamlet|
 searchform :: HledgerWebAppRoutes -> String -> String -> Hamlet HledgerWebAppRoutes
 searchform here a p = [$hamlet|
  %form#searchform!method=GET
-  search for: $
+  filter by: $
   %input!name=a!size=20!value=$string.a$
   ^ahelp^ $
-  in reporting period: $
+  in period: $
   %input!name=p!size=20!value=$string.p$
   ^phelp^ $
   %input!type=submit!value=filter
@@ -267,7 +271,7 @@ transactionfields n = [$hamlet|
                         %input!size=15!name=$string.amtvar$!value=$string.amt$
                        |]
            | otherwise = nulltemplate
-  amthelp | n == 1    = "eg: 5, $9.01, €7" -- XXX , £75  <- misencoded
+  amthelp | n == 1    = "eg: 5, $6, €7.01"
           | otherwise = ""
   acct = ""
   amt = ""
