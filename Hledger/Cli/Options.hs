@@ -38,7 +38,7 @@ usagehdr =
 #ifdef VTY
   "  vty       - run a simple curses-style UI\n" ++
 #endif
-#if defined(WEB) || defined(WEBYESOD)
+#if defined(WEB) || defined(WEB610)
   "  web       - run a simple web-based UI\n" ++
 #endif
 #ifdef CHART
@@ -83,7 +83,7 @@ options = [
  ,Option "M" ["monthly"]      (NoArg  MonthlyOpt)    "register report: show monthly summary"
  ,Option "Q" ["quarterly"]    (NoArg  QuarterlyOpt)  "register report: show quarterly summary"
  ,Option "Y" ["yearly"]       (NoArg  YearlyOpt)     "register report: show yearly summary"
-#if defined(WEB) || defined(WEBYESOD)
+#ifdef WEB
  ,Option ""  ["base-url"]     (ReqArg BaseUrl "URL") "web: use this base url (default http://localhost:PORT)"
  ,Option ""  ["port"]         (ReqArg Port "N")      "web: serve on tcp port N (default 5000)"
 #endif
@@ -123,7 +123,7 @@ data Opt =
     MonthlyOpt |
     QuarterlyOpt |
     YearlyOpt |
-#if defined(WEB) || defined(WEBYESOD)
+#ifdef WEB
     BaseUrl {value::String} |
     Port    {value::String} |
 #endif
@@ -235,7 +235,7 @@ displayExprFromOpts opts = listtomaybe $ optValuesForConstructor Display opts
       listtomaybe [] = Nothing
       listtomaybe vs = Just $ last vs
 
-#if defined(WEB) || defined(WEBYESOD)
+#ifdef WEB
 -- | Get the value of the (last) baseurl option, if any.
 baseUrlFromOpts :: [Opt] -> Maybe String
 baseUrlFromOpts opts = listtomaybe $ optValuesForConstructor BaseUrl opts
