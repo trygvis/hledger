@@ -123,7 +123,7 @@ data Opt =
     MonthlyOpt |
     QuarterlyOpt |
     YearlyOpt |
-#ifdef WEB
+#if defined(WEB) || defined(WEB610)
     BaseUrl {value::String} |
     Port    {value::String} |
 #endif
@@ -235,7 +235,7 @@ displayExprFromOpts opts = listtomaybe $ optValuesForConstructor Display opts
       listtomaybe [] = Nothing
       listtomaybe vs = Just $ last vs
 
-#ifdef WEB
+#if defined(WEB) || defined(WEB610)
 -- | Get the value of the (last) baseurl option, if any.
 baseUrlFromOpts :: [Opt] -> Maybe String
 baseUrlFromOpts opts = listtomaybe $ optValuesForConstructor BaseUrl opts
