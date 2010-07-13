@@ -123,10 +123,8 @@ data Opt =
     MonthlyOpt |
     QuarterlyOpt |
     YearlyOpt |
-#if defined(WEB) || defined(WEB610)
     BaseUrl {value::String} |
     Port    {value::String} |
-#endif
     Help |
     Verbose |
     Version
@@ -235,7 +233,6 @@ displayExprFromOpts opts = listtomaybe $ optValuesForConstructor Display opts
       listtomaybe [] = Nothing
       listtomaybe vs = Just $ last vs
 
-#if defined(WEB) || defined(WEB610)
 -- | Get the value of the (last) baseurl option, if any.
 baseUrlFromOpts :: [Opt] -> Maybe String
 baseUrlFromOpts opts = listtomaybe $ optValuesForConstructor BaseUrl opts
@@ -250,7 +247,6 @@ portFromOpts opts = listtomaybeint $ optValuesForConstructor Port opts
       listtomaybeint [] = Nothing
       listtomaybeint vs = Just $ read $ last vs
 
-#endif
 
 -- | Get a maybe boolean representing the last cleared/uncleared option if any.
 clearedValueFromOpts opts | null os = Nothing
