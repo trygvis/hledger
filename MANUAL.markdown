@@ -447,7 +447,7 @@ Fargo checking account:
     amount-field 1
     currency $
     
-    # account-assigning rules
+    ; account-assigning rules:
     
     SPECTRUM
     expenses:health:gym
@@ -475,8 +475,8 @@ This says:
 
 Notes:
 
--   Lines beginning with \# or ; are ignored (but avoid using
-    inside an account rule)
+-   Lines beginning with ; or \# are ignored (but avoid using inside an
+    account rule)
 
 -   Definitions must come first, one per line, all in one
     paragraph. Each is a name and a value separated by whitespace.
