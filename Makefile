@@ -96,21 +96,21 @@ hledgercov: setversion
 hledgeropt: setversion
 	ghc --make hledger.hs -o bin/hledgeropt $(BUILDFLAGS) -O2 # -fvia-C # -fexcess-precision -optc-O3 -optc-ffast-math
 
-# build a deployable binary for mac, one which uses only standard osx libs
-hledgermac: setversion
-	ghc --make hledger.hs -o bin/$(BINARYFILENAME) $(BUILDFLAGS) -O2 # -optl-L/usr/lib
-	@echo Please check the build looks portable:
-	otool -L bin/$(BINARYFILENAME)
-
 # build a deployable binary for gnu/linux, statically linked
 hledgerlinux: setversion
 	ghc --make hledger.hs -o bin/$(BINARYFILENAME) $(BUILDFLAGS) -O2 -static -optl-static -optl-pthread
 	@echo 'Please check the build looks portable (statically linked):'
 	-file bin/$(BINARYFILENAME)
 
-# build a deployable binary for windows, using cygwin presumably
-# hledgerwin: setversion
-# 	ghc --make hledger.hs -o bin/hledgerlinux $(BUILDFLAGS) -O2 -static -optl-static -optl-pthread
+# build a deployable binary for mac, using only standard osx libs
+hledgermac: setversion
+	ghc --make hledger.hs -o bin/$(BINARYFILENAME) $(BUILDFLAGS) -O2 # -optl-L/usr/lib
+	@echo Please check the build looks portable:
+	otool -L bin/$(BINARYFILENAME)
+
+# build a deployable binary for windows, running make via cygwin presumably
+hledgerwin: setversion hledgercabal
+	cp ~/.cabal/bin/hledger.exe bin/$(BINARYFILENAME)
 
 # "continuous integration" testing - auto-recompile and run hledger test
 # (or some other command) whenever a module changes. sp is from
