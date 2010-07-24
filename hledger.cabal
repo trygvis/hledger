@@ -27,7 +27,7 @@ data-files:
 extra-tmp-files:
 extra-source-files:
   README.rst
-  README2.rst
+  DEVELOPMENT.rst
   MANUAL.markdown
   NEWS.rst
   CONTRIBUTORS.rst
