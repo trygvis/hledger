@@ -109,7 +109,7 @@ tests = TestList [
    let (opts,args) `gives` es = do 
         l <- samplejournalwithopts opts args
         t <- getCurrentLocalTime
-        showBalanceReport opts (balanceReport opts (optsToFilterSpec opts args t) l) `is` unlines es
+        balanceReportAsText opts (balanceReport opts (optsToFilterSpec opts args t) l) `is` unlines es
    in TestList
    [
 
@@ -245,7 +245,7 @@ tests = TestList [
              ,"  c:d                   "
              ]) >>= either error return
       let j' = journalCanonicaliseAmounts $ journalConvertAmountsToCost j -- enable cost basis adjustment
-      showBalanceReport [] (balanceReport [] nullfilterspec j') `is`
+      balanceReportAsText [] (balanceReport [] nullfilterspec j') `is`
        unlines
         ["                $500  a:b"
         ,"               $-500  c:d"
@@ -260,7 +260,7 @@ tests = TestList [
               ,"  test:a  1"
               ,"  test:b"
               ])
-      showBalanceReport [] (balanceReport [] nullfilterspec l) `is`
+      balanceReportAsText [] (balanceReport [] nullfilterspec l) `is`
        unlines
         ["                   1  test:a"
         ,"                  -1  test:b"
@@ -459,7 +459,7 @@ tests = TestList [
    "register report with no args" ~:
    do 
     l <- samplejournal
-    showRegisterReport [] (optsToFilterSpec [] [] t1) l `is` unlines
+    (registerReportAsText [] $ registerReport [] (optsToFilterSpec [] [] t1) l) `is` unlines
      ["2008/01/01 income               assets:bank:checking             $1           $1"
      ,"                                income:salary                   $-1            0"
      ,"2008/06/01 gift                 assets:bank:checking             $1           $1"
@@ -477,7 +477,7 @@ tests = TestList [
    do 
     let opts = [Cleared]
     l <- readJournalWithOpts opts sample_journal_str
-    showRegisterReport opts (optsToFilterSpec opts [] t1) l `is` unlines
+    (registerReportAsText opts $ registerReport opts (optsToFilterSpec opts [] t1) l) `is` unlines
      ["2008/06/03 eat & shop           expenses:food                    $1           $1"
      ,"                                expenses:supplies                $1           $2"
      ,"                                assets:cash                     $-2            0"
@@ -489,7 +489,7 @@ tests = TestList [
    do 
     let opts = [UnCleared]
     l <- readJournalWithOpts opts sample_journal_str
-    showRegisterReport opts (optsToFilterSpec opts [] t1) l `is` unlines
+    (registerReportAsText opts $ registerReport opts (optsToFilterSpec opts [] t1) l) `is` unlines
      ["2008/01/01 income               assets:bank:checking             $1           $1"
      ,"                                income:salary                   $-1            0"
      ,"2008/06/01 gift                 assets:bank:checking             $1           $1"
@@ -509,19 +509,19 @@ tests = TestList [
         ,"  e  1"
         ,"  f"
         ]
-    registerdates (showRegisterReport [] (optsToFilterSpec [] [] t1) l) `is` ["2008/01/01","2008/02/02"]
+    registerdates (registerReportAsText [] $ registerReport [] (optsToFilterSpec [] [] t1) l) `is` ["2008/01/01","2008/02/02"]
 
   ,"register report with account pattern" ~:
    do
     l <- samplejournal
-    showRegisterReport [] (optsToFilterSpec [] ["cash"] t1) l `is` unlines
+    (registerReportAsText [] $ registerReport [] (optsToFilterSpec [] ["cash"] t1) l) `is` unlines
      ["2008/06/03 eat & shop           assets:cash                     $-2          $-2"
      ]
 
   ,"register report with account pattern, case insensitive" ~:
    do 
     l <- samplejournal
-    showRegisterReport [] (optsToFilterSpec [] ["cAsH"] t1) l `is` unlines
+    (registerReportAsText [] $ registerReport [] (optsToFilterSpec [] ["cAsH"] t1) l) `is` unlines
      ["2008/06/03 eat & shop           assets:cash                     $-2          $-2"
      ]
 
@@ -529,7 +529,7 @@ tests = TestList [
    do 
     l <- samplejournal
     let gives displayexpr = 
-            (registerdates (showRegisterReport opts (optsToFilterSpec opts [] t1) l) `is`)
+            (registerdates (registerReportAsText opts $ registerReport opts (optsToFilterSpec opts [] t1) l) `is`)
                 where opts = [Display displayexpr]
     "d<[2008/6/2]"  `gives` ["2008/01/01","2008/06/01"]
     "d<=[2008/6/2]" `gives` ["2008/01/01","2008/06/01","2008/06/02"]
@@ -542,7 +542,7 @@ tests = TestList [
     l <- samplejournal
     let periodexpr `gives` dates = do
           l' <- samplejournalwithopts opts []
-          registerdates (showRegisterReport opts (optsToFilterSpec opts [] t1) l') `is` dates
+          registerdates (registerReportAsText opts $ registerReport opts (optsToFilterSpec opts [] t1) l') `is` dates
               where opts = [Period periodexpr]
     ""     `gives` ["2008/01/01","2008/06/01","2008/06/02","2008/06/03","2008/12/31"]
     "2008" `gives` ["2008/01/01","2008/06/01","2008/06/02","2008/06/03","2008/12/31"]
@@ -551,7 +551,7 @@ tests = TestList [
     "monthly" `gives` ["2008/01/01","2008/06/01","2008/12/01"]
     "quarterly" `gives` ["2008/01/01","2008/04/01","2008/10/01"]
     let opts = [Period "yearly"]
-    showRegisterReport opts (optsToFilterSpec opts [] t1) l `is` unlines
+    (registerReportAsText opts $ registerReport opts (optsToFilterSpec opts [] t1) l) `is` unlines
      ["2008/01/01 - 2008/12/31         assets:bank:saving               $1           $1"
      ,"                                assets:cash                     $-2          $-1"
      ,"                                expenses:food                    $1            0"
@@ -561,9 +561,9 @@ tests = TestList [
      ,"                                liabilities:debts                $1            0"
      ]
     let opts = [Period "quarterly"]
-    registerdates (showRegisterReport opts (optsToFilterSpec opts [] t1) l) `is` ["2008/01/01","2008/04/01","2008/10/01"]
+    registerdates (registerReportAsText opts $ registerReport opts (optsToFilterSpec opts [] t1) l) `is` ["2008/01/01","2008/04/01","2008/10/01"]
     let opts = [Period "quarterly",Empty]
-    registerdates (showRegisterReport opts (optsToFilterSpec opts [] t1) l) `is` ["2008/01/01","2008/04/01","2008/07/01","2008/10/01"]
+    registerdates (registerReportAsText opts $ registerReport opts (optsToFilterSpec opts [] t1) l) `is` ["2008/01/01","2008/04/01","2008/07/01","2008/10/01"]
 
   ]
 
@@ -571,7 +571,7 @@ tests = TestList [
    do 
     l <- samplejournal
     let opts = [Depth "2"]
-    showRegisterReport opts (optsToFilterSpec opts [] t1) l `is` unlines
+    (registerReportAsText opts $ registerReport opts (optsToFilterSpec opts [] t1) l) `is` unlines
      ["2008/01/01 income               income:salary                   $-1          $-1"
      ,"2008/06/01 gift                 income:gifts                    $-1          $-2"
      ,"2008/06/03 eat & shop           expenses:food                    $1          $-1"
@@ -587,7 +587,7 @@ tests = TestList [
   ,"unicode in balance layout" ~: do
     l <- readJournalWithOpts []
       "2009/01/01 * медвежья шкура\n  расходы:покупки  100\n  актив:наличные\n"
-    showBalanceReport [] (balanceReport [] (optsToFilterSpec [] [] t1) l) `is` unlines
+    balanceReportAsText [] (balanceReport [] (optsToFilterSpec [] [] t1) l) `is` unlines
       ["                -100  актив:наличные"
       ,"                 100  расходы:покупки"
       ,"--------------------"
@@ -597,7 +597,7 @@ tests = TestList [
   ,"unicode in register layout" ~: do
     l <- readJournalWithOpts []
       "2009/01/01 * медвежья шкура\n  расходы:покупки  100\n  актив:наличные\n"
-    showRegisterReport [] (optsToFilterSpec [] [] t1) l `is` unlines
+    (registerReportAsText [] $ registerReport [] (optsToFilterSpec [] [] t1) l) `is` unlines
       ["2009/01/01 медвежья шкура       расходы:покупки                 100          100"
       ,"                                актив:наличные                 -100            0"]
 
