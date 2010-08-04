@@ -244,7 +244,9 @@ getAccountsPage = do
 balanceReportAsHtml :: [Opt] -> TemplateData -> BalanceReport -> Hamlet HledgerWebAppRoute
 balanceReportAsHtml _ td@TD{here=here,a=a,p=p} (items,total) = [$hamlet|
 %table.balancereport
- ^accountsheading^
+ %tr
+  %td
+   ^accountsheading^
  $forall items i
   ^itemAsHtml' i^
  %tr.totalrule
