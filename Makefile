@@ -548,7 +548,7 @@ MANUAL.markdown: $(VERSIONFILE)
 	perl -p -e "s/(^This is the official.*?version) +[0-9.]+/\1 $(VERSION3)./" -i $@
 
 DOWNLOAD.markdown: $(VERSIONFILE)
-	perl -p -e "s/hledger-[0-9.]+-/hledger-$(VERSION3)-/g" -i $@
+	perl -p -e "s/hledger-[0-9.]+-/hledger-$(VERSION)-/g" -i $@
 
 tagrelease:
 	darcs tag $(VERSION3)
