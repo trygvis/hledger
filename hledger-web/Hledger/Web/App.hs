@@ -672,7 +672,7 @@ addform td = [$hamlet|
 %script!type=text/javascript
  $$(document).ready(function() {
     /* dhtmlxcombo setup */
-    window.dhx_globalImgPath="../static/images/";
+    window.dhx_globalImgPath="../static/";
     var desccombo  = new dhtmlXCombo("description");
     var acct1combo = new dhtmlXCombo("account1");
     var acct2combo = new dhtmlXCombo("account2");
