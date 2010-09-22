@@ -71,9 +71,9 @@ getParentAccount = liftM (concat . reverse . ctxAccount) getState
 -- | Convert a possibly relative, possibly tilde-containing file path to an absolute one.
 -- using the current directory from a parsec source position. ~username is not supported.
 expandPath :: (MonadIO m) => SourcePos -> FilePath -> m FilePath
-expandPath pos fp = liftM mkRelative (expandHome fp)
+expandPath pos fp = liftM mkAbsolute (expandHome fp)
   where
-    mkRelative = combine (takeDirectory (sourceName pos))
+    mkAbsolute = combine (takeDirectory (sourceName pos))
     expandHome inname | "~/" `isPrefixOf` inname = do homedir <- liftIO getHomeDirectory
                                                       return $ homedir ++ drop 1 inname
                       | otherwise                = return inname
