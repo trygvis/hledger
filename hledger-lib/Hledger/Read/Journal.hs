@@ -173,6 +173,7 @@ journalFile = do journalupdates <- many journalItem
                           , liftM (return . addHistoricalPrice) ledgerHistoricalPrice
                           , ledgerDefaultYear
                           , ledgerDefaultCommodity
+                          , ledgerCommodityConversion
                           , ledgerIgnoredPriceCommodity
                           , ledgerTagDirective
                           , ledgerEndTagDirective
