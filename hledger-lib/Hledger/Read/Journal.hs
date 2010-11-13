@@ -393,7 +393,7 @@ ledgereffectivedate actualdate = do
   return edate
 
 ledgerstatus :: GenParser Char JournalContext Bool
-ledgerstatus = try (do { many1 spacenonewline; char '*' <?> "status"; return True } ) <|> return False
+ledgerstatus = try (do { many spacenonewline; char '*' <?> "status"; return True } ) <|> return False
 
 ledgercode :: GenParser Char JournalContext String
 ledgercode = try (do { many1 spacenonewline; char '(' <?> "code"; code <- anyChar `manyTill` char ')'; return code } ) <|> return ""
@@ -423,6 +423,7 @@ ledgerposting :: GenParser Char JournalContext Posting
 ledgerposting = do
   many1 spacenonewline
   status <- ledgerstatus
+  many spacenonewline
   account <- transactionaccountname
   let (ptype, account') = (postingTypeFromAccountName account, unbracket account)
   amount <- postingamount
