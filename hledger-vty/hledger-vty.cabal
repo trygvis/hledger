@@ -1,7 +1,7 @@
 name:           hledger-vty
 version: 0.12.98
 category:       Finance
-synopsis:       A hledger add-on command providing a curses-style console interface.
+synopsis:       A hledger add-on command providing a full-window console interface.
 description:    
 license:        GPL
 license-file:   LICENSE
@@ -9,7 +9,7 @@ author:         Simon Michael <simon@joyful.com>
 maintainer:     
 homepage:       http://hledger.org
 bug-reports:    http://code.google.com/p/hledger/issues
-stability:      experimental
+stability:      beta
 tested-with:    GHC==6.10, GHC==6.12
 cabal-version:  >= 1.6
 build-type:     Simple
