@@ -10,7 +10,7 @@ module Hledger.Web.App
     )
 where
 import Control.Applicative ((<$>), (<*>))
-import Control.Failure
+-- import Control.Failure
 -- import qualified Data.ByteString.Lazy as L
 import Data.Either
 -- import System.Directory
@@ -23,8 +23,8 @@ import Yesod.Helpers.Static
 -- import Yesod.Helpers.Auth
 -- import Yesod.Mail
 -- import Yesod.WebRoutes
-import Text.Hamlet (defaultHamletSettings)
-import Text.Hamlet.RT
+-- import Text.Hamlet (defaultHamletSettings)
+-- import Text.Hamlet.RT
 
 import Hledger.Cli.Add (appendToJournalFile)
 import Hledger.Cli.Balance
@@ -100,8 +100,8 @@ mkYesod "App" [$parseRoutes|
 /accounts        AccountsOnlyR     GET
 /journal         JournalR          GET POST
 /register        RegisterR         GET POST
-/addformrt       AddformRTR        GET
 |]
+-- /addformrt       AddformRTR        GET
 
 type Handler = GHandler App App
 
@@ -421,6 +421,8 @@ helplink :: String -> String -> Hamlet AppRoute
 helplink topic label = [$hamlet|%a!href=$u$!target=hledgerhelp $label$|]
     where u = manualurl ++ if null topic then "" else '#':topic
 
+{-
+
 -- | Render a runtime template with the provided runtime data as html.
 renderHamletFileRT :: FilePath -> HamletMap AppRoute -> Handler Html
 renderHamletFileRT hfile hmap = do
@@ -463,6 +465,8 @@ hdstringlist ss = HDList [ [([], hdstring s)] | s <- ss ]
 
 -- hamletToHamletRT ::  Failure HamletException m => Hamlet AppRoute -> m HamletRT
 -- hamletToHamletRT h = stringToHamletRT $ show $ unsafeByteString $ renderHamlet show h
+
+-}
 
 ----------------------------------------------------------------------
 -- handlers/views
@@ -1019,7 +1023,7 @@ mixedAmountAsHtml b = preEscapedString $ addclass $ intercalate "<br>" $ lines $
 --   hamletToRepHtml $ pageLayout td $ editform td s
 
 ----------------------------------------------------------------------
-
+{-
 -- | An add form with template files reloaded at runtime.
 getAddformRTR :: Handler RepHtml
 getAddformRTR = do
@@ -1066,6 +1070,8 @@ getAddformRTR = do
                                                 ,(["deschelp"], hdstring "eg: supermarket (optional)")
                                                 ,(["postingfields1"], HDHtml pfields1)
                                                 ,(["postingfields2"], HDHtml pfields2)
+                                                ,(["manyfiles"], HDBool $ (length $ files $ j) > 1)
+--                                                ,(["files"], ... $ files $ j)
                                                 ] :: HamletMap AppRoute)
   hamletToRepHtml $ pageLayout td $ htmlAsHamlet addform
-
+-}
