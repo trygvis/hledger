@@ -575,10 +575,8 @@ getAccountsOnlyR = do
 -- | Render a balance report as HTML.
 balanceReportAsHtml :: [Opt] -> TemplateData -> BalanceReport -> Hamlet AppRoute
 balanceReportAsHtml _ td@TD{here=here,a=a,p=p} (items,total) = [$hamlet|
+^accountsheading^
 %table.balancereport
- %tr
-  %td
-   ^accountsheading^
  $forall items i
   ^itemAsHtml' i^
  %tr.totalrule
@@ -589,14 +587,14 @@ balanceReportAsHtml _ td@TD{here=here,a=a,p=p} (items,total) = [$hamlet|
 |]
  where
    accountsheading = [$hamlet|
-                      accounts
-                      \ $
-                      %span#showmoreaccounts ^showmore^ ^showall^
-                      <br />
-                      <br />
+                      #accountsheading
+                       accounts
+                       \ $
+                       ^showlinks^
                       |]
        where
          filteringaccts = not $ null a
+         showlinks = [$hamlet|%span#showmoreaccounts ^showmore^ ^showall^|]
          showmore = case (filteringaccts, items) of
                       -- cunning parent account logic
                       (True, ((acct, _, _, _):_)) ->
