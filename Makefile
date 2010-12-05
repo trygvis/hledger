@@ -37,9 +37,8 @@ INCLUDEPATHS=\
 MAIN=hledger/hledger.hs
 # all source files in the project (plus a few strays like Setup.hs & hlint.hs)
 SOURCEFILES:= \
-	$(MAIN) \
 	hledger/*hs \
-	hledger/Hledger/Cli/*hs \
+	hledger/Hledger/*/*hs \
 	hledger-*/*hs \
 	hledger-*/Hledger/*hs \
 	hledger-*/Hledger/*/*hs
