@@ -117,7 +117,7 @@ autotest: setversion
 # as above for add-on programs
 autoweb: setversion linkhledgerwebdir
 	rm -f bin/hledger-web
-	sp --no-exts --no-default-map -o bin/hledger-web ghc --make hledger-web/hledger-web.hs -ihledger-web -ihledger $(BUILDFLAGS) --run --debug
+	sp --no-exts --no-default-map -o bin/hledger-web ghc --make hledger-web/hledger-web.hs -ihledger-web -ihledger $(BUILDFLAGS) --run --debug -B
 
 autovty: setversion
 	rm -f bin/hledger-vty
