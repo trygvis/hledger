@@ -3,6 +3,7 @@ version: 0.13
 category:       Finance
 synopsis:       A hledger add-on command providing a web interface.
 description:    
+    A hledger add-on command providing a web interface.
 license:        GPL
 license-file:   LICENSE
 author:         Simon Michael <simon@joyful.com>

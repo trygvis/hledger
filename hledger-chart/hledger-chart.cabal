@@ -6,7 +6,7 @@ description:    This generates simple pie chart images showing relative account 
 license:        GPL
 license-file:   LICENSE
 author:         Simon Michael <simon@joyful.com>
-maintainer:     
+maintainer:     Simon Michael <simon@joyful.com>
 homepage:       http://hledger.org
 bug-reports:    http://code.google.com/p/hledger/issues
 stability:      experimental
