@@ -55,7 +55,6 @@ CABALFILES:= \
 	hledger/hledger.cabal \
 	hledger-*/*.cabal
 # DOCFILES:=README DOWNLOAD MANUAL DEVELOPMENT NEWS SCREENSHOTS CONTRIBUTORS
-BINARYFILENAME=$(shell touch $(VERSIONHS); runhaskell -ihledger $(MAIN) --binary-filename)
 PATCHLEVEL:=$(shell expr `darcs changes --count --from-tag=\\\\\.` - 1)
 WARNINGS:=-W -fwarn-tabs #-fwarn-orphans -fwarn-simple-patterns -fwarn-monomorphism-restriction -fwarn-name-shadowing
 DEFINEFLAGS:=
@@ -83,6 +82,9 @@ VERSIONSENSITIVEFILES=\
 	DOWNLOAD.markdown \
 	$(CABALFILES) \
 	hledger-web/.hledger/web/.version \
+
+#BINARYFILENAME=$(shell touch $(VERSIONHS); runhaskell -ihledger $(MAIN) --binary-filename)
+RELEASEBINARYSUFFIX:=$(shell echo "-$(VERSION)-`uname`-`arch`" | tr '[:upper:]' '[:lower:]')
 
 default: tag hledger
 
@@ -218,14 +220,20 @@ hledgercov:
 hledgeropt:
 	ghc --make $(MAIN) -o bin/hledgeropt $(BUILDFLAGS) -O2 # -fvia-C # -fexcess-precision -optc-O3 -optc-ffast-math
 
-# build a deployable binary for gnu/linux, statically linked
-hledgerlinux:
-	ghc --make $(MAIN) $(LINUXRELEASEBUILDFLAGS) -o bin/$(BINARYFILENAME)
-	-ghc --make hledger-web/hledger-web.hs $(LINUXRELEASEBUILDFLAGS) -o bin/`echo $(BINARYFILENAME) | sed -e 's/hledger/hledger-web/'`
-	-ghc --make hledger-vty/hledger-vty.hs $(LINUXRELEASEBUILDFLAGS) -o bin/`echo $(BINARYFILENAME) | sed -e 's/hledger/hledger-vty/'`
-	-ghc --make hledger-chart/hledger-chart.hs $(LINUXRELEASEBUILDFLAGS) -o bin/`echo $(BINARYFILENAME) | sed -e 's/hledger/hledger-chart/'`
+# build portable releaseable binaries for gnu/linux
+linuxbinaries: 	linuxbinary-hledger \
+		linuxbinary-hledger-web \
+		linuxbinary-hledger-vty \
+		linuxbinary-hledger-chart
 	@echo 'Please check the binaries look portable, then make compressbinaries:'
 	-file bin/*`arch`
+
+linuxbinary-%:
+	ghc --make $*/$*.hs -o bin/$*$(RELEASEBINARYSUFFIX) $(LINUXRELEASEBUILDFLAGS)
+
+# XXX link errors
+linuxbinary-hledger-chart:
+	ghc --make hledger-chart/hledger-chart.hs -o bin/hledger-chart$(RELEASEBINARYSUFFIX) $(LINUXRELEASEBUILDFLAGS) -lpixman-1 -v
 
 # build a deployable binary for mac, using only standard osx libs
 hledgermac:
