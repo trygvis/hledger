@@ -362,7 +362,7 @@ identify rules defacct desc | null matchingrules = (defacct,desc)
 
 caseinsensitive = ("(?i)"++)
 
-tests_Convert = TestList [
+tests_Hledger_Cli_Convert = TestList [
 
    "convert rules parsing: empty file" ~: do
      -- let assertMixedAmountParse parseresult mixedamount =
