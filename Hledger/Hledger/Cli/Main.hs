@@ -46,10 +46,8 @@ import System.IO.UTF8
 #endif
 
 import Hledger.Data
-import Hledger.Cli.Commands
-import Hledger.Cli.Options
+import Hledger.Cli
 import Hledger.Cli.Tests
-import Hledger.Cli.Utils (withJournalDo)
 import Hledger.Cli.Version (progversionstr, binaryfilename)
 
 main :: IO ()
