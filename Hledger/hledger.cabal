@@ -41,7 +41,7 @@ executable hledger
                   Hledger.Cli.Tests
                   Hledger.Cli.Utils
                   Hledger.Cli.Version
-                  Hledger.Cli.Commands
+                  Hledger.Cli
                   Hledger.Cli.Add
                   Hledger.Cli.Balance
                   Hledger.Cli.Convert
@@ -80,7 +80,7 @@ library
                   Hledger.Cli.Tests
                   Hledger.Cli.Utils
                   Hledger.Cli.Version
-                  Hledger.Cli.Commands
+                  Hledger.Cli
                   Hledger.Cli.Add
                   Hledger.Cli.Balance
                   Hledger.Cli.Convert
