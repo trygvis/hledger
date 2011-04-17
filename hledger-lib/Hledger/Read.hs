@@ -34,8 +34,9 @@ import Hledger.Read.JournalReader as JournalReader
 import Hledger.Read.TimelogReader as TimelogReader
 
 
-journalenvvar           = "LEDGER"
-timelogenvvar          = "TIMELOG"
+journalenvvar           = "LEDGER_FILE"
+journalenvvar2          = "LEDGER"
+timelogenvvar           = "TIMELOG"
 journaldefaultfilename  = ".hledger.journal"
 timelogdefaultfilename = ".hledger.timelog"
 
@@ -107,13 +108,19 @@ emptyJournal = do
 readJournal :: Maybe String -> String -> IO (Either String Journal)
 readJournal format s = journalFromPathAndString format "(string)" s
 
--- | Get the user's default journal file path.
+-- | Get the user's default journal file path. Like ledger, we look first
+-- for the LEDGER_FILE environment variable, and if that does not exist,
+-- for the legacy LEDGER environment variable. If neither exists, the path
+-- will be ".hledger.journal" in the users's home directory, or if we
+-- cannot determine that, in the current directory.
 myJournalPath :: IO String
 myJournalPath =
     getEnv journalenvvar `catch`
                (\_ -> do
-                  home <- getHomeDirectory `catch` (\_ -> return "")
-                  return $ home </> journaldefaultfilename)
+                  getEnv journalenvvar2 `catch`
+                             (\_ -> do
+                                home <- getHomeDirectory `catch` (\_ -> return "")
+                                return $ home </> journaldefaultfilename))
   
 -- | Get the user's default timelog file path.
 myTimelogPath :: IO String
