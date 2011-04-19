@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP #-}
 {-|
 hledger - a ledger-compatible accounting tool.
 Copyright (c) 2007-2011 Simon Michael <simon@joyful.com>
