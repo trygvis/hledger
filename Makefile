@@ -566,6 +566,7 @@ apihaddock: linkhledgerwebdir .haddockprologue
 	 $(LIBSOURCEFILESFORHADDOCK)
 
 # generate internal code docs for the whole project
+# XXX seems to need ln -s hledger/Hledger
 codehaddock: linkhledgerwebdir .haddockprologue
 	$(HADDOCK) --title "hledger internal code docs, all packages" \
 	 -o site/code-doc \
