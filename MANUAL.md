@@ -63,8 +63,7 @@ This is the manual for hledger 0.14.0.
 
 ## Installing
 
-hledger works on all major platforms *(except microsoft windows, as of
-version 0.13; to be fixed)*. You can download and run current release
+hledger works on linux, mac and windows. You can download and run current release
 binaries from the [download page](DOWNLOAD.html).
 
 Or, you can build the current release from source using cabal-install.
