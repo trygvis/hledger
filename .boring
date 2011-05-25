@@ -129,3 +129,7 @@ site/.*
 
 # branch repos
 (^|/)b[[:digit:]]*
+
+# yesod stuff
+(^|/)static/tmp
+client_session_key.aes
