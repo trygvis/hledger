@@ -128,7 +128,7 @@ tools/simplifyprof
 site/.*
 
 # branch repos
-(^|/)b[[:digit:]]*
+(^|/)b[[:digit:]]+
 
 # yesod stuff
 (^|/)static/tmp
