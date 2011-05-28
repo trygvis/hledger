@@ -8,7 +8,6 @@ Released under GPL version 3 or later.
 module Main
 where
 
-import Prelude hiding (putStr, putStrLn)
 -- import Control.Concurrent (forkIO, threadDelay)
 import Data.Text(pack)
 import Network.Wai.Handler.Warp (run)
@@ -25,7 +24,8 @@ import Hledger.Cli.Options
 import Hledger.Cli.Utils (withJournalDo) --, openBrowserOn)
 import Hledger.Cli.Version (progversionstr, binaryfilename)
 import Hledger.Data
-import Hledger.Data.UTF8 (putStr, putStrLn)
+import Prelude hiding (putStr, putStrLn)
+import Hledger.Utils.UTF8 (putStr, putStrLn)
 
 import App
 import AppRun (withApp)

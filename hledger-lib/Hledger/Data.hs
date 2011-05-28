@@ -19,10 +19,11 @@ module Hledger.Data (
                module Hledger.Data.Posting,
                module Hledger.Data.TimeLog,
                module Hledger.Data.Types,
-               module Hledger.Data.Utils,
                tests_Hledger_Data
               )
 where
+import Test.HUnit
+
 import Hledger.Data.Account
 import Hledger.Data.AccountName
 import Hledger.Data.Amount
@@ -34,7 +35,6 @@ import Hledger.Data.Journal
 import Hledger.Data.Posting
 import Hledger.Data.TimeLog
 import Hledger.Data.Types
-import Hledger.Data.Utils
 
 tests_Hledger_Data = TestList
     [
@@ -49,5 +49,4 @@ tests_Hledger_Data = TestList
     ,tests_Hledger_Data_TimeLog
     ,tests_Hledger_Data_Transaction
     -- ,tests_Hledger_Data_Types
-    -- ,tests_Hledger_Data_Utils
     ]
