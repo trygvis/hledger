@@ -9,6 +9,7 @@ module Main
 where
 
 -- import Control.Concurrent (forkIO, threadDelay)
+import Data.Maybe
 import Data.Text(pack)
 import Network.Wai.Handler.Warp (run)
 #if PRODUCTION
@@ -18,6 +19,7 @@ import Network.Wai.Middleware.Debug (debug)
 import System.Console.GetOpt
 import System.Exit (exitFailure)
 import System.IO.Storage (withStore, putValue,)
+import Text.Printf
 import Yesod.Helpers.Static
 
 import Hledger.Cli.Options
