@@ -35,6 +35,7 @@ INCLUDEPATHS=\
 	-ihledger-vty \
 	-ihledger-chart
 MAIN=hledger/hledger.hs
+
 # all source files in the project (plus a few strays like Setup.hs & hlint.hs)
 SOURCEFILES:= \
 	hledger/*hs \
@@ -42,19 +43,22 @@ SOURCEFILES:= \
 	hledger-*/*hs \
 	hledger-*/Hledger/*hs \
 	hledger-*/Hledger/*/*hs
+
 # a more careful list suitable for for haddock
 SOURCEFILESFORHADDOCK:= \
 	hledger-lib/Hledger/*hs \
 	hledger-lib/Hledger/*/*hs \
 	hledger/Hledger/Cli/*hs \
-	hledger-web/Hledger/*/*hs \
-	hledger-vty/Hledger/*/*hs \
-	hledger-chart/Hledger/*/*hs
+	hledger-web/*hs \
+	hledger-vty/Hledger/*/*hs
+#	hledger-chart/Hledger/*/*hs
+
 # just the library-exporting files for haddock, similar to what hackage shows
 LIBSOURCEFILESFORHADDOCK:= \
 	hledger-lib/Hledger/*hs \
 	hledger-lib/Hledger/*/*hs \
 	hledger/Hledger/Cli/*hs
+
 VERSIONHS=hledger/Hledger/Cli/Version.hs
 CABALFILES:= \
 	hledger/hledger.cabal \
@@ -566,7 +570,11 @@ apihaddock: linkhledgerwebdir .haddockprologue
 	 $(LIBSOURCEFILESFORHADDOCK)
 
 # generate internal code docs for the whole project
-# XXX seems to need ln -s hledger/Hledger
+# Very fragile. Things that may help:
+# ln -s hledger/Hledger
+# ln -s hledger-web/routes
+# cabal install hledger-lib hledger ?
+# mkdir Hledger; cd Hledger; for f in ../hledger{,-lib}/Hledger/*; do ln -s $f; done
 codehaddock: linkhledgerwebdir .haddockprologue
 	$(HADDOCK) --title "hledger internal code docs, all packages" \
 	 -o site/code-doc \
@@ -576,8 +584,8 @@ codehaddock: linkhledgerwebdir .haddockprologue
 	 --source-entity=../code-doc/src/%{MODULE/./-}.html#%N \
 	 $(SOURCEFILESFORHADDOCK)
 
-#http://www.cs.york.ac.uk/fp/darcs/hscolour/
-HSCOLOUR=HsColour -icss
+# http://www.cs.york.ac.uk/fp/darcs/hscolour/
+HSCOLOUR=HsColour -css
 hscolour:
 	mkdir -p site/code-doc/src
 	for f in $(SOURCEFILESFORHADDOCK); do \
