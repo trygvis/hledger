@@ -47,6 +47,7 @@ data CsvRules = CsvRules {
       currencyField :: Maybe FieldPosition,
       baseCurrency :: Maybe String,
       accountField :: Maybe FieldPosition,
+      account2Field :: Maybe FieldPosition,
       effectiveDateField :: Maybe FieldPosition,
       baseAccount :: AccountName,
       accountRules :: [AccountRule]
@@ -64,6 +65,7 @@ nullrules = CsvRules {
       currencyField=Nothing,
       baseCurrency=Nothing,
       accountField=Nothing,
+      account2Field=Nothing,
       effectiveDateField=Nothing,
       baseAccount="unknown",
       accountRules=[]
@@ -136,6 +138,7 @@ maxFieldIndex r = maximumDef (-1) $ catMaybes [
                   ,outField r
                   ,currencyField r
                   ,accountField r
+                  ,account2Field r
                   ,effectiveDateField r
                   ]
 
@@ -220,6 +223,7 @@ definitions = do
    ,outfield
    ,currencyfield
    ,accountfield
+   ,account2field
    ,effectivedatefield
    ,basecurrency
    ,baseaccount
@@ -304,6 +308,12 @@ accountfield = do
   r <- getState
   setState r{accountField=readMay v}
 
+account2field = do
+  string "account2-field"
+  many1 spacenonewline
+  v <- restofline
+  r <- getState
+  setState r{account2Field=readMay v}
 
 basecurrency = do
   string "currency"
@@ -379,7 +389,8 @@ transactionFromCsvRecord rules fields =
       baseamount = costOfMixedAmount amount
       unknownacct | (readDef 0 amountstr' :: Double) < 0 = "income:unknown"
                   | otherwise = "expenses:unknown"
-      (acct,newdesc) = identify (accountRules rules) unknownacct desc
+      (acct',newdesc) = identify (accountRules rules) unknownacct desc
+      acct = maybe acct' (atDef "" fields) (account2Field rules)
       t = Transaction {
               tdate=date,
               teffectivedate=effectivedate,
