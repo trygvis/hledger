@@ -464,3 +464,13 @@ isAccountRegex  :: String -> Bool
 isAccountRegex s = take 1 s == "^" && (take 5 $ reverse s) == ")$|:("
 
 numbered = zip [1..]
+
+-- Add incrementing transaction numbers to a list of register report items starting at 1.
+numberTransactions :: [RegisterReportItem] -> [(Int,RegisterReportItem)]
+numberTransactions [] = []
+numberTransactions is = number 0 is
+  where
+    number _ [] = []
+    number n (i@(Just _, _, _):is)  = (n+1,i):(number (n+1) is)
+    number n (i@(Nothing, _, _):is) = (n,i):(number n is)
+
