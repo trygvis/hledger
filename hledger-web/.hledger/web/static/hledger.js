@@ -20,7 +20,7 @@ function filterformToggle() {
  var flink = document.getElementById('filterformlink');
  var ilink = document.getElementById('importformlink');
  var jlink = document.getElementById('journallink');
- var rlink = document.getElementById('registerlink');
+ var rlink = document.getElementById('postingslink');
 
  if (f.style.display == 'none') {
   flink.style['font-weight'] = 'bold';
@@ -43,7 +43,7 @@ function addformToggle(ev) {
  var flink = document.getElementById('filterformlink');
  var ilink = document.getElementById('importformlink');
  var jlink = document.getElementById('journallink');
- var rlink = document.getElementById('registerlink');
+ var rlink = document.getElementById('postingslink');
 
  if (a.style.display == 'none') {
    if (alink) alink.style['font-weight'] = 'bold';
@@ -79,7 +79,7 @@ function editformToggle(ev) {
  var flink = document.getElementById('filterformlink');
  var ilink = document.getElementById('importformlink');
  var jlink = document.getElementById('journallink');
- var rlink = document.getElementById('registerlink');
+ var rlink = document.getElementById('postingslink');
 
  if (e.style.display == 'none') {
   if (alink) alink.style['font-weight'] = 'normal';
@@ -139,7 +139,7 @@ function importformToggle(ev) {
  var flink = document.getElementById('filterformlink');
  var ilink = document.getElementById('importformlink');
  var jlink = document.getElementById('journallink');
- var rlink = document.getElementById('registerlink');
+ var rlink = document.getElementById('postingslink');
 
  if (i.style.display == 'none') {
    if (alink) alink.style['font-weight'] = 'normal';
