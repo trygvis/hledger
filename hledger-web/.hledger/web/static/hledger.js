@@ -19,8 +19,7 @@ function filterformToggle() {
  var elink = document.getElementById('editformlink');
  var flink = document.getElementById('filterformlink');
  var ilink = document.getElementById('importformlink');
- var jlink = document.getElementById('journallink');
- var rlink = document.getElementById('postingslink');
+ var tlink = document.getElementById('transactionslink');
 
  if (f.style.display == 'none') {
   flink.style['font-weight'] = 'bold';
@@ -42,15 +41,13 @@ function addformToggle(ev) {
  var elink = document.getElementById('editformlink');
  var flink = document.getElementById('filterformlink');
  var ilink = document.getElementById('importformlink');
- var jlink = document.getElementById('journallink');
- var rlink = document.getElementById('postingslink');
+ var tlink = document.getElementById('transactionslink');
 
  if (a.style.display == 'none') {
    if (alink) alink.style['font-weight'] = 'bold';
    if (elink) elink.style['font-weight'] = 'normal';
    if (ilink) ilink.style['font-weight'] = 'normal';
-   if (jlink) jlink.style['font-weight'] = 'normal';
-   if (rlink) rlink.style['font-weight'] = 'normal';
+   if (tlink) tlink.style['font-weight'] = 'normal';
    if (a) a.style.display = 'block';
    if (e) e.style.display = 'none';
    if (i) i.style.display = 'none';
@@ -59,6 +56,7 @@ function addformToggle(ev) {
    if (alink) alink.style['font-weight'] = 'normal';
    if (elink) elink.style['font-weight'] = 'normal';
    if (ilink) ilink.style['font-weight'] = 'normal';
+   if (tlink) tlink.style['font-weight'] = 'bold';
    if (a) a.style.display = 'none';
    if (e) e.style.display = 'none';
    if (i) i.style.display = 'none';
@@ -78,15 +76,13 @@ function editformToggle(ev) {
  var elink = document.getElementById('editformlink');
  var flink = document.getElementById('filterformlink');
  var ilink = document.getElementById('importformlink');
- var jlink = document.getElementById('journallink');
- var rlink = document.getElementById('postingslink');
+ var tlink = document.getElementById('transactionslink');
 
  if (e.style.display == 'none') {
   if (alink) alink.style['font-weight'] = 'normal';
   if (elink) elink.style['font-weight'] = 'bold';
   if (ilink) ilink.style['font-weight'] = 'normal';
-  if (jlink) jlink.style['font-weight'] = 'normal';
-  if (rlink) rlink.style['font-weight'] = 'normal';
+  if (tlink) tlink.style['font-weight'] = 'normal';
   if (a) a.style.display = 'none';
   if (i) i.style.display = 'none';
   if (c) c.style.display = 'none';
@@ -96,6 +92,7 @@ function editformToggle(ev) {
   if (alink) alink.style['font-weight'] = 'normal';
   if (elink) elink.style['font-weight'] = 'normal';
   if (ilink) ilink.style['font-weight'] = 'normal';
+   if (tlink) tlink.style['font-weight'] = 'bold';
   if (a) a.style.display = 'none';
   if (e) e.style.display = 'none';
   if (i) i.style.display = 'none';
@@ -138,15 +135,13 @@ function importformToggle(ev) {
  var elink = document.getElementById('editformlink');
  var flink = document.getElementById('filterformlink');
  var ilink = document.getElementById('importformlink');
- var jlink = document.getElementById('journallink');
- var rlink = document.getElementById('postingslink');
+ var tlink = document.getElementById('transactionslink');
 
  if (i.style.display == 'none') {
    if (alink) alink.style['font-weight'] = 'normal';
    if (elink) elink.style['font-weight'] = 'normal';
    if (ilink) ilink.style['font-weight'] = 'bold';
-   if (jlink) jlink.style['font-weight'] = 'normal';
-   if (rlink) rlink.style['font-weight'] = 'normal';
+   if (tlink) tlink.style['font-weight'] = 'normal';
    if (a) a.style.display = 'none';
    if (e) e.style.display = 'none';
    if (i) i.style.display = 'block';
@@ -155,6 +150,7 @@ function importformToggle(ev) {
    if (alink) alink.style['font-weight'] = 'normal';
    if (elink) elink.style['font-weight'] = 'normal';
    if (ilink) ilink.style['font-weight'] = 'normal';
+   if (tlink) tlink.style['font-weight'] = 'bold';
    if (a) a.style.display = 'none';
    if (e) e.style.display = 'none';
    if (i) i.style.display = 'none';
