@@ -97,7 +97,7 @@ words'' prefixes = fromparse . parsewith maybeprefixedquotedphrases
 -- matcher = undefined
 
 matchesPosting :: Matcher -> Posting -> Bool
-matchesPosting (MatchAny) p = True
+matchesPosting (MatchAny) _ = True
 matchesPosting (MatchOr ms) p = any (`matchesPosting` p) ms
 matchesPosting (MatchAnd ms) p = all (`matchesPosting` p) ms
 matchesPosting (MatchDesc True r) p = regexMatchesCI r $ maybe "" tdescription $ ptransaction p
@@ -112,7 +112,7 @@ matchesPosting (MatchOtherAcct False r) p = not $ (MatchOtherAcct True r) `match
 matchesPosting _ _ = False
 
 matchesTransaction :: Matcher -> Transaction -> Bool
-matchesTransaction (MatchAny) t = True
+matchesTransaction (MatchAny) _ = True
 matchesTransaction (MatchOr ms) t = any (`matchesTransaction` t) ms
 matchesTransaction (MatchAnd ms) t = all (`matchesTransaction` t) ms
 matchesTransaction (MatchDesc True r) t = regexMatchesCI r $ tdescription t
@@ -124,7 +124,7 @@ matchesTransaction _ _ = False
 
 -- | Does this matcher match this account name as one we are "in" ?
 matchesInAccount :: Matcher -> AccountName -> Bool
-matchesInAccount (MatchAny) a = True
+matchesInAccount (MatchAny) _ = True
 matchesInAccount (MatchOr ms) a = any (`matchesInAccount` a) ms
 matchesInAccount (MatchAnd ms) a = all (`matchesInAccount` a) ms
 matchesInAccount (MatchOtherAcct True r) a = regexMatchesCI r a
@@ -132,6 +132,7 @@ matchesInAccount (MatchOtherAcct False r) a = not $ (MatchOtherAcct True r) `mat
 matchesInAccount _ _ = True
 
 negateMatch :: Matcher -> Matcher
+negateMatch MatchAny                   = MatchOr [] -- matches nothing
 negateMatch (MatchOr ms)               = MatchAnd $ map negateMatch ms
 negateMatch (MatchAnd ms)              = MatchOr $ map negateMatch ms
 negateMatch (MatchAcct sense arg)      = MatchAcct (not sense) arg
