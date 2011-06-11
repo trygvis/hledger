@@ -486,7 +486,8 @@ tests_Hledger_Cli = TestList
   
 -- fixtures/test data
 
-t1 = LocalTime date1 midday where date1 = parsedate "2008/11/26"
+date1 = parsedate "2008/11/26"
+t1 = LocalTime date1 midday
 
 samplejournal = readJournal' sample_journal_str
 
