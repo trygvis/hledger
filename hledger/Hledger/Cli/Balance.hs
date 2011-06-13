@@ -107,13 +107,14 @@ module Hledger.Cli.Balance (
 import Data.List
 import Data.Maybe
 import Data.Tree
-import Test.HUnit
+import Prelude hiding (putStr)
 
 import Hledger.Cli.Options
 import Hledger.Cli.Utils
 import Hledger.Data
 import Hledger.Utils
-import Prelude hiding (putStr)
+import Hledger.Read.Format
+import qualified Hledger.Read.Format as Format
 import Hledger.Utils.UTF8 (putStr)
 
 
@@ -133,20 +134,27 @@ type BalanceReportItem = (AccountName  -- full account name
 balance :: [Opt] -> [String] -> Journal -> IO ()
 balance opts args j = do
   d <- getCurrentDay
-  putStr $ balanceReportAsText opts $ balanceReport opts (optsToFilterSpec opts args d) j
+  putStr $ 
+  t <- getCurrentLocalTime
+  let format = reportFormatFromOpts opts
+  let lines = case format of
+            Left err -> [err]
+            Right format -> balanceReportAsText opts $ balanceReport opts (optsToFilterSpec opts args d) j
+  putStr $ unlines lines
 
 -- | Render a balance report as plain text suitable for console output.
-balanceReportAsText :: [Opt] -> BalanceReport -> String
-balanceReportAsText opts (items,total) =
-    unlines $
-            map (balanceReportItemAsText opts) items
-            ++
-            if NoTotal `elem` opts
+balanceReportAsText :: [Opt] -> [FormatString] -> BalanceReport -> [String]
+balanceReportAsText opts format (items, total) = concat lines ++ t
+    where
+      lines = map (balanceReportItemAsText opts format) items
+      t = if NoTotal `elem` opts
              then []
              else ["--------------------"
-                  ,padleft 20 $ showMixedAmountWithoutPrice total
+                    -- TODO: This must use the format somehow
+                  , padleft 20 $ showMixedAmountWithoutPrice total
                   ]
 
+<<<<<<< HEAD
 -- | Render one balance report line item as plain text.
 balanceReportItemAsText :: [Opt] -> BalanceReportItem -> String
 balanceReportItemAsText opts (a, adisplay, aindent, abal) = concatTopPadded [amt, "  ", name]
@@ -156,6 +164,45 @@ balanceReportItemAsText opts (a, adisplay, aindent, abal) = concatTopPadded [amt
            | otherwise        = indentspacer ++ adisplay
       indentspacer = replicate (indentperlevel * aindent) ' '
       indentperlevel = 2
+=======
+{- 
+This turned out to be a bit convoluted but implements the following algorithm for printing:
+
+If there is a single amount, print it with the account name directly.
+Otherwise, only print the account name on the list name.
+-}
+balanceReportItemAsText :: [Opt] -> [FormatString] -> BalanceReportItem -> [String]
+balanceReportItemAsText opts format (_, accountName, depth, Mixed amounts) =
+    case amounts of
+      [] -> []
+      [a] -> [formatAmount opts (Just accountName) depth a format]
+      (as) -> asText as
+    where
+      asText :: [Amount] -> [String]
+      asText []     = []
+      asText [a]    = [formatAmount opts (Just accountName) depth a format]
+      asText (a:as) = (formatAmount opts Nothing depth a format) : asText as
+
+formatAmount :: [Opt] -> Maybe AccountName -> Int -> Amount -> [FormatString] -> String
+formatAmount _ _ _ _ [] = ""
+formatAmount opts accountName depth amount (f:fs) = s ++ (formatAmount opts accountName depth amount fs)
+  where
+    s = case f of
+            FormatLiteral l -> l
+            FormatField leftJustified min max field  -> formatAccount opts accountName depth amount leftJustified min max field
+
+formatAccount :: [Opt] -> Maybe AccountName -> Int -> Amount -> Bool -> Maybe Int -> Maybe Int -> Field -> String
+formatAccount opts accountName depth balance leftJustified min max field = case field of
+        Format.Account  -> formatValue leftJustified min max a
+        DefaultDate     -> error "not applicable"
+        Payee           -> error "not applicable"
+        DepthSpace      -> case min of
+                               Just m  -> formatValue leftJustified Nothing max $ replicate (depth * m) ' '
+                               Nothing -> formatValue leftJustified Nothing max $ replicate depth ' '
+        Total           -> formatValue leftJustified min max $ showAmountWithoutPrice balance
+    where
+      a = maybe "" (accountNameDrop (dropFromOpts opts)) accountName
+>>>>>>> Adding basic ledger FORMAT parser
 
 -- | Get a balance report with the specified options for this journal.
 balanceReport :: [Opt] -> FilterSpec -> Journal -> BalanceReport

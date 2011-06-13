@@ -14,6 +14,7 @@ import Test.HUnit
 
 import Hledger.Data
 import Hledger.Read (myJournalPath, myTimelogPath)
+import Hledger.Read.Format as Format
 import Hledger.Utils
 
 
@@ -84,6 +85,7 @@ options_cli = [
  ,Option "Q" ["quarterly"]    (NoArg  QuarterlyOpt)  "register, stats: report by quarter"
  ,Option "Y" ["yearly"]       (NoArg  YearlyOpt)     "register, stats: report by year"
  ,Option "r" ["rules"]        (ReqArg RulesFile "FILE") "convert, rules file to use"
+ ,Option "F" ["format"]       (ReqArg ReportFormat "STR") "use STR as the format"
  ,Option "v" ["verbose"]      (NoArg  Verbose)       "show more verbose output"
  ,Option ""  ["debug"]        (NoArg  Debug)         "show extra debug output; implies verbose"
  ,Option ""  ["binary-filename"] (NoArg BinaryFilename) "show the download filename for this hledger build"
@@ -117,6 +119,7 @@ data Opt =
     | QuarterlyOpt
     | YearlyOpt
     | RulesFile   {value::String}
+    | ReportFormat {value::String}
     | Help
     | Verbose
     | Version
@@ -155,6 +158,9 @@ optValuesForConstructors fs opts = concatMap get opts
 parseArgumentsWith :: [OptDescr Opt] -> IO ([Opt], [String])
 parseArgumentsWith options = do
   rawargs <- map fromPlatformString `fmap` getArgs
+  parseArgumentsWith' options rawargs
+
+parseArgumentsWith' options rawargs = do
   let (opts,args,errs) = getOpt Permute options rawargs
   opts' <- fixOptDates opts
   let opts'' = if Debug `elem` opts' then Verbose:opts' else opts'
@@ -220,6 +226,22 @@ rulesFileFromOpts opts = listtomaybe $ optValuesForConstructor RulesFile opts
     where
       listtomaybe [] = Nothing
       listtomaybe vs = Just $ head vs
+
+-- ledgers format is "%20T %-.20A", but hledger defaults to "%20T  %2_%-.20A"
+defaultBalanceFormatString :: [FormatString]
+defaultBalanceFormatString = [
+      FormatField False (Just 20) Nothing Total
+    , FormatLiteral "  "
+    , FormatField True (Just 2) Nothing DepthSpace
+    , FormatField True Nothing (Just 20) Format.Account
+    ]
+
+reportFormatFromOpts :: [Opt] -> Either String [FormatString]
+reportFormatFromOpts opts = listtomaybe $ optValuesForConstructor ReportFormat opts
+    where
+      listtomaybe :: [String] -> Either String [FormatString]
+      listtomaybe [] = Right defaultBalanceFormatString
+      listtomaybe vs = parseFormatString $ head vs
 
 -- | Get the value of the (last) depth option, if any.
 depthFromOpts :: [Opt] -> Maybe Int

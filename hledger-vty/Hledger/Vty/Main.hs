@@ -5,7 +5,7 @@ Copyright (c) 2007-2011 Simon Michael <simon@joyful.com>
 Released under GPL version 3 or later.
 -}
 
-module Hledger.Vty.Main where
+module Hledger.Vty.Main (main) where
 
 import Control.Monad
 import Data.List
@@ -63,15 +63,15 @@ instance Show Vty where show = const "a Vty"
 -- | The application state when running the vty command.
 data AppState = AppState {
      av :: Vty                   -- ^ the vty context
-    ,aw :: Int                  -- ^ window width
-    ,ah :: Int                  -- ^ window height
+    ,aw :: Int                   -- ^ window width
+    ,ah :: Int                   -- ^ window height
     ,amsg :: String              -- ^ status message
     ,aopts :: [Opt]              -- ^ command-line opts
     ,aargs :: [String]           -- ^ command-line args at startup
     ,ajournal :: Journal         -- ^ parsed journal
     ,abuf :: [String]            -- ^ lines of the current buffered view
     ,alocs :: [Loc]              -- ^ user's navigation trail within the UI
-                                -- ^ never null, head is current location
+                                 -- ^ never null, head is current location
     } deriving (Show)
 
 -- | A location within the user interface.
@@ -270,10 +270,13 @@ resetTrailAndEnter d scr a = enter d scr (aargs a) $ clearLocs a
 updateData :: Day -> AppState -> AppState
 updateData d a@AppState{aopts=opts,ajournal=j} =
     case screen a of
-      BalanceScreen  -> a{abuf=lines $ balanceReportAsText opts $ balanceReport opts fspec j}
+      BalanceScreen  -> a{abuf=balanceReportAsText opts format $ balanceReport opts fspec j}
       RegisterScreen -> a{abuf=lines $ registerReportAsText opts $ registerReport opts fspec j}
       PrintScreen    -> a{abuf=lines $ showTransactions opts fspec j}
     where fspec = optsToFilterSpec opts (currentArgs a) d
+          format = case reportFormatFromOpts opts of
+                     Left err -> defaultBalanceFormatString
+                     Right f -> f
 
 backout :: Day -> AppState -> AppState
 backout d a | screen a == BalanceScreen = a

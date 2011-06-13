@@ -235,8 +235,7 @@ tests_Hledger_Cli = TestList
              ,"  c:d                   "
              ]) >>= either error' return
       let j' = journalCanonicaliseAmounts $ journalConvertAmountsToCost j -- enable cost basis adjustment
-      balanceReportAsText [] (balanceReport [] nullfilterspec j') `is`
-       unlines
+      balanceReportAsText [] defaultBalanceFormatString (balanceReport [] nullfilterspec j') `is`
         ["                $500  a:b"
         ,"               $-500  c:d"
         ,"--------------------"
@@ -250,8 +249,7 @@ tests_Hledger_Cli = TestList
               ,"  test:a  1"
               ,"  test:b"
               ])
-      balanceReportAsText [] (balanceReport [] nullfilterspec j) `is`
-       unlines
+      balanceReportAsText [] defaultBalanceFormatString (balanceReport [] nullfilterspec j) `is`
         ["                   1  test:a"
         ,"                  -1  test:b"
         ,"--------------------"

@@ -28,13 +28,13 @@ import Test.HUnit
 import Text.Printf
 
 import Hledger.Data.Dates (getCurrentDay)
-import Hledger.Data.Types (Journal(..), Reader(..))
 import Hledger.Data.Journal (nullctx)
+import Hledger.Data.Types (Journal(..), Reader(..))
 import Hledger.Read.JournalReader as JournalReader
 import Hledger.Read.TimelogReader as TimelogReader
 import Hledger.Utils
-import Prelude hiding (getContents)
 import Hledger.Utils.UTF8 (getContents, hGetContents)
+import Prelude hiding (getContents)
 
 
 journalenvvar           = "LEDGER_FILE"
