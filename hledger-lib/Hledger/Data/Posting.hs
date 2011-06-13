@@ -25,6 +25,7 @@ import Hledger.Data.Dates (nulldate, spanContainsDate)
 
 instance Show Posting where show = showPosting
 
+nullposting :: Posting
 nullposting = Posting False "" nullmixedamt "" RegularPosting [] Nothing
 
 showPosting :: Posting -> String
