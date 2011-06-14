@@ -354,7 +354,7 @@ searchform VD{here=here,q=q} = $(Settings.hamletFile "searchform")
 
 -- | Add transaction form.
 addform :: ViewData -> Hamlet AppRoute
-addform vd = $(Settings.hamletFile "addform")
+addform vd@VD{qopts=qopts} = $(Settings.hamletFile "addform")
  where
   datehelp = "eg: 2010/7/20" :: String
   deschelp = "eg: supermarket (optional)" :: String
@@ -363,6 +363,7 @@ addform vd = $(Settings.hamletFile "addform")
   manyfiles = (length $ files $ j vd) > 1
   postingfields VD{j=j} n = $(Settings.hamletFile "addformpostingfields")
    where
+    shouldselect a = n == 2 && Just a == inAccount qopts
     numbered = (++ show n)
     acctvar = numbered "account"
     amtvar = numbered "amount"
