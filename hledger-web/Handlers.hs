@@ -97,8 +97,8 @@ postRegisterOnlyR = handlePost
 -- temporary helper - use the new account register report when in:ACCT is specified.
 accountOrJournalRegisterReport :: ViewData -> Journal -> RegisterReport
 accountOrJournalRegisterReport VD{opts=opts,m=m,qopts=qopts} j =
-    case inAccount qopts of Just a  -> accountRegisterReport opts j m a
-                            Nothing -> registerReport opts nullfilterspec $ filterJournalPostings2 m j
+    case inAccountMatcher qopts of Just m'  -> accountRegisterReport opts j m m'
+                                   Nothing -> registerReport opts nullfilterspec $ filterJournalPostings2 m j
 
 -- | A simple accounts view, like hledger balance. If the Accept header
 -- specifies json, returns the chart of accounts as json.
@@ -131,14 +131,13 @@ balanceReportAsHtml _ vd@VD{here=here,q=q,m=m,qopts=qopts,j=j} (items,total) = $
    l = journalToLedger nullfilterspec j
    numpostingsinacct = length . apostings . ledgerAccount l
    filtering = not $ null q
-   inacct = inAccount qopts
+   inacctmatcher = inAccountMatcher qopts
    itemAsHtml :: ViewData -> BalanceReportItem -> Hamlet AppRoute
    itemAsHtml VD{here=here,q=q} (acct, adisplay, adepth, abal) = $(Settings.hamletFile "balancereportitem")
      where
        depthclass = "depth"++show adepth
-       inclass | Just acct == inacct = "inacct"
-               | isJust inacct       = "notinacct"
-               | otherwise           = "" :: String
+       inclass = case inacctmatcher of Just m -> if m `matchesAccount` acct then "inacct" else "notinacct"
+                                       Nothing -> "" :: String
        indent = preEscapedString $ concat $ replicate (2 * adepth) "&nbsp;"
        accturl = (here, [("q", pack $ accountUrl acct)])
 
