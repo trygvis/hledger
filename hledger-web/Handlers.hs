@@ -418,7 +418,7 @@ mkvd = VD {
 getViewData :: Handler ViewData
 getViewData = do
   app        <- getYesod
-  let opts = appOpts app
+  let opts = appOpts app ++ [NoElide]
   (j, err)   <- getCurrentJournal opts
   msg        <- getMessageOr err
   Just here' <- getCurrentRoute
