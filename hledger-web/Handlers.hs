@@ -160,8 +160,7 @@ registerReportAsHtml _ vd (balancelabel,items) = $(Settings.hamletFile "register
    itemAsHtml VD{here=here} (n, newd, newm, newy, (ds, posting, b)) = $(Settings.hamletFile "registerreportitem")
      where
        evenodd = if even n then "even" else "odd" :: String
-       datetransition -- | newy && n > 1 = "newyear"
-                      | newm = "newmonth"
+       datetransition | newm = "newmonth"
                       | newd = "newday"
                       | otherwise = "" :: String
        (firstposting, date, desc) = case ds of Just (da, de) -> ("firstposting", show da, de)
