@@ -130,8 +130,8 @@ balanceReportAsHtml _ vd@VD{here=here,q=q,m=m,qopts=qopts,j=j} (items,total) = $
  where
    l = journalToLedger nullfilterspec j
    numpostingsinacct = length . apostings . ledgerAccount l
-   filtering = not $ null q
    inacctmatcher = inAccountMatcher qopts
+   allaccts = isNothing inacctmatcher
    itemAsHtml :: ViewData -> BalanceReportItem -> Hamlet AppRoute
    itemAsHtml VD{here=here,q=q} (acct, adisplay, adepth, abal) = $(Settings.hamletFile "balancereportitem")
      where
