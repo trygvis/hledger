@@ -133,13 +133,13 @@ balanceReportAsHtml _ vd@VD{here=here,q=q,m=m,qopts=qopts,j=j} (items,total) = $
    inacctmatcher = inAccountMatcher qopts
    allaccts = isNothing inacctmatcher
    itemAsHtml :: ViewData -> BalanceReportItem -> Hamlet AppRoute
-   itemAsHtml VD{here=here,q=q} (acct, adisplay, adepth, abal) = $(Settings.hamletFile "balancereportitem")
+   itemAsHtml VD{here=here,q=q} (acct, adisplay, aindent, abal) = $(Settings.hamletFile "balancereportitem")
      where
-       depthclass = "depth"++show adepth
+       depthclass = "depth"++show aindent
        inacctclass = case inacctmatcher of
                        Just m -> if m `matchesAccount` acct then "inacct" else "notinacct"
                        Nothing -> "" :: String
-       indent = preEscapedString $ concat $ replicate (2 * adepth) "&nbsp;"
+       indent = preEscapedString $ concat $ replicate (2 * aindent) "&nbsp;"
        accturl = (here, [("q", pack $ accountUrl acct)])
 
 -- | Render a journal report as HTML.
