@@ -23,7 +23,7 @@ body                                                                 { backgroun
 #editform textarea                                                   { background-color:#eee; }
 .negative                                                            { color:#800; }
 
-.balancereport .inacct                                               { background-color:#eee; font-weight:bold; }
+.balancereport .inacct                                               { background-color:#ddd; font-weight:bold; }
 .notinacct, .notinacct :link, .notinacct :visited, .notinacct .negative  { /*color:#aaa;*/ }
 .balancereport .numpostings                                          { padding-left:1em; color:#aaa; }
 
