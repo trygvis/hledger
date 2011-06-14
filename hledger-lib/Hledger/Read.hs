@@ -41,7 +41,7 @@ journalenvvar           = "LEDGER_FILE"
 journalenvvar2          = "LEDGER"
 timelogenvvar           = "TIMELOG"
 journaldefaultfilename  = ".hledger.journal"
-timelogdefaultfilename = ".hledger.timelog"
+timelogdefaultfilename  = ".hledger.timelog"
 
 -- Here are the available readers. The first is the default, used for unknown data formats.
 readers :: [Reader]

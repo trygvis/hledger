@@ -134,19 +134,17 @@ type BalanceReportItem = (AccountName  -- full account name
 balance :: [Opt] -> [String] -> Journal -> IO ()
 balance opts args j = do
   d <- getCurrentDay
-  putStr $ 
-  t <- getCurrentLocalTime
-  let format = reportFormatFromOpts opts
-  let lines = case format of
+  let lines = case parseFormatFromOpts opts of
             Left err -> [err]
-            Right format -> balanceReportAsText opts $ balanceReport opts (optsToFilterSpec opts args d) j
+            Right _ -> balanceReportAsText opts $ balanceReport opts (optsToFilterSpec opts args d) j
   putStr $ unlines lines
 
 -- | Render a balance report as plain text suitable for console output.
-balanceReportAsText :: [Opt] -> [FormatString] -> BalanceReport -> [String]
-balanceReportAsText opts format (items, total) = concat lines ++ t
+balanceReportAsText :: [Opt] -> BalanceReport -> [String]
+balanceReportAsText opts (items, total) = concat lines ++ t
     where
       lines = map (balanceReportItemAsText opts format) items
+      format = formatFromOpts opts
       t = if NoTotal `elem` opts
              then []
              else ["--------------------"
@@ -154,23 +152,13 @@ balanceReportAsText opts format (items, total) = concat lines ++ t
                   , padleft 20 $ showMixedAmountWithoutPrice total
                   ]
 
-<<<<<<< HEAD
--- | Render one balance report line item as plain text.
-balanceReportItemAsText :: [Opt] -> BalanceReportItem -> String
-balanceReportItemAsText opts (a, adisplay, aindent, abal) = concatTopPadded [amt, "  ", name]
-    where
-      amt = padleft 20 $ showMixedAmountWithoutPrice abal
-      name | Flat `elem` opts = accountNameDrop (dropFromOpts opts) a
-           | otherwise        = indentspacer ++ adisplay
-      indentspacer = replicate (indentperlevel * aindent) ' '
-      indentperlevel = 2
-=======
 {- 
 This turned out to be a bit convoluted but implements the following algorithm for printing:
 
 If there is a single amount, print it with the account name directly.
 Otherwise, only print the account name on the list name.
 -}
+-- | Render one balance report line item as plain text.
 balanceReportItemAsText :: [Opt] -> [FormatString] -> BalanceReportItem -> [String]
 balanceReportItemAsText opts format (_, accountName, depth, Mixed amounts) =
     case amounts of
@@ -195,14 +183,13 @@ formatAccount :: [Opt] -> Maybe AccountName -> Int -> Amount -> Bool -> Maybe In
 formatAccount opts accountName depth balance leftJustified min max field = case field of
         Format.Account  -> formatValue leftJustified min max a
         DefaultDate     -> error "not applicable"
-        Payee           -> error "not applicable"
+        Description     -> error "not applicable"
         DepthSpace      -> case min of
                                Just m  -> formatValue leftJustified Nothing max $ replicate (depth * m) ' '
                                Nothing -> formatValue leftJustified Nothing max $ replicate depth ' '
         Total           -> formatValue leftJustified min max $ showAmountWithoutPrice balance
     where
       a = maybe "" (accountNameDrop (dropFromOpts opts)) accountName
->>>>>>> Adding basic ledger FORMAT parser
 
 -- | Get a balance report with the specified options for this journal.
 balanceReport :: [Opt] -> FilterSpec -> Journal -> BalanceReport

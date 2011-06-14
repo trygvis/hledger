@@ -227,21 +227,28 @@ rulesFileFromOpts opts = listtomaybe $ optValuesForConstructor RulesFile opts
       listtomaybe [] = Nothing
       listtomaybe vs = Just $ head vs
 
--- ledgers format is "%20T %-.20A", but hledger defaults to "%20T  %2_%-.20A"
+-- | Default balance format string: "%20T  %2_%-A"
 defaultBalanceFormatString :: [FormatString]
 defaultBalanceFormatString = [
       FormatField False (Just 20) Nothing Total
     , FormatLiteral "  "
     , FormatField True (Just 2) Nothing DepthSpace
-    , FormatField True Nothing (Just 20) Format.Account
+    , FormatField True Nothing Nothing Format.Account
     ]
 
-reportFormatFromOpts :: [Opt] -> Either String [FormatString]
-reportFormatFromOpts opts = listtomaybe $ optValuesForConstructor ReportFormat opts
+-- | Parses the --format string to either an error message or a format string.
+parseFormatFromOpts :: [Opt] -> Either String [FormatString]
+parseFormatFromOpts opts = listtomaybe $ optValuesForConstructor ReportFormat opts
     where
       listtomaybe :: [String] -> Either String [FormatString]
       listtomaybe [] = Right defaultBalanceFormatString
       listtomaybe vs = parseFormatString $ head vs
+
+-- | Returns the format string. If the string can't be parsed it fails with error'.
+formatFromOpts :: [Opt] -> [FormatString]
+formatFromOpts opts = case parseFormatFromOpts opts of
+    Left err -> error' err
+    Right format -> format
 
 -- | Get the value of the (last) depth option, if any.
 depthFromOpts :: [Opt] -> Maybe Int

@@ -22,11 +22,11 @@ import Text.Printf
 -}
 
 data Field =
-    Account         -- %A
-  | DefaultDate     -- %D
-  | Payee           -- %P
-  | Total           -- %T
-  | DepthSpace      -- %_
+    Account
+  | DefaultDate
+  | Description
+  | Total
+  | DepthSpace
     deriving (Show, Eq)
 
 data FormatString =
@@ -62,9 +62,7 @@ parseFormatString input = case parse formatStrings "(unknown)" input of
 Parsers
 -}
 
-text :: Parser Char
-text = letter
-
+{-
 field :: Parser Field
 field = do
     l <- oneOf ("ADPT")
@@ -74,6 +72,13 @@ field = do
         'P' -> Payee
         'T' -> Total
         _ -> error $ "Unknown field" ++ [l]
+-}
+field :: Parser Field
+field = do
+        try (string "account" >> return Account)
+    <|> try (string "date" >> return Description)
+    <|> try (string "description" >> return Description)
+    <|> try (string "total" >> return Total)
 
 formatField :: Parser FormatString
 formatField = do
@@ -81,7 +86,9 @@ formatField = do
     leftJustified <- optionMaybe (char '-')
     minWidth <- optionMaybe (many1 $ digit)
     maxWidth <- optionMaybe (do char '.'; many1 $ digit)
+    char '('
     field <- field
+    char ')'
     return $ FormatField (isJust leftJustified) (parseDec minWidth) (parseDec maxWidth) field
     where
       parseDec s = case s of
@@ -118,29 +125,29 @@ testParser s expected = case (parseFormatString s) of
 tests = test [ formattingTests ++ parserTests ]
 
 formattingTests = [
-      testFormat (FormatLiteral " ") "" " "
-    , testFormat (FormatField False Nothing Nothing Payee) "payee"      "payee"
-    , testFormat (FormatField False (Just 10) Nothing Payee) "payee"    "     payee"
-    , testFormat (FormatField False Nothing (Just 10) Payee) "payee"    "payee"
-    , testFormat (FormatField True Nothing (Just 10) Payee) "payee"     "payee"
-    , testFormat (FormatField True (Just 10) Nothing Payee) "payee"     "payee     "
-    , testFormat (FormatField True (Just 10) (Just 10) Payee) "payee"   "payee     "
-    , testFormat (FormatField True Nothing (Just 3) Payee) "payee"      "pay"
+      testFormat (FormatLiteral " ")                                ""            " "
+    , testFormat (FormatField False Nothing Nothing Description)    "description" "description"
+    , testFormat (FormatField False (Just 20) Nothing Description)  "description" "         description"
+    , testFormat (FormatField False Nothing (Just 20) Description)  "description" "description"
+    , testFormat (FormatField True Nothing (Just 20) Description)   "description" "description"
+    , testFormat (FormatField True (Just 20) Nothing Description)   "description" "description         "
+    , testFormat (FormatField True (Just 20) (Just 20) Description) "description" "description         "
+    , testFormat (FormatField True Nothing (Just 3) Description)    "description" "des"
     ]
 
 parserTests = [
-      testParser ""             []
-    , testParser "P"            [FormatLiteral "P"]
-    , testParser "%P"           [FormatField False Nothing Nothing Payee]
-    , testParser "%T"           [FormatField False Nothing Nothing Total]
-    , testParser "Hello %P!"    [FormatLiteral "Hello ", FormatField False Nothing Nothing Payee, FormatLiteral "!"]
-    , testParser "%-P"          [FormatField True Nothing Nothing Payee]
-    , testParser "%20P"         [FormatField False (Just 20) Nothing Payee]
-    , testParser "%.10P"        [FormatField False Nothing (Just 10) Payee]
-    , testParser "%20.10P"      [FormatField False (Just 20) (Just 10) Payee]
-    , testParser "%20A %.10T\n" [ FormatField False (Just 20) Nothing Account
-                                , FormatLiteral " "
-                                , FormatField False Nothing (Just 10) Total
-                                , FormatLiteral "\n"
-                                ]
+      testParser ""                             []
+    , testParser "D"                            [FormatLiteral "D"]
+    , testParser "%(date)"                      [FormatField False Nothing Nothing Description]
+    , testParser "%(total)"                     [FormatField False Nothing Nothing Total]
+    , testParser "Hello %(date)!"               [FormatLiteral "Hello ", FormatField False Nothing Nothing Description, FormatLiteral "!"]
+    , testParser "%-(date)"                     [FormatField True Nothing Nothing Description]
+    , testParser "%20(date)"                    [FormatField False (Just 20) Nothing Description]
+    , testParser "%.10(date)"                   [FormatField False Nothing (Just 10) Description]
+    , testParser "%20.10(date)"                 [FormatField False (Just 20) (Just 10) Description]
+    , testParser "%20(account) %.10(total)\n"   [ FormatField False (Just 20) Nothing Account
+                                                , FormatLiteral " "
+                                                , FormatField False Nothing (Just 10) Total
+                                                , FormatLiteral "\n"
+                                                ]
   ]
