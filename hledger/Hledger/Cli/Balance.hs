@@ -153,10 +153,14 @@ balanceReportAsText opts (items, total) = concat lines ++ t
                   ]
 
 {- 
-This turned out to be a bit convoluted but implements the following algorithm for printing:
+This implementation turned out to be a bit convoluted but implements the following algorithm for formatting:
 
-If there is a single amount, print it with the account name directly.
-Otherwise, only print the account name on the list name.
+- If there is a single amount, print it with the account name directly:
+- Otherwise, only print the account name on the list name.
+
+    a         USD 1   ; Account 'a' has a single amount
+              EUR -1
+    b         USD -1  ; Account 'b' has two amounts. The account name is printed on the last line.
 -}
 -- | Render one balance report line item as plain text.
 balanceReportItemAsText :: [Opt] -> [FormatString] -> BalanceReportItem -> [String]
