@@ -62,17 +62,6 @@ parseFormatString input = case parse formatStrings "(unknown)" input of
 Parsers
 -}
 
-{-
-field :: Parser Field
-field = do
-    l <- oneOf ("ADPT")
-    return $ case l of
-        'A' -> Account
-        'D' -> DefaultDate
-        'P' -> Payee
-        'T' -> Total
-        _ -> error $ "Unknown field" ++ [l]
--}
 field :: Parser Field
 field = do
         try (string "account" >> return Account)
