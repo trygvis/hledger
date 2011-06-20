@@ -197,7 +197,7 @@ handleAdd = do
     <*> maybeStringInput "amount2"
     <*> maybeStringInput "journal"
   -- supply defaults and parse date and amounts, or get errors.
-  let dateE = maybe (Left "date required") (either (\e -> Left $ showDateParseError e) Right . fixSmartDateStrEither today . unpack) dateM
+  let dateE = maybe (Left "date required") (either (Left . showDateParseError) Right . fixSmartDateStrEither today . unpack) dateM
       descE = Right $ maybe "" unpack descM
       acct1E = maybe (Left "to account required") (Right . unpack) acct1M
       acct2E = maybe (Left "from account required") (Right . unpack) acct2M
@@ -473,8 +473,8 @@ numberTransactions is = number 0 nulldate is
   where
     number :: Int -> Day -> [RegisterReportItem] -> [(Int,Bool,Bool,Bool,RegisterReportItem)]
     number _ _ [] = []
-    number n prevd (i@(Nothing, _, _)   :is)  = (n,False,False,False,i)    :(number n prevd is)
-    number n prevd (i@(Just (d,_), _, _):is)  = (n+1,newday,newmonth,newyear,i):(number (n+1) d is)
+    number n prevd (i@(Nothing, _, _)   :is)  = (n,False,False,False,i)        :number n prevd is
+    number n prevd (i@(Just (d,_), _, _):is)  = (n+1,newday,newmonth,newyear,i):number (n+1) d is
         where
           newday = d/=prevd
           newmonth = dm/=prevdm || dy/=prevdy

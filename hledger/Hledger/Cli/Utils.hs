@@ -47,7 +47,7 @@ import Hledger.Utils
 -- | Parse the user's specified journal file and run a hledger command on
 -- it, or throw an error.
 withJournalDo :: [Opt] -> [String] -> String -> ([Opt] -> [String] -> Journal -> IO ()) -> IO ()
-withJournalDo opts args _ cmd = do
+withJournalDo opts args _ cmd =
   -- We kludgily read the file before parsing to grab the full text, unless
   -- it's stdin, or it doesn't exist and we are adding. We read it strictly
   -- to let the add command work.
@@ -100,14 +100,14 @@ journalReloadIfChanged opts j = do
 journalFileIsNewer :: Journal -> IO Bool
 journalFileIsNewer j@Journal{filereadtime=tread} = do
   tmod <- fileModificationTime $ journalFilePath j
-  return $ diffClockTimes tmod tread > (TimeDiff 0 0 0 0 0 0 0)
+  return $ diffClockTimes tmod tread > TimeDiff 0 0 0 0 0 0 0
 
 -- | Has the specified file (presumably one of journal's data files)
 -- changed since journal was last read ?
 journalSpecifiedFileIsNewer :: Journal -> FilePath -> IO Bool
 journalSpecifiedFileIsNewer Journal{filereadtime=tread} f = do
   tmod <- fileModificationTime f
-  return $ diffClockTimes tmod tread > (TimeDiff 0 0 0 0 0 0 0)
+  return $ diffClockTimes tmod tread > TimeDiff 0 0 0 0 0 0 0
 
 -- | Get the last modified time of the specified file, or if it does not
 -- exist or there is some other error, the current time.
@@ -161,7 +161,7 @@ backUpFile :: FilePath -> IO ()
 backUpFile fp = do
   fs <- safeGetDirectoryContents $ takeDirectory $ fp
   let (d,f) = splitFileName fp
-      versions = catMaybes $ map (f `backupNumber`) fs
+      versions = mapMaybe (f `backupNumber`) fs
       next = maximum (0:versions) + 1
       f' = printf "%s.%d" f next
   copyFile fp (d </> f')
@@ -173,5 +173,5 @@ safeGetDirectoryContents fp = getDirectoryContents fp
 -- | Does the second file represent a backup of the first, and if so which version is it ?
 backupNumber :: FilePath -> FilePath -> Maybe Int
 backupNumber f g = case regexMatch ("^" ++ f ++ "\\.([0-9]+)$") g of
-                        Just (_, ((_,suffix):_)) -> readMay suffix
+                        Just (_,(_, suffix):_) -> readMay suffix
                         _ -> Nothing

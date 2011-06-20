@@ -208,14 +208,14 @@ dateSpanFromOpts refdate opts
 intervalFromOpts :: [Opt] -> Interval
 intervalFromOpts opts =
     case (periodopts, intervalopts) of
-      ((p:_), _)            -> case parsePeriodExpr (parsedate "0001/01/01") p of
+      (p:_, _)              -> case parsePeriodExpr (parsedate "0001/01/01") p of
                                 Right (i, _) -> i
                                 Left e       -> parseerror e
-      (_, (DailyOpt:_))     -> Days 1
-      (_, (WeeklyOpt:_))    -> Weeks 1
-      (_, (MonthlyOpt:_))   -> Months 1
-      (_, (QuarterlyOpt:_)) -> Quarters 1
-      (_, (YearlyOpt:_))    -> Years 1
+      (_, DailyOpt:_)       -> Days 1
+      (_, WeeklyOpt:_)      -> Weeks 1
+      (_, MonthlyOpt:_)     -> Months 1
+      (_, QuarterlyOpt:_)   -> Quarters 1
+      (_, YearlyOpt:_)      -> Years 1
       (_, _)                -> NoInterval
     where
       periodopts   = reverse $ optValuesForConstructor Period opts

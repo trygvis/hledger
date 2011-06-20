@@ -159,13 +159,13 @@ posY a = scrollY a + cursorY a
 
 setCursorY, setScrollY, setPosY :: Int -> AppState -> AppState
 setCursorY _ AppState{alocs=[]} = error' "shouldn't happen" -- silence warnings
-setCursorY y a@AppState{alocs=(l:locs)} = a{alocs=(l':locs)} where l' = setLocCursorY y l
+setCursorY y a@AppState{alocs=(l:locs)} = a{alocs=l':locs} where l' = setLocCursorY y l
 
 setScrollY _ AppState{alocs=[]} = error' "shouldn't happen" -- silence warnings
-setScrollY y a@AppState{alocs=(l:locs)} = a{alocs=(l':locs)} where l' = setLocScrollY y l
+setScrollY y a@AppState{alocs=(l:locs)} = a{alocs=l':locs} where l' = setLocScrollY y l
 
 setPosY _ AppState{alocs=[]}    = error' "shouldn't happen" -- silence warnings
-setPosY y a@AppState{alocs=(l:locs)} = a{alocs=(l':locs)}
+setPosY y a@AppState{alocs=(l:locs)} = a{alocs=l':locs}
     where 
       l' = setLocScrollY sy $ setLocCursorY cy l
       ph = pageHeight a
@@ -233,7 +233,7 @@ prevpage a
 
 -- | Push a new UI location on to the stack.
 pushLoc :: Loc -> AppState -> AppState
-pushLoc l a = a{alocs=(l:alocs a)}
+pushLoc l a = a{alocs=l:alocs a}
 
 popLoc :: AppState -> AppState
 popLoc a@AppState{alocs=locs}

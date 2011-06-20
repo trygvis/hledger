@@ -105,7 +105,7 @@ genPie opts filterspec j = defaultPieLayout { pie_background_ = solidFillStyle $
                                             , pie_plot_ = pie_chart }
     where
       pie_chart = defaultPieChart { pie_data_ = map (uncurry accountPieItem) chartitems'
-                                  , pie_start_angle_ = (-90)
+                                  , pie_start_angle_ = -90
                                   , pie_colors_ = mkColours hue
                                   , pie_label_style_ = defaultFontStyle{font_size_=12}
                                   }

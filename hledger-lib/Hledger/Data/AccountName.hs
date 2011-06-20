@@ -28,7 +28,7 @@ accountNameComponents :: AccountName -> [String]
 accountNameComponents = splitAtElement acctsepchar
 
 accountNameFromComponents :: [String] -> AccountName
-accountNameFromComponents = concat . intersperse [acctsepchar]
+accountNameFromComponents = intercalate [acctsepchar]
 
 accountLeafName :: AccountName -> String
 accountLeafName = last . accountNameComponents
@@ -194,7 +194,7 @@ accountRegexToAccountName = regexReplace "^\\^(.*?)\\(:\\|\\$\\)$" "\\1"
 
 -- | Does this string look like an exact account-matching regular expression ?
 isAccountRegex  :: String -> Bool
-isAccountRegex s = take 1 s == "^" && (take 5 $ reverse s) == ")$|:("
+isAccountRegex s = ("^" `isPrefixOf` s) && (")$|:(" `isPrefixOf` reverse s)
 
 tests_Hledger_Data_AccountName = TestList
  [

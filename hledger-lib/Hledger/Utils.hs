@@ -205,7 +205,7 @@ userError' = userError . toPlatformString
 -- math
 
 difforzero :: (Num a, Ord a) => a -> a -> a
-difforzero a b = maximum [(a - b), 0]
+difforzero a b = maximum [a - b, 0]
 
 -- regexps
 
@@ -267,7 +267,7 @@ subtreeat v t
 -- forest in which it occurs.
 subtreeinforest :: Eq a => a -> [Tree a] -> Maybe (Tree a)
 subtreeinforest _ [] = Nothing
-subtreeinforest v (t:ts) = case (subtreeat v t) of
+subtreeinforest v (t:ts) = case subtreeat v t of
                              Just t' -> Just t'
                              Nothing -> subtreeinforest v ts
           
@@ -380,15 +380,15 @@ is :: (Eq a, Show a) => a -> a -> Assertion
 a `is` e = assertEqual "" e a
 
 -- | Assert a parse result is successful, printing the parse error on failure.
-assertParse :: (Either ParseError a) -> Assertion
+assertParse :: Either ParseError a -> Assertion
 assertParse parse = either (assertFailure.show) (const (return ())) parse
 
 -- | Assert a parse result is successful, printing the parse error on failure.
-assertParseFailure :: (Either ParseError a) -> Assertion
+assertParseFailure :: Either ParseError a -> Assertion
 assertParseFailure parse = either (const $ return ()) (const $ assertFailure "parse should not have succeeded") parse
 
 -- | Assert a parse result is some expected value, printing the parse error on failure.
-assertParseEqual :: (Show a, Eq a) => (Either ParseError a) -> a -> Assertion
+assertParseEqual :: (Show a, Eq a) => Either ParseError a -> a -> Assertion
 assertParseEqual parse expected = either (assertFailure.show) (`is` expected) parse
 
 printParseError :: (Show a) => a -> IO ()

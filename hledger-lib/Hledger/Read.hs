@@ -72,11 +72,11 @@ journalFromPathAndString format fp s = do
   case journals of j:_ -> return $ Right j
                    _   -> return $ Left $ errMsg errors
     where
-      tryReader r = (runErrorT . (rParser r) fp) s
+      tryReader r = (runErrorT . rParser r fp) s
       errMsg [] = unknownFormatMsg
       errMsg es = printf "could not parse %s data in %s\n%s" (rFormat r) fp e
           where (r,e) = headDef (head readers, head es) $ filter detects $ zip readers es
-                detects (r,_) = (rDetector r) fp s
+                detects (r,_) = rDetector r fp s
       unknownFormatMsg = printf "could not parse %sdata in %s" (fmt formats) fp
           where fmt [] = ""
                 fmt [f] = f ++ " "
@@ -95,7 +95,7 @@ readJournalFile format f = do
 ensureJournalFile :: FilePath -> IO ()
 ensureJournalFile f = do
   exists <- doesFileExist f
-  when (not exists) $ do
+  unless exists $ do
     hPrintf stderr "No journal file \"%s\", creating it.\n" f
     hPrintf stderr "Edit this file or use \"hledger add\" or \"hledger web\" to add transactions.\n"
     emptyJournal >>= writeFile f

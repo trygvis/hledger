@@ -50,7 +50,7 @@ formatValue leftJustified min max value = printf formatS value
     where
       l = if leftJustified then "-" else ""
       min' = maybe "" show min
-      max' = maybe "" (\i -> "." ++ (show i)) max
+      max' = maybe "" (\i -> "." ++ show i) max
       formatS = "%" ++ l ++ min' ++ max' ++ "s"
 
 parseFormatString :: String -> Either String [FormatString]
@@ -63,8 +63,7 @@ Parsers
 -}
 
 field :: Parser Field
-field = do
-        try (string "account" >> return Account)
+field = try (string "account" >> return Account)
     <|> try (string "date" >> return Description)
     <|> try (string "description" >> return Description)
     <|> try (string "total" >> return Total)
@@ -107,7 +106,7 @@ testFormat fs value expected = assertEqual name expected actual
             FormatField leftJustify min max _ -> ("field", formatValue leftJustify min max value)
 
 testParser :: String -> [FormatString] -> Assertion
-testParser s expected = case (parseFormatString s) of
+testParser s expected = case parseFormatString s of
     Left  error -> assertFailure $ show error
     Right actual -> assertEqual ("Input: " ++ s) expected actual
 

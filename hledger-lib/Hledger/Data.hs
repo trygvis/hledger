@@ -8,35 +8,24 @@ functionality.  This package re-exports all the Hledger.Data.* modules
 -}
 
 module Hledger.Data (
-               module Hledger.Data.Account,
-               module Hledger.Data.AccountName,
-               module Hledger.Data.Amount,
-               module Hledger.Data.Commodity,
-               module Hledger.Data.Dates,
-               module Hledger.Data.Journal,
-               module Hledger.Data.Ledger,
-               module Hledger.Data.Matching,
-               module Hledger.Data.Posting,
-               module Hledger.Data.TimeLog,
-               module Hledger.Data.Transaction,
-               module Hledger.Data.Types,
+               module X,
                tests_Hledger_Data
               )
 where
 import Test.HUnit
 
-import Hledger.Data.Account
-import Hledger.Data.AccountName
-import Hledger.Data.Amount
-import Hledger.Data.Commodity
-import Hledger.Data.Dates
-import Hledger.Data.Journal
-import Hledger.Data.Ledger
-import Hledger.Data.Matching
-import Hledger.Data.Posting
-import Hledger.Data.TimeLog
-import Hledger.Data.Transaction
-import Hledger.Data.Types
+import Hledger.Data.Account as X
+import Hledger.Data.AccountName as X
+import Hledger.Data.Amount as X
+import Hledger.Data.Commodity as X
+import Hledger.Data.Dates as X
+import Hledger.Data.Journal as X
+import Hledger.Data.Ledger as X
+import Hledger.Data.Matching as X
+import Hledger.Data.Posting as X
+import Hledger.Data.TimeLog as X
+import Hledger.Data.Transaction as X
+import Hledger.Data.Types as X
 
 tests_Hledger_Data = TestList
     [

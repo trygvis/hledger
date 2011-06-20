@@ -173,11 +173,11 @@ balanceReportItemAsText opts format (_, accountName, depth, Mixed amounts) =
       asText :: [Amount] -> [String]
       asText []     = []
       asText [a]    = [formatAmount opts (Just accountName) depth a format]
-      asText (a:as) = (formatAmount opts Nothing depth a format) : asText as
+      asText (a:as) = formatAmount opts Nothing depth a format : asText as
 
 formatAmount :: [Opt] -> Maybe AccountName -> Int -> Amount -> [FormatString] -> String
 formatAmount _ _ _ _ [] = ""
-formatAmount opts accountName depth amount (f:fs) = s ++ (formatAmount opts accountName depth amount fs)
+formatAmount opts accountName depth amount (f:fs) = s ++ formatAmount opts accountName depth amount fs
   where
     s = case f of
             FormatLiteral l -> l

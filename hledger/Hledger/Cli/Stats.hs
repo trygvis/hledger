@@ -27,7 +27,7 @@ stats opts args j = do
   d <- getCurrentDay
   let filterspec = optsToFilterSpec opts args d
       l = journalToLedger filterspec j
-      reportspan = (ledgerDateSpan l) `orDatesFrom` (datespan filterspec)
+      reportspan = ledgerDateSpan l `orDatesFrom` datespan filterspec
       intervalspans = splitSpan (intervalFromOpts opts) reportspan
       showstats = showLedgerStats opts args l d
       s = intercalate "\n" $ map showstats intervalspans

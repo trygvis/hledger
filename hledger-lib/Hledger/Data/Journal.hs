@@ -204,7 +204,7 @@ filterJournalPostingsByEmpty False j@Journal{jtxns=ts} = j{jtxns=map filterposti
 filterJournalTransactionsByDepth :: Maybe Int -> Journal -> Journal
 filterJournalTransactionsByDepth Nothing j = j
 filterJournalTransactionsByDepth (Just d) j@Journal{jtxns=ts} =
-    j{jtxns=(filter (any ((<= d+1) . accountNameLevel . paccount) . tpostings) ts)}
+    j{jtxns=filter (any ((<= d+1) . accountNameLevel . paccount) . tpostings) ts}
 
 -- | Strip out any postings to accounts deeper than the specified depth
 -- (and any transactions which have no postings as a result).
@@ -257,8 +257,8 @@ journalFinalise tclock tlocal path txt ctx j@Journal{files=fs} =
 -- depends on display precision. Reports only the first error encountered.
 journalBalanceTransactions :: Journal -> Either String Journal
 journalBalanceTransactions j@Journal{jtxns=ts} =
-  case sequence $ map balance ts of Right ts' -> Right j{jtxns=ts'}
-                                    Left e    -> Left e
+  case mapM balance ts of Right ts' -> Right j{jtxns=ts'}
+                          Left e    -> Left e
       where balance = balanceTransaction (Just $ journalCanonicalCommodities j)
 
 -- | Convert all the journal's amounts to their canonical display
@@ -299,7 +299,7 @@ journalHistoricalPriceFor j d Commodity{symbol=s} = do
 -- | Close any open timelog sessions in this journal using the provided current time.
 journalCloseTimeLogEntries :: LocalTime -> Journal -> Journal
 journalCloseTimeLogEntries now j@Journal{jtxns=ts, open_timelog_entries=es} =
-  j{jtxns = ts ++ (timeLogEntriesToTransactions now es), open_timelog_entries = []}
+  j{jtxns = ts ++ timeLogEntriesToTransactions now es, open_timelog_entries = []}
 
 -- | Convert all this journal's amounts to cost by applying their prices, if any.
 journalConvertAmountsToCost :: Journal -> Journal
@@ -373,9 +373,9 @@ journalAccountInfo j = (ant, amap)
 -- functions that fetch postings, subaccount-excluding-balance and
 -- subaccount-including-balance by account name.
 groupPostings :: [Posting] -> (Tree AccountName,
-                             (AccountName -> [Posting]),
-                             (AccountName -> MixedAmount),
-                             (AccountName -> MixedAmount))
+                             AccountName -> [Posting],
+                             AccountName -> MixedAmount,
+                             AccountName -> MixedAmount)
 groupPostings ps = (ant, psof, exclbalof, inclbalof)
     where
       anames = sort $ nub $ map paccount ps

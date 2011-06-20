@@ -34,7 +34,7 @@ showPosting (Posting{paccount=a,pamount=amt,pcomment=com,ptype=t}) =
     where
       ledger3ishlayout = False
       acctnamewidth = if ledger3ishlayout then 25 else 22
-      showaccountname = printf ("%-"++(show acctnamewidth)++"s") . bracket . elideAccountName width
+      showaccountname = printf ("%-"++show acctnamewidth++"s") . bracket . elideAccountName width
       (bracket,width) = case t of
                           BalancedVirtualPosting -> (\s -> "["++s++"]", acctnamewidth-2)
                           VirtualPosting -> (\s -> "("++s++")", acctnamewidth-2)
@@ -48,7 +48,7 @@ showPostingForRegister (Posting{paccount=a,pamount=amt,ptype=t}) =
     where
       ledger3ishlayout = False
       acctnamewidth = if ledger3ishlayout then 25 else 22
-      showaccountname = printf ("%-"++(show acctnamewidth)++"s") . bracket . elideAccountName width
+      showaccountname = printf ("%-"++show acctnamewidth++"s") . bracket . elideAccountName width
       (bracket,width) = case t of
                           BalancedVirtualPosting -> (\s -> "["++s++"]", acctnamewidth-2)
                           VirtualPosting -> (\s -> "("++s++")", acctnamewidth-2)
@@ -86,9 +86,7 @@ postingDate p = maybe nulldate tdate $ ptransaction p
 -- transaction's cleared status or, if there is no parent
 -- transaction, return False.
 postingCleared :: Posting -> Bool
-postingCleared p = if pstatus p
-                    then True
-                    else maybe False tstatus $ ptransaction p
+postingCleared p = pstatus p || (maybe False tstatus $ ptransaction p)
 
 -- | Does this posting fall within the given date span ?
 isPostingInDateSpan :: DateSpan -> Posting -> Bool

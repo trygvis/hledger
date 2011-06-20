@@ -23,7 +23,7 @@ juSequence us = liftM (foldr (.) id) $ sequence us
 
 -- | Given a JournalUpdate-generating parsec parser, file path and data string,
 -- parse and post-process a Journal so that it's ready to use, or give an error.
-parseJournalWith :: (GenParser Char JournalContext (JournalUpdate,JournalContext)) -> FilePath -> String -> ErrorT String IO Journal
+parseJournalWith :: GenParser Char JournalContext (JournalUpdate,JournalContext) -> FilePath -> String -> ErrorT String IO Journal
 parseJournalWith p f s = do
   tc <- liftIO getClockTime
   tl <- liftIO getCurrentLocalTime

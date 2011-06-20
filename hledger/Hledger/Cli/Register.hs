@@ -72,7 +72,7 @@ registerReportItemAsText _ (dd, p, b) = concatTopPadded [datedesc, pstr, " ", ba
                             Just (da, de) -> printf "%s %s " date desc
                                 where
                                   date = showDate da
-                                  desc = printf ("%-"++(show descwidth)++"s") $ elideRight descwidth de :: String
+                                  desc = printf ("%-"++show descwidth++"s") $ elideRight descwidth de :: String
           where
             descwidth = datedescwidth - datewidth - 2
             datedescwidth = 32
@@ -140,7 +140,7 @@ accountRegisterReport opts j m thisacctmatcher = (label, postingsToRegisterRepor
      -- postings to display: this account's transactions' "other" postings, with any additional filter applied
      -- XXX would be better to collapse multiple postings from one txn into one (expandable) "split" item
      displayps = -- ltrace "displayps" $
-                 catMaybes $ map displayPostingFromTransaction ts
+                 mapMaybe displayPostingFromTransaction ts
 
      displaymatcher = -- ltrace "displaymatcher" $
                       MatchAnd [negateMatcher thisacctmatcher, m]
@@ -162,7 +162,7 @@ balancelabel = "Balance"
 -- | Generate register report line items.
 postingsToRegisterReportItems :: [Posting] -> Posting -> MixedAmount -> (MixedAmount -> MixedAmount -> MixedAmount) -> [RegisterReportItem]
 postingsToRegisterReportItems [] _ _ _ = []
-postingsToRegisterReportItems (p:ps) pprev b sumfn = i:(postingsToRegisterReportItems ps p b' sumfn)
+postingsToRegisterReportItems (p:ps) pprev b sumfn = i:postingsToRegisterReportItems ps p b' sumfn
     where
       i = mkitem isfirst p b'
       isfirst = ptransaction p /= ptransaction pprev
@@ -277,7 +277,7 @@ tests_Hledger_Cli_Register :: Test
 tests_Hledger_Cli_Register = TestList
  [
 
-  "summarisePostingsByInterval" ~: do
+  "summarisePostingsByInterval" ~:
     summarisePostingsByInterval (Quarters 1) Nothing False (DateSpan Nothing Nothing) [] ~?= []
 
   -- ,"summarisePostingsInDateSpan" ~: do

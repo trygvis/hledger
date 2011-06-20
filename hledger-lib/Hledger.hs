@@ -1,9 +1,4 @@
-module Hledger (
-                module Hledger.Data
-               ,module Hledger.Read
-               ,module Hledger.Utils
-)
-where
-import Hledger.Data
-import Hledger.Read
-import Hledger.Utils
+module Hledger (module X) where
+import Hledger.Data as X
+import Hledger.Read as X
+import Hledger.Utils as X

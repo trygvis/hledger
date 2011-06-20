@@ -177,7 +177,7 @@ getPostings st enteredps = do
 -- input is valid. May also raise an EOF exception if control-d is pressed.
 askFor :: String -> Maybe String -> Maybe (String -> Bool) -> InputT IO String
 askFor prompt def validator = do
-  l <- fmap (maybe eofErr id)
+  l <- fmap (fromMaybe eofErr)
             $ getInputLine $ prompt ++ maybe "" showdef def ++ ": "
   let input = if null l then fromMaybe l def else l
   case validator of
@@ -242,7 +242,7 @@ wordLetterPairs = concatMap letterPairs . words
 letterPairs (a:b:rest) = [a,b] : letterPairs (b:rest)
 letterPairs _ = []
 
-compareDescriptions :: [Char] -> [Char] -> Double
+compareDescriptions :: String -> String -> Double
 compareDescriptions s t = compareStrings s' t'
     where s' = simplify s
           t' = simplify t
@@ -264,8 +264,7 @@ runInteraction j m = do
     runInputT (setComplete (accountCompletion cc) defaultSettings) m
 
 runInteractionDefault :: InputT IO a -> IO a
-runInteractionDefault m = do
-    runInputT (setComplete noCompletion defaultSettings) m
+runInteractionDefault m = runInputT (setComplete noCompletion defaultSettings) m
 
 -- A precomputed list of all accounts previously entered into the journal.
 type CompletionCache = [AccountName]

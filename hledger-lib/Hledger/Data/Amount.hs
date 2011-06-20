@@ -177,10 +177,10 @@ showAmount a@(Amount (Commodity {symbol=sym,side=side,spaced=spaced}) _ pri) =
       R -> printf "%s%s%s%s" quantity' space sym' price
     where
       quantity = showamountquantity a
-      displayingzero = null $ filter (`elem` "123456789") $ quantity
+      displayingzero = not (any (`elem` "123456789") quantity)
       (quantity',sym') | displayingzero = ("0","")
                        | otherwise      = (quantity,quoteCommoditySymbolIfNeeded sym)
-      space = if (not (null sym') && spaced) then " " else ""
+      space = if not (null sym') && spaced then " " else ""
       price = maybe "" showPrice pri
 
 -- | Get the string representation of the number part of of an amount,
@@ -229,18 +229,18 @@ punctuatethousands s =
     where 
       (sign,num) = break isDigit s
       (int,frac) = break (=='.') num
-      addcommas = reverse . concat . intersperse "," . triples . reverse
+      addcommas = reverse . intercalate "," . triples . reverse
       triples [] = []
       triples l  = take 3 l : triples (drop 3 l)
 
 -- | Does this amount appear to be zero when displayed with its given precision ?
 isZeroAmount :: Amount -> Bool
-isZeroAmount = null . filter (`elem` "123456789") . showAmountWithoutPriceOrCommodity
+isZeroAmount = not . any (`elem` "123456789") . showAmountWithoutPriceOrCommodity
 
 -- | Is this amount "really" zero, regardless of the display precision ?
 -- Since we are using floating point, for now just test to some high precision.
 isReallyZeroAmount :: Amount -> Bool
-isReallyZeroAmount = null . filter (`elem` "123456789") . printf ("%."++show zeroprecision++"f") . quantity
+isReallyZeroAmount = not . any (`elem` "123456789") . printf ("%."++show zeroprecision++"f") . quantity
     where zeroprecision = 8
 
 -- | Is this amount negative ? The price is ignored.
@@ -305,7 +305,7 @@ showMixedAmountDebug m = printf "Mixed [%s]" as
 -- | Get the string representation of a mixed amount, but without
 -- any \@ prices.
 showMixedAmountWithoutPrice :: MixedAmount -> String
-showMixedAmountWithoutPrice m = concat $ intersperse "\n" $ map showfixedwidth as
+showMixedAmountWithoutPrice m = intercalate "\n" $ map showfixedwidth as
     where
       (Mixed as) = normaliseMixedAmountIgnoringPrice m
       width = maximum $ map (length . show) as
@@ -335,7 +335,7 @@ normaliseMixedAmount (Mixed as) = Mixed as''
       as'' = if null nonzeros then [nullamt] else nonzeros
       (_,nonzeros) = partition (\a -> isReallyZeroAmount a && Mixed [a] /= missingamt) as'
       as' = map sumSamePricedAmountsPreservingPrice $ group $ sort as
-      sort = sortBy (\a1 a2 -> compare (sym a1) (sym a2))
+      sort = sortBy $ comparing sym
       group = groupBy (\a1 a2 -> sym a1 == sym a2)
       sym = symbol . commodity
 
@@ -416,7 +416,7 @@ costOfMixedAmount (Mixed as) = Mixed $ map costOfAmount as
 
 -- | Divide a mixed amount's quantities by some constant.
 divideMixedAmount :: MixedAmount -> Double -> MixedAmount
-divideMixedAmount (Mixed as) d = Mixed $ map (flip divideAmount d) as
+divideMixedAmount (Mixed as) d = Mixed $ map (`divideAmount` d) as
 
 -- | Divide an amount's quantity by some constant.
 divideAmount :: Amount -> Double -> Amount
@@ -466,8 +466,8 @@ tests_Hledger_Data_Amount = TestList [
     sum [a3,a3] `is` Amount (comm "$") (-2.46) Nothing
     sum [a1,a2,a3,-a3] `is` Amount (comm "$") 0 Nothing
     let dollar0 = dollar{precision=0}
-    (sum [Amount dollar 1.25 Nothing, Amount dollar0 (-1) Nothing, Amount dollar (-0.25) Nothing])
-      `is` (Amount dollar 0 Nothing)
+    sum [Amount dollar 1.25 Nothing, Amount dollar0 (-1) Nothing, Amount dollar (-0.25) Nothing]
+      `is` Amount dollar 0 Nothing
 
   ,"mixed amount arithmetic" ~: do
     let dollar0 = dollar{precision=0}
@@ -479,10 +479,10 @@ tests_Hledger_Data_Amount = TestList [
 
   ,"normaliseMixedAmount" ~: do
      normaliseMixedAmount (Mixed []) `is` Mixed [nullamt]
-     assertBool "" $ isZeroMixedAmount $ normaliseMixedAmount (Mixed [Amount {commodity=dollar, quantity=10,    price=Nothing}
-                                                                     ,Amount {commodity=dollar, quantity=10,    price=Just (TotalPrice (Mixed [Amount {commodity=euro, quantity=7, price=Nothing}]))}
-                                                                     ,Amount {commodity=dollar, quantity=(-10), price=Nothing}
-                                                                     ,Amount {commodity=dollar, quantity=(-10), price=Just (TotalPrice (Mixed [Amount {commodity=euro, quantity=7, price=Nothing}]))}
+     assertBool "" $ isZeroMixedAmount $ normaliseMixedAmount (Mixed [Amount {commodity=dollar, quantity=10,   price=Nothing}
+                                                                     ,Amount {commodity=dollar, quantity=10,   price=Just (TotalPrice (Mixed [Amount {commodity=euro, quantity=7, price=Nothing}]))}
+                                                                     ,Amount {commodity=dollar, quantity= -10, price=Nothing}
+                                                                     ,Amount {commodity=dollar, quantity= -10, price=Just (TotalPrice (Mixed [Amount {commodity=euro, quantity=7, price=Nothing}]))}
                                                                      ])
 
   ,"punctuatethousands 1" ~: punctuatethousands "" `is` ""

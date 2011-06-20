@@ -120,7 +120,7 @@ balancedVirtualPostings :: Transaction -> [Posting]
 balancedVirtualPostings = filter isBalancedVirtual . tpostings
 
 transactionsPostings :: [Transaction] -> [Posting]
-transactionsPostings = concat . map tpostings
+transactionsPostings = concatMap tpostings
 
 -- | Get the sums of a transaction's real, virtual, and balanced virtual postings.
 transactionPostingBalances :: Transaction -> (MixedAmount,MixedAmount,MixedAmount)
@@ -166,8 +166,8 @@ balanceTransaction canonicalcommoditymap t@Transaction{tpostings=ps}
       bvamounts = map pamount bvwithamounts
       t' = t{tpostings=map inferamount ps}
           where 
-            inferamount p | not (hasAmount p) && isReal p            = p{pamount = (- sum ramounts)}
-                          | not (hasAmount p) && isBalancedVirtual p = p{pamount = (- sum bvamounts)}
+            inferamount p | not (hasAmount p) && isReal p            = p{pamount = - sum ramounts}
+                          | not (hasAmount p) && isBalancedVirtual p = p{pamount = - sum bvamounts}
                           | otherwise                             = p
 
       -- maybe infer conversion prices, for real postings
@@ -189,10 +189,10 @@ balanceTransaction canonicalcommoditymap t@Transaction{tpostings=ps}
                                         -- invariant: prices should always be positive. Enforced with "abs"
                                         = if length ramountsinunpricedcommodity == 1
                                            then Just $ TotalPrice $ Mixed [setAmountPrecision maxprecision $ abs $ targetcommodityamount]
-                                           else Just $ UnitPrice $ Mixed [setAmountPrecision maxprecision $ abs $ targetcommodityamount `divideAmount` (quantity unpricedamount)]
+                                           else Just $ UnitPrice $ Mixed [setAmountPrecision maxprecision $ abs $ targetcommodityamount `divideAmount` quantity unpricedamount]
                                     | otherwise = Nothing
                       where
-                        unpricedcommodity     = head $ filter (`elem` (map commodity rsumamounts)) rcommoditiesinorder
+                        unpricedcommodity     = head $ filter (`elem` map commodity rsumamounts) rcommoditiesinorder
                         unpricedamount        = head $ filter ((==unpricedcommodity).commodity) rsumamounts
                         targetcommodityamount = head $ filter ((/=unpricedcommodity).commodity) rsumamounts
                         ramountsinunpricedcommodity = filter ((==unpricedcommodity).commodity) ramountsinorder
@@ -213,10 +213,10 @@ balanceTransaction canonicalcommoditymap t@Transaction{tpostings=ps}
                   conversionprice c | c == unpricedcommodity
                                         = if length bvamountsinunpricedcommodity == 1
                                            then Just $ TotalPrice $ Mixed [setAmountPrecision maxprecision $ abs $ targetcommodityamount]
-                                           else Just $ UnitPrice $ Mixed [setAmountPrecision maxprecision $ abs $ targetcommodityamount `divideAmount` (quantity unpricedamount)]
+                                           else Just $ UnitPrice $ Mixed [setAmountPrecision maxprecision $ abs $ targetcommodityamount `divideAmount` quantity unpricedamount]
                                     | otherwise = Nothing
                       where
-                        unpricedcommodity     = head $ filter (`elem` (map commodity bvsumamounts)) bvcommoditiesinorder
+                        unpricedcommodity     = head $ filter (`elem` map commodity bvsumamounts) bvcommoditiesinorder
                         unpricedamount        = head $ filter ((==unpricedcommodity).commodity) bvsumamounts
                         targetcommodityamount = head $ filter ((/=unpricedcommodity).commodity) bvsumamounts
                         bvamountsinunpricedcommodity = filter ((==unpricedcommodity).commodity) bvamountsinorder
@@ -350,7 +350,7 @@ tests_Hledger_Data_Transaction = TestList [
      assertEqual "balancing amount is inferred"
                      (Mixed [dollars (-1)])
                      (case e of
-                        Right e' -> (pamount $ last $ tpostings e')
+                        Right e' -> pamount $ last $ tpostings e'
                         Left _ -> error' "should not happen")
      let e = balanceTransaction Nothing (Transaction (parsedate "2011/01/01") Nothing False "" "" "" []
                            [Posting False "a" (Mixed [dollars 1.35]) "" RegularPosting [] Nothing,
@@ -360,11 +360,11 @@ tests_Hledger_Data_Transaction = TestList [
      assertEqual "balancing conversion price is inferred"
                      (Mixed [Amount{commodity=dollar{precision=2},
                                     quantity=1.35,
-                                    price=(Just $ TotalPrice $ Mixed [Amount{commodity=euro{precision=maxprecision},
+                                    price=Just $ TotalPrice $ Mixed [Amount{commodity=euro{precision=maxprecision},
                                                                              quantity=1,
-                                                                             price=Nothing}])}])
+                                                                             price=Nothing}]}])
                      (case e of
-                        Right e' -> (pamount $ head $ tpostings e')
+                        Right e' -> pamount $ head $ tpostings e'
                         Left _ -> error' "should not happen")
 
   ,"isTransactionBalanced" ~: do

@@ -336,23 +336,31 @@ yyyymmdd = do
   failIfInvalidDay d
   return (y,m,d)
 
-ymd :: GenParser Char st SmartDate
-ymd = do
+yearSep :: GenParser Char st [Char]
+yearSep = do
   y <- many1 digit
   failIfInvalidYear y
   datesepchar
+  return y
+
+monthSep :: GenParser Char st [Char]
+monthSep = do
   m <- many1 digit
   failIfInvalidMonth m
   datesepchar
+  return m
+
+ymd :: GenParser Char st SmartDate
+ymd = do
+  y <- yearSep
+  m <- monthSep
   d <- many1 digit
   failIfInvalidDay d
   return $ (y,m,d)
 
 ym :: GenParser Char st SmartDate
 ym = do
-  y <- many1 digit
-  failIfInvalidYear y
-  datesepchar
+  y <- yearSep
   m <- many1 digit
   failIfInvalidMonth m
   return (y,m,"")
@@ -371,9 +379,7 @@ d = do
 
 md :: GenParser Char st SmartDate
 md = do
-  m <- many1 digit
-  failIfInvalidMonth m
-  datesepchar
+  m <- monthSep
   d <- many1 digit
   failIfInvalidDay d
   return ("",m,d)
@@ -429,7 +435,7 @@ periodexpr rdate = choice $ map try [
                     intervalanddateperiodexpr rdate,
                     intervalperiodexpr,
                     dateperiodexpr rdate,
-                    (return (NoInterval,DateSpan Nothing Nothing))
+                    return (NoInterval,DateSpan Nothing Nothing)
                    ]
 
 intervalanddateperiodexpr :: Day -> GenParser Char st (Interval, DateSpan)

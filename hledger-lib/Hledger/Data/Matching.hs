@@ -178,19 +178,19 @@ matchesPosting (MatchNone) _ = False
 matchesPosting (MatchOr ms) p = any (`matchesPosting` p) ms
 matchesPosting (MatchAnd ms) p = all (`matchesPosting` p) ms
 matchesPosting (MatchDesc True r) p = regexMatchesCI r $ maybe "" tdescription $ ptransaction p
-matchesPosting (MatchDesc False r) p = not $ (MatchDesc True r) `matchesPosting` p
+matchesPosting (MatchDesc False r) p = not $ MatchDesc True r `matchesPosting` p
 matchesPosting (MatchAcct True r) p = regexMatchesCI r $ paccount p
-matchesPosting (MatchAcct False r) p = not $ (MatchAcct True r) `matchesPosting` p
+matchesPosting (MatchAcct False r) p = not $ MatchAcct True r `matchesPosting` p
 matchesPosting (MatchDate True span) p =
     case d of Just d'  -> spanContainsDate span d'
               Nothing -> False
     where d = maybe Nothing (Just . tdate) $ ptransaction p
-matchesPosting (MatchDate False span) p = not $ (MatchDate True span) `matchesPosting` p
+matchesPosting (MatchDate False span) p = not $ MatchDate True span `matchesPosting` p
 matchesPosting (MatchEDate True span) p =
     case d of Just d  -> spanContainsDate span d
               Nothing -> False
     where d = maybe Nothing teffectivedate $ ptransaction p
-matchesPosting (MatchEDate False span) p = not $ (MatchEDate True span) `matchesPosting` p
+matchesPosting (MatchEDate False span) p = not $ MatchEDate True span `matchesPosting` p
 matchesPosting _ _ = False
 
 -- | Does the match expression match this transaction ?
@@ -200,14 +200,14 @@ matchesTransaction (MatchNone) _ = False
 matchesTransaction (MatchOr ms) t = any (`matchesTransaction` t) ms
 matchesTransaction (MatchAnd ms) t = all (`matchesTransaction` t) ms
 matchesTransaction (MatchDesc True r) t = regexMatchesCI r $ tdescription t
-matchesTransaction (MatchDesc False r) t = not $ (MatchDesc True r) `matchesTransaction` t
+matchesTransaction (MatchDesc False r) t = not $ MatchDesc True r `matchesTransaction` t
 matchesTransaction m@(MatchAcct True _) t = any (m `matchesPosting`) $ tpostings t
-matchesTransaction (MatchAcct False r) t = not $ (MatchAcct True r) `matchesTransaction` t
+matchesTransaction (MatchAcct False r) t = not $ MatchAcct True r `matchesTransaction` t
 matchesTransaction (MatchDate True span) t = spanContainsDate span $ tdate t
-matchesTransaction (MatchDate False span) t = not $ (MatchDate True span) `matchesTransaction` t
+matchesTransaction (MatchDate False span) t = not $ MatchDate True span `matchesTransaction` t
 matchesTransaction (MatchEDate True span) Transaction{teffectivedate=Just d} = spanContainsDate span d
 matchesTransaction _ Transaction{teffectivedate=Nothing} = False
-matchesTransaction (MatchEDate False span) t = not $ (MatchEDate True span) `matchesTransaction` t
+matchesTransaction (MatchEDate False span) t = not $ MatchEDate True span `matchesTransaction` t
 matchesTransaction _ _ = False
 
 -- | Does the match expression match this account ?
@@ -218,7 +218,7 @@ matchesAccount (MatchNone) _ = False
 matchesAccount (MatchOr ms) a = any (`matchesAccount` a) ms
 matchesAccount (MatchAnd ms) a = all (`matchesAccount` a) ms
 matchesAccount (MatchAcct True r) a = regexMatchesCI r a
-matchesAccount (MatchAcct False r) a = not $ (MatchAcct True r) `matchesAccount` a
+matchesAccount (MatchAcct False r) a = not $ MatchAcct True r `matchesAccount` a
 matchesAccount _ _ = False
 
 -- | What start date does this matcher specify, if any ?
@@ -237,8 +237,8 @@ matcherStartDate _ _ = Nothing
 matcherIsStartDateOnly :: Bool -> Matcher -> Bool
 matcherIsStartDateOnly _ MatchAny = False
 matcherIsStartDateOnly _ MatchNone = False
-matcherIsStartDateOnly effective (MatchOr ms) = and $ map (matcherIsStartDateOnly effective) ms
-matcherIsStartDateOnly effective (MatchAnd ms) = and $ map (matcherIsStartDateOnly effective) ms
+matcherIsStartDateOnly effective (MatchOr ms) = all (matcherIsStartDateOnly effective) ms
+matcherIsStartDateOnly effective (MatchAnd ms) = all (matcherIsStartDateOnly effective) ms
 matcherIsStartDateOnly False (MatchDate _ (DateSpan (Just _) _)) = True
 matcherIsStartDateOnly True (MatchEDate _ (DateSpan (Just _) _)) = True
 matcherIsStartDateOnly _ _ = False
