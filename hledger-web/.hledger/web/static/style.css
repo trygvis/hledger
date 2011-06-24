@@ -109,7 +109,7 @@ table.registerreport tr     { vertical-align:top; }
 table.registerreport td     { padding-bottom:0.2em; }
 table.registerreport .date  { white-space:nowrap; }
 tr.firstposting td          { }
-tr.newday td                { border-top: 1px solid #464; }
+tr.newday td                { border-top: 1px solid #797; }
 /* tr.newday .date             { font-weight:bold; } */
 tr.newmonth td              { border-top: 2px solid #464; }
 /* tr.newyear td               { border-top: 3px solid black; } */
