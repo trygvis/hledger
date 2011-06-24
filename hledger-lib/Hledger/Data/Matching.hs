@@ -135,7 +135,7 @@ words'' prefixes = fromparse . parsewith maybeprefixedquotedphrases -- XXX
 
 -- keep synced with patterns below, excluding "not"
 prefixes = map (++":") [
-            "inacct","inaccts",
+            "inacct","inaccts","inacctsonly",
             "desc","acct","date","edate","status","real","empty","depth"
            ]
 defaultprefix = "acct"
