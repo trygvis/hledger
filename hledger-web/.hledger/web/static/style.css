@@ -22,6 +22,7 @@ body                                                                 { backgroun
 #addform input.textinput, #addform .dhx_combo_input, .dhx_combo_list { background-color:#eee; }
 #editform textarea                                                   { background-color:#eee; }
 .negative                                                            { color:#800; }
+.help                                                                {  }
 
 .balancereport .inacct                                               { background-color:#ddd; font-weight:bold; }
 .notinacct, .notinacct :link, .notinacct :visited, .notinacct .negative  { /*color:#aaa;*/ }
