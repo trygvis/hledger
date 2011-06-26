@@ -8,7 +8,7 @@ import Prelude hiding (getContents)
 import Control.Monad (when, guard, liftM)
 import Data.Maybe
 import Data.Time.Format (parseTime)
-import Safe (atDef, maximumDef)
+import Safe (atDef, atMay, maximumDef)
 import Safe (readDef, readMay)
 import System.Directory (doesFileExist)
 import System.Exit (exitFailure)
@@ -25,9 +25,12 @@ import Hledger.Cli.Options (Opt(Debug), progname_cli, rulesFileFromOpts)
 import Hledger.Data.Amount (nullmixedamt, costOfMixedAmount)
 import Hledger.Data.Dates (firstJust, showDate, parsedate)
 import Hledger.Data (Journal,AccountName,Transaction(..),Posting(..),PostingType(..))
+import Hledger.Read.Format
+import qualified Hledger.Read.Format as Format
 import Hledger.Data.Journal (nullctx)
 import Hledger.Read.JournalReader (someamount,ledgeraccountname)
-import Hledger.Utils (strip, spacenonewline, restofline, parseWithCtx, assertParse, assertParseEqual, error', regexMatchesCI, regexReplaceCI)
+import Hledger.Utils (choice', strip, spacenonewline, restofline, parseWithCtx, assertParse, assertParseEqual, error', regexMatchesCI, regexReplaceCI)
+import Hledger.Utils (mtrace, ltrace)
 import Hledger.Utils.UTF8 (getContents)
 
 {- |
@@ -39,7 +42,7 @@ data CsvRules = CsvRules {
       dateFormat :: Maybe String,
       statusField :: Maybe FieldPosition,
       codeField :: Maybe FieldPosition,
-      descriptionField :: Maybe FieldPosition,
+      descriptionField :: [FormatString],
       amountField :: Maybe FieldPosition,
       inField :: Maybe FieldPosition,
       outField :: Maybe FieldPosition,
@@ -57,7 +60,7 @@ nullrules = CsvRules {
       dateFormat=Nothing,
       statusField=Nothing,
       codeField=Nothing,
-      descriptionField=Nothing,
+      descriptionField=[],
       amountField=Nothing,
       inField=Nothing,
       outField=Nothing,
@@ -131,7 +134,6 @@ maxFieldIndex r = maximumDef (-1) $ catMaybes [
                    dateField r
                   ,statusField r
                   ,codeField r
-                  ,descriptionField r
                   ,amountField r
                   ,inField r
                   ,outField r
@@ -207,11 +209,14 @@ csvrulesfile = do
   return r{accountRules=ars}
 
 -- | Real independent parser choice, even when alternative matches share a prefix.
-choice' parsers = choice $ map try (init parsers) ++ [last parsers]
+-- choice' parsers = choice $ map try (init parsers) ++ [last parsers]
 
-definitions :: GenParser Char CsvRules ()
+-- definitions :: GenParser Char CsvRules CsvRules
 definitions = do
   choice' [
+{-
+    descriptionfield
+-}
     datefield
    ,dateformat
    ,statusfield
@@ -234,100 +239,149 @@ datefield = do
   string "date-field"
   many1 spacenonewline
   v <- restofline
-  r <- getState
-  setState r{dateField=readMay v}
+--  r <- getState
+--  setState r{dateField=readMay v}
+  updateState (\r -> r{dateField=readMay v})
 
 effectivedatefield = do
   string "effective-date-field"
   many1 spacenonewline
   v <- restofline
-  r <- getState
-  setState r{effectiveDateField=readMay v}
+--  r <- getState
+--  setState r{effectiveDateField=readMay v}
+  updateState (\r -> r{effectiveDateField=readMay v})
 
 dateformat = do
   string "date-format"
   many1 spacenonewline
   v <- restofline
-  r <- getState
-  setState r{dateFormat=Just v}
+--  r <- getState
+--  setState r{dateFormat=Just v}
+  updateState (\r -> r{dateFormat=Just v})
 
 codefield = do
   string "code-field"
   many1 spacenonewline
   v <- restofline
-  r <- getState
-  setState r{codeField=readMay v}
+--  r <- getState
+--  setState r{codeField=readMay v}
+  updateState (\r -> r{codeField=readMay v})
 
 statusfield = do
   string "status-field"
   many1 spacenonewline
   v <- restofline
-  r <- getState
-  setState r{statusField=readMay v}
+--  r <- getState
+--  setState r{statusField=readMay v}
+  updateState (\r -> r{statusField=readMay v})
 
+{-
+positive :: GenParser Char st Int
+positive = do
+  mtrace ">>> positive"
+  digits <- many1 digit
+  let value = read digits
+  return $ ltrace "<<< positive" value
+-}
+
+fieldNo :: GenParser Char st [FormatString]
+fieldNo = do
+--  mtrace ">>> fieldNo"
+  i <- many1 digit
+  let s = [FormatField False Nothing Nothing $ FieldNo $ read i]
+  return s -- $ ltrace "<<< fieldNo" s
+
+descriptionFieldValue :: GenParser Char st [FormatString]
+descriptionFieldValue = do
+  -- fieldNo will consume many1 digit
+  -- formatStrings will consume anything
+  mtrace ">>> descriptionFieldValue";
+      try fieldNoW
+  <|> formatStringsW
+  where
+    fieldNoW = fieldNo >>= (\x -> return $ ltrace "<<< descriptionFieldValue (fieldNo)" x)
+    formatStringsW = formatStrings >>= (\x -> return $ ltrace "<<< descriptionFieldValue (formatString)" x)
+
+--descriptionfield :: GenParser Char st ()
+--descriptionfield :: GenParser Char st CsvRules
 descriptionfield = do
+  mtrace ">>> descriptionfield"
   string "description-field"
-  many1 spacenonewline
-  v <- restofline
-  r <- getState
-  setState r{descriptionField=readMay v}
+  space1 <- many1 spacenonewline
+  mtrace ("many1 spacenonewline '" ++ show space1 ++ "'")
+  formatS <- descriptionFieldValue
+  restofline
+--  c <- optionMaybe anyChar
+--  updateState (\x -> x{descriptionField=formatS}) >>= (\formatS -> return $ ltrace ("<<< descriptionfield, c=" ++ (show c)) formatS)
+  updateState (\x -> ltrace "<<< descriptionfield" x{descriptionField=formatS})
 
 amountfield = do
   string "amount-field"
+  mtrace ">>> amountfield"
   many1 spacenonewline
   v <- restofline
-  r <- getState
-  setState r{amountField=readMay v}
+--  r <- getState
+--  setState r{amountField=readMay v}
+  x <- updateState (\r -> r{amountField=readMay v})
+  mtrace "<<< amountfield"
+  return x
 
 infield = do
   string "in-field"
   many1 spacenonewline
   v <- restofline
-  r <- getState
-  setState r{inField=readMay v}
+--  r <- getState
+--  setState r{inField=readMay v}
+  updateState (\r -> r{inField=readMay v})
 
 outfield = do
   string "out-field"
   many1 spacenonewline
   v <- restofline
-  r <- getState
-  setState r{outField=readMay v}
+--  r <- getState
+--  setState r{outField=readMay v}
+  updateState (\r -> r{outField=readMay v})
 
 currencyfield = do
   string "currency-field"
   many1 spacenonewline
   v <- restofline
-  r <- getState
-  setState r{currencyField=readMay v}
+--  r <- getState
+--  setState r{currencyField=readMay v}
+  updateState (\r -> r{currencyField=readMay v})
 
 accountfield = do
   string "account-field"
   many1 spacenonewline
   v <- restofline
-  r <- getState
-  setState r{accountField=readMay v}
+--  r <- getState
+--  setState r{accountField=readMay v}
+  updateState (\r -> r{accountField=readMay v})
 
 account2field = do
   string "account2-field"
   many1 spacenonewline
   v <- restofline
-  r <- getState
-  setState r{account2Field=readMay v}
+--  r <- getState
+--  setState r{account2Field=readMay v}
+  updateState (\r -> r{account2Field=readMay v})
 
 basecurrency = do
   string "currency"
   many1 spacenonewline
   v <- restofline
-  r <- getState
-  setState r{baseCurrency=Just v}
+--  r <- getState
+--  setState r{baseCurrency=Just v}
+  updateState (\r -> r{baseCurrency=Just v})
 
 baseaccount = do
   string "base-account"
   many1 spacenonewline
   v <- ledgeraccountname
   optional newline
-  r <- getState
-  setState r{baseAccount=v}
+--  r <- getState
+--  setState r{baseAccount=v}
+  updateState (\r -> r{baseAccount=v})
 
 accountrule :: GenParser Char CsvRules AccountRule
 accountrule = do
@@ -340,14 +394,17 @@ accountrule = do
   return (pats',acct)
  <?> "account rule"
 
-blanklines = many1 blankline >> return ()
+blanklines = many1 blankline
 
 blankline = many spacenonewline >> newline >> return () <?> "blank line"
+-- blankline = many spacenonewline >> newline >> getState <?> "blank line"
 
 commentchar = oneOf ";#"
 
+-- commentline :: GenParser Char CsvRules CsvRules
 commentline = many spacenonewline >> commentchar >> restofline >> return () <?> "comment line"
 
+-- blankorcommentline :: GenParser Char CsvRules CsvRules
 blankorcommentline = choice' [blankline, commentline]
 
 matchreplacepattern = do
@@ -363,6 +420,24 @@ printTxn debug rules rec = do
   putStr $ show $ transactionFromCsvRecord rules rec
 
 -- csv record conversion
+formatD :: CsvRecord -> Bool -> Maybe Int -> Maybe Int -> Field -> String
+formatD record leftJustified min max f = case f of 
+  FieldNo n       -> maybe "" show $ atMay record n
+  -- Some of these might in theory in read from fields
+  Format.Account  -> ""
+  DepthSpace      -> ""
+  Total           -> ""
+  DefaultDate     -> ""
+  Description     -> ""
+ where
+   show = formatValue leftJustified min max
+
+formatDescription :: CsvRecord -> [FormatString] -> String
+formatDescription _ [] = ""
+formatDescription record (f:fs) = s ++ (formatDescription record fs)
+  where s = case f of
+                FormatLiteral l -> l
+                FormatField leftJustified min max field  -> formatD record leftJustified min max field
 
 transactionFromCsvRecord :: CsvRules -> CsvRecord -> Transaction
 transactionFromCsvRecord rules fields =
@@ -372,7 +447,8 @@ transactionFromCsvRecord rules fields =
                          return $ parsedate $ normaliseDate (dateFormat rules) $ (atDef "" fields) idx
       status = maybe False (null . strip . (atDef "" fields)) (statusField rules)
       code = maybe "" (atDef "" fields) (codeField rules)
-      desc = maybe "" (atDef "" fields) (descriptionField rules)
+--      desc = maybe "" (atDef "" fields) (descriptionField rules)
+      desc = formatDescription fields (descriptionField rules)
       comment = ""
       precomment = ""
       baseacc = maybe (baseAccount rules) (atDef "" fields) (accountField rules)
@@ -467,7 +543,25 @@ getAmount rules fields = case amountField rules of
       c = maybe "" (atDef "" fields) (inField rules)
       d = maybe "" (atDef "" fields) (outField rules)
 
-tests_Hledger_Cli_Convert = TestList [
+tests_Hledger_Cli_Convert = TestList (test_parser ++ test_description_parsing)
+
+test_description_parsing = [
+      "description-field 1" ~: assertParseDescription "description-field 1" [FormatField False Nothing Nothing (FieldNo 1)]
+    , "description-field %(1)" ~: assertParseDescription "description-field %(1)" [FormatField False Nothing Nothing (FieldNo 1)]
+    ]
+  where
+    assertParseDescription string expected = do assertParseEqual (parseDescription string) (nullrules {descriptionField = expected})
+-- descriptionfield :: GenParser Char CsvRules ()
+-- runParser :: GenParser tok st a -> st -> SourceName -> [tok] -> Either ParseError a
+    parseDescription :: String -> Either ParseError CsvRules
+    parseDescription x = runParser descriptionfieldWrapper nullrules "(unknown)" x
+    descriptionfieldWrapper :: GenParser Char CsvRules CsvRules
+    descriptionfieldWrapper = do
+      descriptionfield
+      r <- getState
+      return r
+
+test_parser =  [
 
    "convert rules parsing: empty file" ~: do
      -- let assertMixedAmountParse parseresult mixedamount =

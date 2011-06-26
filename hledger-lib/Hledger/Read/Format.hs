@@ -1,5 +1,6 @@
 module Hledger.Read.Format (
           parseFormatString
+        , formatStrings
         , formatValue
         , FormatString(..)
         , Field(..)
@@ -27,6 +28,7 @@ data Field =
   | Description
   | Total
   | DepthSpace
+  | FieldNo Int
     deriving (Show, Eq)
 
 data FormatString =
@@ -54,7 +56,7 @@ formatValue leftJustified min max value = printf formatS value
       formatS = "%" ++ l ++ min' ++ max' ++ "s"
 
 parseFormatString :: String -> Either String [FormatString]
-parseFormatString input = case parse formatStrings "(unknown)" input of
+parseFormatString input = case (runParser formatStrings () "(unknown)") input of
     Left y -> Left $ show y
     Right x -> Right x
 
@@ -62,29 +64,30 @@ parseFormatString input = case parse formatStrings "(unknown)" input of
 Parsers
 -}
 
-field :: Parser Field
+field :: GenParser Char st Field
 field = do
         try (string "account" >> return Account)
     <|> try (string "date" >> return Description)
     <|> try (string "description" >> return Description)
     <|> try (string "total" >> return Total)
+    <|> try (many1 digit >>= (\s -> return $ FieldNo $ read s))
 
-formatField :: Parser FormatString
+formatField :: GenParser Char st FormatString
 formatField = do
     char '%'
     leftJustified <- optionMaybe (char '-')
     minWidth <- optionMaybe (many1 $ digit)
-    maxWidth <- optionMaybe (do char '.'; many1 $ digit)
+    maxWidth <- optionMaybe (do char '.'; many1 $ digit) -- TODO: Can this be (char '1') *> (many1 digit)
     char '('
-    field <- field
+    f <- field
     char ')'
-    return $ FormatField (isJust leftJustified) (parseDec minWidth) (parseDec maxWidth) field
+    return $ FormatField (isJust leftJustified) (parseDec minWidth) (parseDec maxWidth) f
     where
       parseDec s = case s of
         Just text -> Just m where ((m,_):_) = readDec text
         _ -> Nothing
 
-formatLiteral :: Parser FormatString
+formatLiteral :: GenParser Char st FormatString
 formatLiteral = do
     s <- many1 c
     return $ FormatLiteral s
@@ -92,11 +95,12 @@ formatLiteral = do
       c =     noneOf "%"
           <|> try (string "%%" >> return '%')
 
-formatString :: Parser FormatString
+formatString :: GenParser Char st FormatString
 formatString =
         formatField
     <|> formatLiteral
 
+formatStrings :: GenParser Char st [FormatString]
 formatStrings = many formatString
 
 testFormat :: FormatString -> String -> String -> Assertion
