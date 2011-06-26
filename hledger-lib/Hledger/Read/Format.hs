@@ -8,6 +8,7 @@ module Hledger.Read.Format (
         ) where
 
 import Numeric
+import Data.Char (isPrint)
 import Data.Maybe
 import Test.HUnit
 import Text.ParserCombinators.Parsec
@@ -92,7 +93,8 @@ formatLiteral = do
     s <- many1 c
     return $ FormatLiteral s
     where
-      c =     noneOf "%"
+      isPrintableButNotPercentage x = isPrint x && (not $ x == '%')
+      c =     (satisfy isPrintableButNotPercentage <?> "printable character")
           <|> try (string "%%" >> return '%')
 
 formatString :: GenParser Char st FormatString

@@ -30,7 +30,6 @@ import qualified Hledger.Read.Format as Format
 import Hledger.Data.Journal (nullctx)
 import Hledger.Read.JournalReader (someamount,ledgeraccountname)
 import Hledger.Utils (choice', strip, spacenonewline, restofline, parseWithCtx, assertParse, assertParseEqual, error', regexMatchesCI, regexReplaceCI)
-import Hledger.Utils (mtrace, ltrace)
 import Hledger.Utils.UTF8 (getContents)
 
 {- |
@@ -214,9 +213,6 @@ csvrulesfile = do
 -- definitions :: GenParser Char CsvRules CsvRules
 definitions = do
   choice' [
-{-
-    descriptionfield
--}
     datefield
    ,dateformat
    ,statusfield
@@ -239,139 +235,88 @@ datefield = do
   string "date-field"
   many1 spacenonewline
   v <- restofline
---  r <- getState
---  setState r{dateField=readMay v}
   updateState (\r -> r{dateField=readMay v})
 
 effectivedatefield = do
   string "effective-date-field"
   many1 spacenonewline
   v <- restofline
---  r <- getState
---  setState r{effectiveDateField=readMay v}
   updateState (\r -> r{effectiveDateField=readMay v})
 
 dateformat = do
   string "date-format"
   many1 spacenonewline
   v <- restofline
---  r <- getState
---  setState r{dateFormat=Just v}
   updateState (\r -> r{dateFormat=Just v})
 
 codefield = do
   string "code-field"
   many1 spacenonewline
   v <- restofline
---  r <- getState
---  setState r{codeField=readMay v}
   updateState (\r -> r{codeField=readMay v})
 
 statusfield = do
   string "status-field"
   many1 spacenonewline
   v <- restofline
---  r <- getState
---  setState r{statusField=readMay v}
   updateState (\r -> r{statusField=readMay v})
-
-{-
-positive :: GenParser Char st Int
-positive = do
-  mtrace ">>> positive"
-  digits <- many1 digit
-  let value = read digits
-  return $ ltrace "<<< positive" value
--}
-
-fieldNo :: GenParser Char st [FormatString]
-fieldNo = do
---  mtrace ">>> fieldNo"
-  i <- many1 digit
-  let s = [FormatField False Nothing Nothing $ FieldNo $ read i]
-  return s -- $ ltrace "<<< fieldNo" s
 
 descriptionFieldValue :: GenParser Char st [FormatString]
 descriptionFieldValue = do
-  -- fieldNo will consume many1 digit
-  -- formatStrings will consume anything
-  mtrace ">>> descriptionFieldValue";
-      try fieldNoW
-  <|> formatStringsW
+--      try (fieldNo <* spacenonewline)
+      try fieldNo
+  <|> formatStrings
   where
-    fieldNoW = fieldNo >>= (\x -> return $ ltrace "<<< descriptionFieldValue (fieldNo)" x)
-    formatStringsW = formatStrings >>= (\x -> return $ ltrace "<<< descriptionFieldValue (formatString)" x)
+    fieldNo = many1 digit >>= \x -> return [FormatField False Nothing Nothing $ FieldNo $ read x]
 
---descriptionfield :: GenParser Char st ()
---descriptionfield :: GenParser Char st CsvRules
 descriptionfield = do
-  mtrace ">>> descriptionfield"
   string "description-field"
-  space1 <- many1 spacenonewline
-  mtrace ("many1 spacenonewline '" ++ show space1 ++ "'")
+  many1 spacenonewline
   formatS <- descriptionFieldValue
   restofline
---  c <- optionMaybe anyChar
---  updateState (\x -> x{descriptionField=formatS}) >>= (\formatS -> return $ ltrace ("<<< descriptionfield, c=" ++ (show c)) formatS)
-  updateState (\x -> ltrace "<<< descriptionfield" x{descriptionField=formatS})
+  updateState (\x -> x{descriptionField=formatS})
 
 amountfield = do
   string "amount-field"
-  mtrace ">>> amountfield"
   many1 spacenonewline
   v <- restofline
---  r <- getState
---  setState r{amountField=readMay v}
   x <- updateState (\r -> r{amountField=readMay v})
-  mtrace "<<< amountfield"
   return x
 
 infield = do
   string "in-field"
   many1 spacenonewline
   v <- restofline
---  r <- getState
---  setState r{inField=readMay v}
   updateState (\r -> r{inField=readMay v})
 
 outfield = do
   string "out-field"
   many1 spacenonewline
   v <- restofline
---  r <- getState
---  setState r{outField=readMay v}
   updateState (\r -> r{outField=readMay v})
 
 currencyfield = do
   string "currency-field"
   many1 spacenonewline
   v <- restofline
---  r <- getState
---  setState r{currencyField=readMay v}
   updateState (\r -> r{currencyField=readMay v})
 
 accountfield = do
   string "account-field"
   many1 spacenonewline
   v <- restofline
---  r <- getState
---  setState r{accountField=readMay v}
   updateState (\r -> r{accountField=readMay v})
 
 account2field = do
   string "account2-field"
   many1 spacenonewline
   v <- restofline
---  r <- getState
---  setState r{account2Field=readMay v}
   updateState (\r -> r{account2Field=readMay v})
 
 basecurrency = do
   string "currency"
   many1 spacenonewline
   v <- restofline
---  r <- getState
---  setState r{baseCurrency=Just v}
   updateState (\r -> r{baseCurrency=Just v})
 
 baseaccount = do
@@ -379,8 +324,6 @@ baseaccount = do
   many1 spacenonewline
   v <- ledgeraccountname
   optional newline
---  r <- getState
---  setState r{baseAccount=v}
   updateState (\r -> r{baseAccount=v})
 
 accountrule :: GenParser Char CsvRules AccountRule
@@ -546,8 +489,14 @@ getAmount rules fields = case amountField rules of
 tests_Hledger_Cli_Convert = TestList (test_parser ++ test_description_parsing)
 
 test_description_parsing = [
-      "description-field 1" ~: assertParseDescription "description-field 1" [FormatField False Nothing Nothing (FieldNo 1)]
-    , "description-field %(1)" ~: assertParseDescription "description-field %(1)" [FormatField False Nothing Nothing (FieldNo 1)]
+      "description-field 1" ~: assertParseDescription "description-field 1\n" [FormatField False Nothing Nothing (FieldNo 1)]
+    , "description-field 1 " ~: assertParseDescription "description-field 1 \n" [FormatField False Nothing Nothing (FieldNo 1)]
+    , "description-field %(1)" ~: assertParseDescription "description-field %(1)\n" [FormatField False Nothing Nothing (FieldNo 1)]
+    , "description-field %(1)/$(2)" ~: assertParseDescription "description-field %(1)/%(2)\n" [
+          FormatField False Nothing Nothing (FieldNo 1)
+        , FormatLiteral "/"
+        , FormatField False Nothing Nothing (FieldNo 2)
+        ]
     ]
   where
     assertParseDescription string expected = do assertParseEqual (parseDescription string) (nullrules {descriptionField = expected})
