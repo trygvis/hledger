@@ -44,7 +44,6 @@ library
                   Hledger.Data.TimeLog
                   Hledger.Data.Types
                   Hledger.Read
-                  Hledger.Read.Format
                   Hledger.Read.JournalReader
                   Hledger.Read.TimelogReader
                   Hledger.Read.Utils

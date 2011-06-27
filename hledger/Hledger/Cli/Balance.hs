@@ -107,7 +107,7 @@ module Hledger.Cli.Balance (
 import Data.List
 import Data.Maybe
 import Data.Tree
-import Prelude hiding (putStr)
+import Test.HUnit
 
 import Hledger.Cli.Format
 import qualified Hledger.Cli.Format as Format
@@ -115,8 +115,7 @@ import Hledger.Cli.Options
 import Hledger.Cli.Utils
 import Hledger.Data
 import Hledger.Utils
-import Hledger.Read.Format
-import qualified Hledger.Read.Format as Format
+import Prelude hiding (putStr)
 import Hledger.Utils.UTF8 (putStr)
 
 

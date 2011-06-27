@@ -63,15 +63,15 @@ instance Show Vty where show = const "a Vty"
 -- | The application state when running the vty command.
 data AppState = AppState {
      av :: Vty                   -- ^ the vty context
-    ,aw :: Int                   -- ^ window width
-    ,ah :: Int                   -- ^ window height
+    ,aw :: Int                  -- ^ window width
+    ,ah :: Int                  -- ^ window height
     ,amsg :: String              -- ^ status message
     ,aopts :: [Opt]              -- ^ command-line opts
     ,aargs :: [String]           -- ^ command-line args at startup
     ,ajournal :: Journal         -- ^ parsed journal
     ,abuf :: [String]            -- ^ lines of the current buffered view
     ,alocs :: [Loc]              -- ^ user's navigation trail within the UI
-                                 -- ^ never null, head is current location
+                                -- ^ never null, head is current location
     } deriving (Show)
 
 -- | A location within the user interface.

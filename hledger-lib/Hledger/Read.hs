@@ -28,20 +28,20 @@ import Test.HUnit
 import Text.Printf
 
 import Hledger.Data.Dates (getCurrentDay)
-import Hledger.Data.Journal (nullctx)
 import Hledger.Data.Types (Journal(..), Reader(..))
+import Hledger.Data.Journal (nullctx)
 import Hledger.Read.JournalReader as JournalReader
 import Hledger.Read.TimelogReader as TimelogReader
 import Hledger.Utils
-import Hledger.Utils.UTF8 (getContents, hGetContents)
 import Prelude hiding (getContents)
+import Hledger.Utils.UTF8 (getContents, hGetContents)
 
 
 journalenvvar           = "LEDGER_FILE"
 journalenvvar2          = "LEDGER"
 timelogenvvar           = "TIMELOG"
 journaldefaultfilename  = ".hledger.journal"
-timelogdefaultfilename  = ".hledger.timelog"
+timelogdefaultfilename = ".hledger.timelog"
 
 -- Here are the available readers. The first is the default, used for unknown data formats.
 readers :: [Reader]
