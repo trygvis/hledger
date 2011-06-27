@@ -3,9 +3,20 @@
 
 $(document).ready(function() {
 
-    /* maybe show forms */
+    /* show/hide things based on request parameters */
     if ($.url.param('add')) addformToggle();
     else if ($.url.param('edit')) editformToggle();
+    if ($.url.param('accounts')=='0') $('#accounts').hide();
+
+    /* set up sidebar account mouse-over handlers */
+    $('.balancereport td.account').mouseenter(function(){ $(this).addClass('mouseover'); });
+    $('.balancereport td.account').mouseleave(function(){ $(this).removeClass('mouseover'); });
+
+    /* set up various show/hide toggles */
+    $('#search-help-link').click(function() { $('#search-help').slideToggle('fast'); event.preventDefault(); });
+    $('#accounts-toggle-link').click(function() { $('#accounts').slideToggle('fast'); event.preventDefault(); });
+    $('#all-postings-toggle-link').click(function() { $('.posting').toggle(); event.preventDefault(); });
+    $('.postings-toggle-link').click(function() { $(this).parent().parent().nextUntil(':not(.posting)').toggle(); event.preventDefault(); });
 
 });
 
@@ -101,18 +112,24 @@ function editformToggle(ev) {
  return false;
 }
 
-function editformJournalSelect(ev) {
-  // http://www.quirksmode.org/js/events_properties.html
- if (!ev) var ev = window.event;
- if (ev.target) targ = ev.target;
- else if (ev.srcElement) targ = ev.srcElement;
- if (targ.nodeType == 3) targ = targ.parentNode;
+// Get the current event's target in a robust way.
+// http://www.quirksmode.org/js/events_properties.html
+function getTarget(ev) {
+  var targ;
+  if (!ev) var ev = window.event;
+  if (ev.target) targ = ev.target;
+  else if (ev.srcElement) targ = ev.srcElement;
+  if (targ.nodeType == 3) targ = targ.parentNode;
+  return targ;
+}
 
+function editformJournalSelect(ev) {
  var textareas = $('textarea', $('form#editform'));
  for (i=0; i<textareas.length; i++) {
    textareas[i].style.display = 'none';
    textareas[i].disabled = true;
  }
+ var targ = getTarget(ev);
  if (targ.value) {
    var journalid = targ.value+'_textarea';
    var textarea = document.getElementById(journalid);
