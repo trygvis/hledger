@@ -15,7 +15,6 @@ import Test.HUnit
 import Hledger.Data
 import Hledger.Cli.Format as Format
 import Hledger.Read (myJournalPath, myTimelogPath)
-import Hledger.Read.Format as Format
 import Hledger.Utils
 
 

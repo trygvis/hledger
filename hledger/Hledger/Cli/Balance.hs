@@ -115,8 +115,6 @@ import Hledger.Cli.Options
 import Hledger.Cli.Utils
 import Hledger.Data
 import Hledger.Utils
-import Hledger.Read.Format
-import qualified Hledger.Read.Format as Format
 import Hledger.Utils.UTF8 (putStr)
 
 
@@ -192,7 +190,7 @@ formatAccount opts accountName depth balance leftJustified min max field = case 
                                Just m  -> formatValue leftJustified Nothing max $ replicate (depth * m) ' '
                                Nothing -> formatValue leftJustified Nothing max $ replicate depth ' '
         Total           -> formatValue leftJustified min max $ showAmountWithoutPrice balance
-        _	        -> ""
+        _               -> ""
     where
       a = maybe "" (accountNameDrop (dropFromOpts opts)) accountName
 

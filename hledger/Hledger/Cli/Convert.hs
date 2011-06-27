@@ -20,13 +20,13 @@ import Text.CSV (parseCSV, parseCSVFromFile, printCSV, CSV)
 import Text.ParserCombinators.Parsec
 import Text.Printf (hPrintf)
 
+import Hledger.Cli.Format
+import qualified Hledger.Cli.Format as Format
 import Hledger.Cli.Version
 import Hledger.Cli.Options (Opt(Debug), progname_cli, rulesFileFromOpts)
 import Hledger.Data.Amount (nullmixedamt, costOfMixedAmount)
 import Hledger.Data.Dates (firstJust, showDate, parsedate)
 import Hledger.Data (Journal,AccountName,Transaction(..),Posting(..),PostingType(..))
-import Hledger.Read.Format
-import qualified Hledger.Read.Format as Format
 import Hledger.Data.Journal (nullctx)
 import Hledger.Read.JournalReader (someamount,ledgeraccountname)
 import Hledger.Utils (choice', strip, spacenonewline, restofline, parseWithCtx, assertParse, assertParseEqual, error', regexMatchesCI, regexReplaceCI)
@@ -368,7 +368,7 @@ formatD record leftJustified min max f = case f of
   FieldNo n       -> maybe "" show $ atMay record n
   -- Some of these might in theory in read from fields
   Format.Account  -> ""
-  DepthSpace      -> ""
+  DepthSpacer     -> ""
   Total           -> ""
   DefaultDate     -> ""
   Description     -> ""
