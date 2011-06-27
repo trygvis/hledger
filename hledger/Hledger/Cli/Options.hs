@@ -13,6 +13,7 @@ import System.Environment
 import Test.HUnit
 
 import Hledger.Data
+import Hledger.Cli.Format as Format
 import Hledger.Read (myJournalPath, myTimelogPath)
 import Hledger.Read.Format as Format
 import Hledger.Utils
@@ -227,12 +228,12 @@ rulesFileFromOpts opts = listtomaybe $ optValuesForConstructor RulesFile opts
       listtomaybe [] = Nothing
       listtomaybe vs = Just $ head vs
 
--- | Default balance format string: "%20T  %2_%-A"
+-- | Default balance format string: "%20(total)  %2(depth_spacer)%-(account)"
 defaultBalanceFormatString :: [FormatString]
 defaultBalanceFormatString = [
       FormatField False (Just 20) Nothing Total
     , FormatLiteral "  "
-    , FormatField True (Just 2) Nothing DepthSpace
+    , FormatField True (Just 2) Nothing DepthSpacer
     , FormatField True Nothing Nothing Format.Account
     ]
 
