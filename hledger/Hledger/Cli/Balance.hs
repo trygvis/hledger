@@ -109,6 +109,8 @@ import Data.Maybe
 import Data.Tree
 import Prelude hiding (putStr)
 
+import Hledger.Cli.Format
+import qualified Hledger.Cli.Format as Format
 import Hledger.Cli.Options
 import Hledger.Cli.Utils
 import Hledger.Data
@@ -152,11 +154,11 @@ balanceReportAsText opts (items, total) = concat lines ++ t
                   , padleft 20 $ showMixedAmountWithoutPrice total
                   ]
 
-{- 
+{-
 This implementation turned out to be a bit convoluted but implements the following algorithm for formatting:
 
 - If there is a single amount, print it with the account name directly:
-- Otherwise, only print the account name on the list name.
+- Otherwise, only print the account name on the last line.
 
     a         USD 1   ; Account 'a' has a single amount
               EUR -1
@@ -167,17 +169,17 @@ balanceReportItemAsText :: [Opt] -> [FormatString] -> BalanceReportItem -> [Stri
 balanceReportItemAsText opts format (_, accountName, depth, Mixed amounts) =
     case amounts of
       [] -> []
-      [a] -> [formatAmount opts (Just accountName) depth a format]
+      [a] -> [formatBalanceReportItem opts (Just accountName) depth a format]
       (as) -> asText as
     where
       asText :: [Amount] -> [String]
       asText []     = []
-      asText [a]    = [formatAmount opts (Just accountName) depth a format]
-      asText (a:as) = (formatAmount opts Nothing depth a format) : asText as
+      asText [a]    = [formatBalanceReportItem opts (Just accountName) depth a format]
+      asText (a:as) = (formatBalanceReportItem opts Nothing depth a format) : asText as
 
-formatAmount :: [Opt] -> Maybe AccountName -> Int -> Amount -> [FormatString] -> String
-formatAmount _ _ _ _ [] = ""
-formatAmount opts accountName depth amount (f:fs) = s ++ (formatAmount opts accountName depth amount fs)
+formatBalanceReportItem :: [Opt] -> Maybe AccountName -> Int -> Amount -> [FormatString] -> String
+formatBalanceReportItem _ _ _ _ [] = ""
+formatBalanceReportItem opts accountName depth amount (f:fs) = s ++ (formatBalanceReportItem opts accountName depth amount fs)
   where
     s = case f of
             FormatLiteral l -> l
@@ -186,12 +188,11 @@ formatAmount opts accountName depth amount (f:fs) = s ++ (formatAmount opts acco
 formatAccount :: [Opt] -> Maybe AccountName -> Int -> Amount -> Bool -> Maybe Int -> Maybe Int -> Field -> String
 formatAccount opts accountName depth balance leftJustified min max field = case field of
         Format.Account  -> formatValue leftJustified min max a
-        DefaultDate     -> error "not applicable"
-        Description     -> error "not applicable"
-        DepthSpace      -> case min of
+        DepthSpacer     -> case min of
                                Just m  -> formatValue leftJustified Nothing max $ replicate (depth * m) ' '
                                Nothing -> formatValue leftJustified Nothing max $ replicate depth ' '
         Total           -> formatValue leftJustified min max $ showAmountWithoutPrice balance
+        _	        -> ""
     where
       a = maybe "" (accountNameDrop (dropFromOpts opts)) accountName
 
