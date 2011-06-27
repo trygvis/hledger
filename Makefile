@@ -885,6 +885,9 @@ tag: emacstags
 emacstags:
 	-@rm -f TAGS; hasktags -e $(SOURCEFILES) $(CABALFILES) $(WEBFILES) Makefile
 
+tags:
+	-@rm -f tags; hasktags -c $(SOURCEFILES) $(CABALFILES) $(WEBFILES) Makefile
+
 clean:
 	rm -rf `find . -name "*.o" -o -name "*.hi" -o -name "*~" -o -name "darcs-amend-record*" -o -name "*-darcs-backup*"`
 
