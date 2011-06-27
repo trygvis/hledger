@@ -1,4 +1,4 @@
-rm -rf unused.journal$$ input.rules$$; printf 'base-account Assets:MyAccount\ndate-field 0\ndate-format %%d/%%Y/%%m\ndescription-field %%(1)/%%(3)\namount-field 2\ncurrency $\n' > input.rules$$ ; touch unused.journal$$ ; bin/hledger -f unused.journal$$ --rules input.rules$$ convert - ; rm -rf *$$
+printf 'base-account Assets:MyAccount\ndate-field 0\ndate-format %%d/%%Y/%%m\ndescription-field %%(1)/%%(3)\namount-field 2\ncurrency $\n' > input.rules$$ ; touch unused.journal$$ ; bin/hledger -f unused.journal$$ --rules input.rules$$ convert - ; rm -rf *$$
 <<<
 10/2009/09,Flubber Co,50,Comment #1
 11/2009/09,Flubber Co,-50,Comment #2
