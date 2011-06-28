@@ -207,10 +207,7 @@ csvrulesfile = do
   eof
   return r{accountRules=ars}
 
--- | Real independent parser choice, even when alternative matches share a prefix.
--- choice' parsers = choice $ map try (init parsers) ++ [last parsers]
-
--- definitions :: GenParser Char CsvRules CsvRules
+definitions :: GenParser Char CsvRules ()
 definitions = do
   choice' [
     datefield
@@ -340,14 +337,11 @@ accountrule = do
 blanklines = many1 blankline
 
 blankline = many spacenonewline >> newline >> return () <?> "blank line"
--- blankline = many spacenonewline >> newline >> getState <?> "blank line"
 
 commentchar = oneOf ";#"
 
--- commentline :: GenParser Char CsvRules CsvRules
 commentline = many spacenonewline >> commentchar >> restofline >> return () <?> "comment line"
 
--- blankorcommentline :: GenParser Char CsvRules CsvRules
 blankorcommentline = choice' [blankline, commentline]
 
 matchreplacepattern = do
@@ -390,7 +384,6 @@ transactionFromCsvRecord rules fields =
                          return $ parsedate $ normaliseDate (dateFormat rules) $ (atDef "" fields) idx
       status = maybe False (null . strip . (atDef "" fields)) (statusField rules)
       code = maybe "" (atDef "" fields) (codeField rules)
---      desc = maybe "" (atDef "" fields) (descriptionField rules)
       desc = formatDescription fields (descriptionField rules)
       comment = ""
       precomment = ""
@@ -500,8 +493,6 @@ test_description_parsing = [
     ]
   where
     assertParseDescription string expected = do assertParseEqual (parseDescription string) (nullrules {descriptionField = expected})
--- descriptionfield :: GenParser Char CsvRules ()
--- runParser :: GenParser tok st a -> st -> SourceName -> [tok] -> Either ParseError a
     parseDescription :: String -> Either ParseError CsvRules
     parseDescription x = runParser descriptionfieldWrapper nullrules "(unknown)" x
     descriptionfieldWrapper :: GenParser Char CsvRules CsvRules
