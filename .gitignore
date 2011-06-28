@@ -6,3 +6,4 @@ bin/
 *.swp
 TAGS
 tags
+.vimrc
